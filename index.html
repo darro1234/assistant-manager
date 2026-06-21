@@ -336,6 +336,8 @@ Not affiliated with McDonald's Corporation.
 <p style="color:var(--muted);line-height:1.45;margin-top:0">Add or delete checklist tasks for Morning, Evening and Overnight. These tasks are used directly in the Checklist screen.</p>
 <div id="shift_task_editor"></div>
 <button class="resetBtn" type="button" onclick="restoreDefaultShiftTasks()">Restore Default Tasks</button>
+<button class="generateBtn" type="button" onclick="saveManagerPlusConfiguration()">Save Configuration</button>
+<button class="generateBtn" type="button" onclick="exportManagerPlusConfiguration()">Save Configuration to File</button>
 </div>
 
 </div></section>
@@ -2827,6 +2829,125 @@ window.confirm=function(msg){
       window.renderShiftChecklist();
     }, 250);
   });
+})();
+</script>
+
+
+<script>
+/* Manager+ v6.0.2 Save Configuration + Export Configuration File */
+(function(){
+  const CONFIG_KEY = 'manager_plus_full_configuration_v602';
+  const PROFILE_KEY = 'manager_plus_profile_v60';
+  const TASKS_KEY = 'manager_plus_shift_tasks_v60';
+
+  function getValue(id){
+    return String(document.getElementById(id)?.value || '').trim();
+  }
+
+  function setValue(id, value){
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.value = value;
+    el.dispatchEvent(new Event('input', {bubbles:true}));
+    el.dispatchEvent(new Event('change', {bubbles:true}));
+  }
+
+  function getJson(key, fallback){
+    try{
+      const parsed = JSON.parse(localStorage.getItem(key) || 'null');
+      return parsed || fallback;
+    }catch(e){
+      return fallback;
+    }
+  }
+
+  function toast(msg){
+    if(typeof window.amToast === 'function') window.amToast(msg);
+    else alert(msg);
+  }
+
+  function collectConfiguration(){
+    const profile = {
+      restaurantName: getValue('restaurant_name'),
+      defaultManagerName: getValue('default_manager_name')
+    };
+
+    const targets = {
+      oepe: getValue('target_oepe'),
+      kvs: getValue('target_kvs'),
+      r2p: getValue('target_r2p'),
+      mcdelivery: getValue('target_mcdelivery'),
+      rawWaste: getValue('target_raw'),
+      fullWaste: getValue('target_full'),
+      crewMeals: getValue('target_crew'),
+      nonRecipe: getValue('target_nonrecipe')
+    };
+
+    const tasks = getJson(TASKS_KEY, window.getManagerPlusShiftTasks ? window.getManagerPlusShiftTasks() : {});
+
+    return {
+      app: 'Manager+',
+      version: '6.0.2',
+      savedAt: new Date().toISOString(),
+      profile,
+      targets,
+      tasks
+    };
+  }
+
+  window.saveManagerPlusConfiguration = function(){
+    const config = collectConfiguration();
+
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(config.profile));
+    localStorage.setItem(TASKS_KEY, JSON.stringify(config.tasks));
+
+    Object.entries({
+      target_oepe: config.targets.oepe,
+      target_kvs: config.targets.kvs,
+      target_r2p: config.targets.r2p,
+      target_mcdelivery: config.targets.mcdelivery,
+      target_raw: config.targets.rawWaste,
+      target_full: config.targets.fullWaste,
+      target_crew: config.targets.crewMeals,
+      target_nonrecipe: config.targets.nonRecipe
+    }).forEach(([id, value]) => setValue(id, value));
+
+    if(typeof saveData === 'function') saveData();
+    if(typeof renderShiftChecklist === 'function') renderShiftChecklist();
+
+    toast('Configuration saved.');
+  };
+
+  window.exportManagerPlusConfiguration = function(){
+    const config = collectConfiguration();
+
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(config.profile));
+    localStorage.setItem(TASKS_KEY, JSON.stringify(config.tasks));
+
+    const safeRestaurant = (config.profile.restaurantName || 'restaurant')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '') || 'restaurant';
+
+    const filename = 'managerplus-config-' + safeRestaurant + '.json';
+    const blob = new Blob([JSON.stringify(config, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+
+    setTimeout(function(){
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+
+    toast('Configuration file saved.');
+  };
 })();
 </script>
 
