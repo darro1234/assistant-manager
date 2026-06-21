@@ -3174,6 +3174,122 @@ window.confirm=function(msg){
 })();
 </script>
 
+
+<script>
+/* Manager+ v6.0.5 Handover generated from completed Checklist tasks */
+(function(){
+  function getCurrentShift(){
+    return document.getElementById('shift_type')?.value || document.getElementById('checklist_shift')?.value || 'Overnight';
+  }
+
+  window.renderDynamicHandover = function(){
+    const box = document.getElementById('dynamic_handover_items');
+    if(!box) return;
+
+    const shift = getCurrentShift();
+    const checklistTasks = Array.from(document.querySelectorAll('input[data-checklist-task]'));
+    const completed = checklistTasks
+      .filter(el => el.checked)
+      .map(el => String(el.getAttribute('data-checklist-task') || '').trim())
+      .filter(Boolean);
+
+    if(!checklistTasks.length){
+      box.innerHTML = '<div class="coachBox" style="margin-top:0">No checklist tasks available for this shift. Add tasks in Settings.</div>';
+      return;
+    }
+
+    if(!completed.length){
+      box.innerHTML = '<div class="coachBox" style="margin-top:0">No completed checklist tasks yet. Complete tasks in Checklist and they will appear in the handover.</div>';
+      return;
+    }
+
+    box.innerHTML = completed.map(task => {
+      return '<label class="check"><input type="checkbox" checked disabled> ' + task + '</label>';
+    }).join('');
+  };
+
+  window.generateHandover = function(){
+    const shift = typeof getValueClean === 'function' ? getValueClean('shift_type', 'Shift') : getCurrentShift();
+    const date = typeof getValueClean === 'function' ? getValueClean('shift_date', 'Today') : (document.getElementById('shift_date')?.value || 'Today');
+
+    const completed = Array.from(document.querySelectorAll('input[data-checklist-task]:checked'))
+      .map(el => String(el.getAttribute('data-checklist-task') || '').trim())
+      .filter(Boolean);
+
+    const optional = typeof getValueClean === 'function' ? getValueClean('handover_optional') : String(document.getElementById('handover_optional')?.value || '').trim();
+
+    const getVal = (id, fallback='N/A') => {
+      if(typeof getValueClean === 'function') return getValueClean(id, fallback);
+      return String(document.getElementById(id)?.value || '').trim() || fallback;
+    };
+
+    const report = [
+      `${shift} Handover – ${date}`,
+      '',
+      'PERFORMANCE KPIs',
+      `• OEPE: ${getVal('oepe')} sec`,
+      `• KVS: ${getVal('kvs')} sec`,
+      `• R2P: ${getVal('r2p')} sec`,
+      `• McDelivery: ${getVal('mcdelivery')} sec`,
+      '',
+      'WASTE',
+      `• Raw Waste: ${getVal('raw_waste')}%`,
+      `• Full Waste: ${getVal('full_waste')}%`,
+      `• Crew Meals: ${getVal('crew_meals')}%`,
+      `• Non-Recipe: ${getVal('non_recipe')}%`,
+      '',
+      'COMPLETED CHECKLIST TASKS',
+      completed.length ? completed.map(x => '• ' + x).join('\n') : '• No completed checklist tasks yet.',
+      '',
+      'FOLLOW UP / NOTES',
+      optional ? '• ' + optional : '• No additional notes.',
+      '',
+      'NEXT SHIFT NOTE',
+      '• Please continue to monitor open issues and keep communication clear during the next shift.'
+    ].join('\n');
+
+    const out = document.getElementById('handover_output');
+    if(out){
+      out.value = typeof cleanGeneratedText === 'function' ? cleanGeneratedText(report) : report;
+      out.dispatchEvent(new Event('input', {bubbles:true}));
+    }
+  };
+
+  const previousChecklistCompletion = window.calculateChecklistCompletion;
+  if(typeof previousChecklistCompletion === 'function'){
+    window.calculateChecklistCompletion = function(){
+      previousChecklistCompletion.apply(this, arguments);
+      setTimeout(window.renderDynamicHandover, 50);
+    };
+  }
+
+  const previousRenderShiftChecklist = window.renderShiftChecklist;
+  if(typeof previousRenderShiftChecklist === 'function'){
+    window.renderShiftChecklist = function(){
+      previousRenderShiftChecklist.apply(this, arguments);
+      setTimeout(window.renderDynamicHandover, 80);
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(window.renderDynamicHandover, 400);
+
+    const shiftSelect = document.getElementById('shift_type');
+    if(shiftSelect){
+      shiftSelect.addEventListener('change', function(){
+        setTimeout(window.renderDynamicHandover, 120);
+      });
+    }
+
+    document.addEventListener('change', function(e){
+      if(e.target && e.target.matches('input[data-checklist-task]')){
+        setTimeout(window.renderDynamicHandover, 50);
+      }
+    });
+  });
+})();
+</script>
+
 </body>
 
 </html>
