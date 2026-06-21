@@ -110,17 +110,17 @@ textarea{min-height:96px;resize:vertical}
 
 /* Manager+ home logo: sharp iPhone/Safari version */
 .logo.managerLogo{
-  width:176px;
-  height:82px;
-  margin:0 auto 6px;
+  width:218px;
+  height:136px;
+  margin:0 auto -20px;
   color:var(--yellow);
   filter:none !important;
   -webkit-filter:none !important;
   overflow:visible;
 }
 .logo.managerLogo img{
-  width:176px;
-  height:82px;
+  width:100%;
+  height:100%;
   display:block;
   object-fit:contain;
   transform:none !important;
@@ -131,15 +131,12 @@ textarea{min-height:96px;resize:vertical}
 }
 @media(max-width:430px){
   .logo.managerLogo{
-    width:164px;
-    height:76px;
-    margin-bottom:6px;
-  }
-  .logo.managerLogo img{
-    width:164px;
-    height:76px;
+    width:198px;
+    height:124px;
+    margin-bottom:-18px;
   }
 }
+
 </style>
 
 <link rel="manifest" href="manifest.json">
@@ -171,7 +168,9 @@ textarea{min-height:96px;resize:vertical}
 <div class="app">
 <section id="homeScreen" class="screen">
 <header class="hero">
-<div class="logo"><svg viewBox="0 0 180 130" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="archGold" x1="0" y1="0" x2="0" y2="130"><stop offset="0" stop-color="#FFE066"/><stop offset=".42" stop-color="#FFBC0D"/><stop offset="1" stop-color="#D99A00"/></linearGradient></defs><path fill="url(#archGold)" d="M22 118C23 86 27 54 39 32C48 15 60 6 72 6C84 6 90 22 91 50C92 22 98 6 110 6C122 6 134 15 143 32C155 54 159 86 160 118L139 118C138 89 135 61 127 42C122 30 116 24 111 24C103 24 101 45 101 118L80 118C80 45 78 24 70 24C65 24 59 30 54 42C46 61 43 89 42 118Z"/></svg></div>
+<div class="logo managerLogo">
+  <img src="manager-icon.svg?v=5" alt="Manager+ icon">
+</div>
 <h1>Manager+</h1><div class="subtitle">Shift Management</div><div class="divider"></div><div class="byline">Designed & Created by <strong>Dariusz Kaniewski</strong></div>
 </header>
 <main class="tiles">
