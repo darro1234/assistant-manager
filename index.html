@@ -171,6 +171,73 @@ pointer-events:none;
 }
 .toastMsg.show{opacity:1}
 
+
+/* Manager+ v6.0 configurable restaurant profile and checklist tasks */
+.settingsSection{
+  margin-top:16px;
+  padding-top:12px;
+  border-top:1px solid #232326;
+}
+.settingsSection h3{
+  margin:8px 0 12px;
+  color:var(--yellow);
+  font-size:18px;
+}
+.taskEditorGroup{
+  margin-top:14px;
+  background:#080808;
+  border:1px solid #28282b;
+  border-radius:18px;
+  padding:14px;
+}
+.taskEditorGroup h4{
+  margin:0 0 10px;
+  color:#fff;
+  font-size:16px;
+}
+.customTaskRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:9px 0;
+  border-bottom:1px solid #202024;
+  color:#d7d7dc;
+  font-size:14px;
+}
+.customTaskRow:last-child{
+  border-bottom:0;
+}
+.deleteTaskBtn{
+  width:auto;
+  margin:0;
+  padding:7px 10px;
+  border-radius:10px;
+  border:1px solid rgba(255,56,56,.25);
+  background:rgba(255,56,56,.08);
+  color:var(--red);
+  font-weight:900;
+  font-size:12px;
+}
+.addTaskBox{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  margin-top:10px;
+}
+.addTaskBox input{
+  min-width:0;
+}
+.addTaskBox button{
+  width:auto;
+  margin-top:0;
+  white-space:nowrap;
+}
+@media(max-width:430px){
+  .addTaskBox{grid-template-columns:1fr}
+  .addTaskBox button{width:100%}
+}
+
 </style>
 
 <link rel="manifest" href="manifest.json">
@@ -249,9 +316,29 @@ Not affiliated with McDonald's Corporation.
 
 <section id="starScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 3"/><path d="M17 6h3a3 3 0 0 1-3 3"/></svg><h2>Star of the Shift</h2></div><div class="grid"><div><label class="fieldLabel">Name</label><input id="star_name" type="text" placeholder="e.g. Troy"></div><div><label class="fieldLabel">Tone</label><select id="star_tone"><option>Professional</option><option>Warm</option><option>Short</option><option>Very positive</option></select></div><div><label class="fieldLabel">Shift Type</label><select id="star_shift_type"><option>Overnight</option><option>Morning</option><option>Breakfast</option><option>Day Shift</option><option>Evening</option></select></div><div><label class="fieldLabel">Feedback Length</label><select id="star_length"><option>Standard</option><option>Short</option><option>Detailed</option></select></div></div><label class="fieldLabel">Stations / Areas</label><div class="stationBox"><label class="check"><input id="st_kitchen" type="checkbox"> Kitchen</label><label class="check"><input id="st_dt1" type="checkbox"> DT Window 1</label><label class="check"><input id="st_dt2" type="checkbox"> DT Window 2</label><label class="check"><input id="st_mcdelivery" type="checkbox"> McDelivery</label><label class="check"><input id="st_lobby" type="checkbox"> Lobby</label><label class="check"><input id="st_beverage" type="checkbox"> Beverage</label><label class="check"><input id="st_stock" type="checkbox"> Stock Up</label><label class="check"><input id="st_breakfast" type="checkbox"> Breakfast</label></div><label class="fieldLabel">Strengths</label><div class="stationBox"><label class="check"><input id="str_teamwork" type="checkbox"> Teamwork</label><label class="check"><input id="str_cleanliness" type="checkbox"> Cleanliness</label><label class="check"><input id="str_speed" type="checkbox"> Speed</label><label class="check"><input id="str_customer" type="checkbox"> Customer Service</label><label class="check"><input id="str_stock" type="checkbox"> Stock Up</label><label class="check"><input id="str_initiative" type="checkbox"> Initiative</label></div><label class="fieldLabel">What did they do well?</label><textarea id="star_notes" placeholder="Optional notes"></textarea><button class="generateBtn" onclick="generateStarFeedback()">Generate Star of the Shift</button><button class="generateBtn" onclick="copyTextarea('star_output')">Copy Star of the Shift</button><label class="fieldLabel">Generated text</label><textarea id="star_output" placeholder="Generated feedback will appear here."></textarea></div></section>
 
-<section id="settingsScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="purple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.5"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1a7 7 0 0 0-1.8-1L14.4 3h-4.8l-.3 3.1a7 7 0 0 0-1.8 1l-2.4-1-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1a7 7 0 0 0 1.8 1l.3 3.1h4.8l.3-3.1a7 7 0 0 0 1.8-1l2.4 1 2-3.4-2-1.5c.1-.3.1-.7.1-1z"/></svg><h2>Settings</h2></div><div class="grid"><div><label class="fieldLabel">OEPE target sec</label><input id="target_oepe" type="number" value="110"></div><div><label class="fieldLabel">KVS target sec</label><input id="target_kvs" type="number" value="55"></div><div><label class="fieldLabel">R2P target sec</label><input id="target_r2p" type="number" value="80"></div><div><label class="fieldLabel">McDelivery target sec</label><input id="target_mcdelivery" type="number" value="150"></div><div><label class="fieldLabel">Raw Waste target %</label><input id="target_raw" type="number" step="0.01" value="0.25"></div><div><label class="fieldLabel">Full Waste target %</label><input id="target_full" type="number" step="0.01" value="0.20"></div>
-<div><label class="fieldLabel">Crew Meals target %</label><input id="target_crew" type="number" step="0.01" value="0.50"></div>
-<div><label class="fieldLabel">Non-Recipe target %</label><input id="target_nonrecipe" type="number" step="0.01" value="0.90"></div></div></div></section>
+<section id="settingsScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="purple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.5"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1a7 7 0 0 0-1.8-1L14.4 3h-4.8l-.3 3.1a7 7 0 0 0-1.8 1l-2.4-1-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1a7 7 0 0 0 1.8 1l.3 3.1h4.8l.3-3.1a7 7 0 0 0 1.8-1l2.4 1 2-3.4-2-1.5c.1-.3.1-.7.1-1z"/></svg><h2>Settings</h2></div>
+
+<div class="settingsSection">
+<h3>Restaurant Profile</h3>
+<div class="grid">
+<div><label class="fieldLabel">Restaurant Name</label><input id="restaurant_name" type="text" placeholder="e.g. Kylemore Road"></div>
+<div><label class="fieldLabel">Default Manager Name</label><input id="default_manager_name" type="text" placeholder="e.g. Dariusz Kaniewski"></div>
+</div>
+</div>
+
+<div class="settingsSection">
+<h3>KPI Targets</h3>
+<div class="grid"><div><label class="fieldLabel">OEPE target sec</label><input id="target_oepe" type="number" value="110"></div><div><label class="fieldLabel">KVS target sec</label><input id="target_kvs" type="number" value="55"></div><div><label class="fieldLabel">R2P target sec</label><input id="target_r2p" type="number" value="80"></div><div><label class="fieldLabel">McDelivery target sec</label><input id="target_mcdelivery" type="number" value="150"></div><div><label class="fieldLabel">Raw Waste target %</label><input id="target_raw" type="number" step="0.01" value="0.25"></div><div><label class="fieldLabel">Full Waste target %</label><input id="target_full" type="number" step="0.01" value="0.20"></div><div><label class="fieldLabel">Crew Meals target %</label><input id="target_crew" type="number" step="0.01" value="0.50"></div><div><label class="fieldLabel">Non-Recipe target %</label><input id="target_nonrecipe" type="number" step="0.01" value="0.90"></div></div>
+</div>
+
+<div class="settingsSection">
+<h3>Shift Tasks</h3>
+<p style="color:var(--muted);line-height:1.45;margin-top:0">Add or delete checklist tasks for Morning, Evening and Overnight. These tasks are used directly in the Checklist screen.</p>
+<div id="shift_task_editor"></div>
+<button class="resetBtn" type="button" onclick="restoreDefaultShiftTasks()">Restore Default Tasks</button>
+</div>
+
+</div></section>
 
 <section id="reportScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg><h2>Full Shift Report</h2></div>
 <p style="color:var(--muted);line-height:1.45">Generate a full shift summary from Dashboard, KPI, Waste, Checklist, Handover and Star of the Shift.</p>
@@ -2172,6 +2259,246 @@ window.confirm=function(msg){
  amToast(String(msg||''));
  return true;
 };
+})();
+</script>
+
+
+<script>
+/* Manager+ v6.0 Restaurant Profile + Editable Shift Tasks */
+(function(){
+  const PROFILE_KEY = 'manager_plus_profile_v60';
+  const TASKS_KEY = 'manager_plus_shift_tasks_v60';
+
+  function clone(obj){
+    return JSON.parse(JSON.stringify(obj));
+  }
+
+  function defaultTasks(){
+    return clone(window.checklistData || checklistData);
+  }
+
+  function loadProfile(){
+    try{
+      return JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
+    }catch(e){
+      return {};
+    }
+  }
+
+  function saveProfile(){
+    const profile = {
+      restaurantName: String(document.getElementById('restaurant_name')?.value || '').trim(),
+      defaultManagerName: String(document.getElementById('default_manager_name')?.value || '').trim()
+    };
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+
+    const manager = document.getElementById('manager_name');
+    if(manager && !String(manager.value || '').trim() && profile.defaultManagerName){
+      manager.value = profile.defaultManagerName;
+      manager.dispatchEvent(new Event('input', {bubbles:true}));
+    }
+
+    if(typeof saveData === 'function') saveData();
+  }
+
+  function applyProfile(){
+    const profile = loadProfile();
+
+    const restaurantInput = document.getElementById('restaurant_name');
+    const defaultManagerInput = document.getElementById('default_manager_name');
+    const managerInput = document.getElementById('manager_name');
+
+    if(restaurantInput && profile.restaurantName) restaurantInput.value = profile.restaurantName;
+    if(defaultManagerInput && profile.defaultManagerName) defaultManagerInput.value = profile.defaultManagerName;
+
+    if(managerInput && !String(managerInput.value || '').trim() && profile.defaultManagerName){
+      managerInput.value = profile.defaultManagerName;
+    }
+  }
+
+  function loadShiftTasks(){
+    try{
+      const saved = JSON.parse(localStorage.getItem(TASKS_KEY) || 'null');
+      if(saved && typeof saved === 'object') return saved;
+    }catch(e){}
+    const d = defaultTasks();
+    localStorage.setItem(TASKS_KEY, JSON.stringify(d));
+    return d;
+  }
+
+  function saveShiftTasks(data){
+    localStorage.setItem(TASKS_KEY, JSON.stringify(data));
+  }
+
+  window.getManagerPlusShiftTasks = function(){
+    return loadShiftTasks();
+  };
+
+  window.renderShiftTaskEditor = function(){
+    const holder = document.getElementById('shift_task_editor');
+    if(!holder) return;
+
+    const data = loadShiftTasks();
+    const shifts = ['Morning','Evening','Overnight'];
+
+    let html = '';
+
+    shifts.forEach(shift => {
+      html += '<div class="taskEditorGroup">';
+      html += '<h4>' + shift + '</h4>';
+
+      const groups = data[shift] || {};
+      const groupNames = Object.keys(groups);
+
+      if(!groupNames.length){
+        html += '<div class="customTaskRow"><span>No tasks yet.</span></div>';
+      }
+
+      groupNames.forEach(group => {
+        const tasks = groups[group] || [];
+        if(tasks.length){
+          html += '<label class="fieldLabel">' + group + '</label>';
+        }
+
+        tasks.forEach((task, index) => {
+          html += '<div class="customTaskRow">';
+          html += '<span>' + task + '</span>';
+          html += '<button class="deleteTaskBtn" type="button" onclick="deleteShiftTask(\\'' + shift + '\\',\\'' + group.replace(/'/g, "\\\\'") + '\\',' + index + ')">Delete</button>';
+          html += '</div>';
+        });
+      });
+
+      html += '<div class="addTaskBox">';
+      html += '<input id="new_task_' + shift + '" type="text" placeholder="Add new ' + shift + ' task">';
+      html += '<button class="generateBtn" type="button" onclick="addShiftTask(\\'' + shift + '\\')">Add Task</button>';
+      html += '</div>';
+
+      html += '</div>';
+    });
+
+    holder.innerHTML = html;
+  };
+
+  window.addShiftTask = function(shift){
+    const input = document.getElementById('new_task_' + shift);
+    const task = String(input?.value || '').trim();
+
+    if(!task){
+      alert('Enter task name first.');
+      return;
+    }
+
+    const data = loadShiftTasks();
+    if(!data[shift]) data[shift] = {};
+    if(!data[shift]['Custom Tasks']) data[shift]['Custom Tasks'] = [];
+
+    data[shift]['Custom Tasks'].push(task);
+    saveShiftTasks(data);
+
+    if(input) input.value = '';
+
+    renderShiftTaskEditor();
+    if(typeof renderShiftChecklist === 'function') renderShiftChecklist();
+
+    alert('Task added.');
+  };
+
+  window.deleteShiftTask = function(shift, group, index){
+    const data = loadShiftTasks();
+
+    if(!data[shift] || !data[shift][group]) return;
+
+    data[shift][group].splice(index, 1);
+
+    if(data[shift][group].length === 0){
+      delete data[shift][group];
+    }
+
+    saveShiftTasks(data);
+
+    renderShiftTaskEditor();
+    if(typeof renderShiftChecklist === 'function') renderShiftChecklist();
+
+    alert('Task deleted.');
+  };
+
+  window.restoreDefaultShiftTasks = function(){
+    const d = defaultTasks();
+    saveShiftTasks(d);
+    renderShiftTaskEditor();
+    if(typeof renderShiftChecklist === 'function') renderShiftChecklist();
+    alert('Default tasks restored.');
+  };
+
+  window.renderShiftChecklist = function(){
+    const shift = document.getElementById('shift_type')?.value || document.getElementById('checklist_shift')?.value || 'Overnight';
+
+    const hiddenShift = document.getElementById('checklist_shift');
+    if(hiddenShift) hiddenShift.value = shift;
+
+    const box = document.getElementById('dynamic_checklist');
+    if(!box) return;
+
+    const allTasks = loadShiftTasks();
+    const groups = allTasks[shift] || {};
+    let html = '';
+
+    Object.keys(groups).forEach(group => {
+      html += '<div class="taskGroup"><h3>' + group + '</h3>';
+      (groups[group] || []).forEach(task => {
+        const id = 'cl_' + safeId(shift + '_' + group + '_' + task);
+        html += '<label class="taskCheck"><input id="' + id + '" type="checkbox" data-checklist-task="' + task + '"> ' + task + '</label>';
+      });
+      html += '</div>';
+    });
+
+    box.innerHTML = html;
+
+    if(typeof loadData === 'function') loadData();
+
+    document.querySelectorAll('input[data-checklist-task]').forEach(el => {
+      el.addEventListener('change', () => {
+        if(typeof saveData === 'function') saveData();
+        if(typeof calculateChecklistCompletion === 'function') calculateChecklistCompletion();
+      });
+    });
+
+    if(typeof calculateChecklistCompletion === 'function') calculateChecklistCompletion();
+  };
+
+  const oldGenerateFullShiftReport = window.generateFullShiftReport;
+  window.generateFullShiftReport = function(){
+    if(typeof oldGenerateFullShiftReport === 'function'){
+      oldGenerateFullShiftReport();
+    }
+
+    const profile = loadProfile();
+    const restaurant = profile.restaurantName || String(document.getElementById('restaurant_name')?.value || '').trim();
+    const out = document.getElementById('full_shift_report');
+
+    if(out && restaurant && out.value && !out.value.includes('Restaurant:')){
+      out.value = out.value.replace('MANAGER DETAILS\n', 'MANAGER DETAILS\nRestaurant: ' + restaurant + '\n');
+      out.dispatchEvent(new Event('input', {bubbles:true}));
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', function(){
+    applyProfile();
+    renderShiftTaskEditor();
+
+    ['restaurant_name','default_manager_name'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el){
+        el.addEventListener('input', saveProfile);
+        el.addEventListener('change', saveProfile);
+      }
+    });
+
+    setTimeout(function(){
+      applyProfile();
+      if(typeof renderShiftChecklist === 'function') renderShiftChecklist();
+    }, 150);
+  });
 })();
 </script>
 
