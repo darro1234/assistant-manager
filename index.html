@@ -338,6 +338,8 @@ Not affiliated with McDonald's Corporation.
 <button class="resetBtn" type="button" onclick="restoreDefaultShiftTasks()">Restore Default Tasks</button>
 <button class="generateBtn" type="button" onclick="saveManagerPlusConfiguration()">Save Configuration</button>
 <button class="generateBtn" type="button" onclick="exportManagerPlusConfiguration()">Save Configuration to File</button>
+<button class="generateBtn" type="button" onclick="document.getElementById('managerplus_config_file').click()">Load Configuration from File</button>
+<input id="managerplus_config_file" type="file" accept="application/json,.json" style="display:none" onchange="importManagerPlusConfigurationFile(event)">
 </div>
 
 </div></section>
@@ -2947,6 +2949,104 @@ window.confirm=function(msg){
     }, 100);
 
     toast('Configuration file saved.');
+  };
+})();
+</script>
+
+
+<script>
+/* Manager+ v6.0.3 Load Configuration from File */
+(function(){
+  const CONFIG_KEY = 'manager_plus_full_configuration_v602';
+  const PROFILE_KEY = 'manager_plus_profile_v60';
+  const TASKS_KEY = 'manager_plus_shift_tasks_v60';
+
+  function toast(msg){
+    if(typeof window.amToast === 'function') window.amToast(msg);
+    else alert(msg);
+  }
+
+  function setValue(id, value){
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.value = value || '';
+    el.dispatchEvent(new Event('input', {bubbles:true}));
+    el.dispatchEvent(new Event('change', {bubbles:true}));
+  }
+
+  function applyImportedConfiguration(config){
+    if(!config || typeof config !== 'object'){
+      toast('Invalid configuration file.');
+      return;
+    }
+
+    const profile = config.profile || {};
+    const targets = config.targets || {};
+    const tasks = config.tasks || {};
+
+    setValue('restaurant_name', profile.restaurantName || '');
+    setValue('default_manager_name', profile.defaultManagerName || '');
+
+    if(profile.defaultManagerName){
+      setValue('manager_name', profile.defaultManagerName);
+    }
+
+    setValue('target_oepe', targets.oepe || '110');
+    setValue('target_kvs', targets.kvs || '55');
+    setValue('target_r2p', targets.r2p || '80');
+    setValue('target_mcdelivery', targets.mcdelivery || '150');
+    setValue('target_raw', targets.rawWaste || '0.25');
+    setValue('target_full', targets.fullWaste || '0.20');
+    setValue('target_crew', targets.crewMeals || '0.50');
+    setValue('target_nonrecipe', targets.nonRecipe || '0.90');
+
+    localStorage.setItem(PROFILE_KEY, JSON.stringify({
+      restaurantName: profile.restaurantName || '',
+      defaultManagerName: profile.defaultManagerName || ''
+    }));
+
+    if(tasks && Object.keys(tasks).length){
+      localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+    }
+
+    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
+
+    if(typeof renderShiftTaskEditor === 'function') renderShiftTaskEditor();
+    if(typeof renderShiftChecklist === 'function') renderShiftChecklist();
+    if(typeof calculateChecklistCompletion === 'function') calculateChecklistCompletion();
+    if(typeof saveData === 'function') saveData();
+
+    toast('Configuration loaded.');
+  }
+
+  window.importManagerPlusConfigurationFile = function(event){
+    const input = event.target;
+    const file = input.files && input.files[0];
+
+    if(!file){
+      toast('No file selected.');
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+      try{
+        const config = JSON.parse(e.target.result);
+        applyImportedConfiguration(config);
+      }catch(err){
+        toast('Invalid configuration file.');
+      }finally{
+        input.value = '';
+      }
+    };
+
+    reader.onerror = function(){
+      toast('Could not read configuration file.');
+      input.value = '';
+    };
+
+    reader.readAsText(file);
   };
 })();
 </script>
