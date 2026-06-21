@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Assistant Manager – v5.1 PWA FINAL</title>
+<title>Assistant Manager – v5.1.2 Safari Date Fix</title>
 <style>
 :root{
   --bg:#000; --card:#101010; --card2:#171717; --line:#2b2b2e; --text:#f5f5f7; --muted:#aaaab0;
@@ -90,21 +90,6 @@ textarea{min-height:96px;resize:vertical}
 }
 
 </style>
-
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="shortcut icon" href="favicon.ico">
-
-<meta name="theme-color" content="#000000">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Assistant Manager">
-<meta name="application-name" content="Assistant Manager">
-<meta name="msapplication-TileColor" content="#000000">
-<meta name="msapplication-TileImage" content="icon-192.png">
-
 </head>
 <body>
 <input class="navRadio" type="radio" name="screen" id="home" checked>
@@ -138,10 +123,10 @@ textarea{min-height:96px;resize:vertical}
   <button id="btnClearData" class="resetBtn" type="button" onclick="amTouchClearData(this)" ontouchend="amTouchClearData(this); return false;">Clear All Data</button>
 </div>
 <div id="homeActionStatus" class="coachBox" style="display:none;margin-top:0"></div>
-<footer class="footer"><strong>© 2026 Dariusz Kaniewski</strong><br><span class="brand">Assistant Manager – McDonald's Edition</span><br><span class="prototype">Version 5.1 • PWA FINAL</span><br>Independent prototype created for operational and educational purposes.<br>Not affiliated with McDonald's Corporation.</footer>
+<footer class="footer"><strong>© 2026 Dariusz Kaniewski</strong><br><span class="brand">Assistant Manager – McDonald's Edition</span><br><span class="prototype">Version 5.1.2 • Safari Date Fix</span><br>Independent prototype created for operational and educational purposes.<br>Not affiliated with McDonald's Corporation.</footer>
 </section>
 
-<section id="dashboardScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a8 8 0 0 1 16 0"/><path d="M12 14l4-5"/><path d="M5 19h14"/><path d="M7 14h.01"/><path d="M12 10h.01"/><path d="M17 14h.01"/></svg><h2>Dashboard</h2></div><div class="grid"><div><label class="fieldLabel">Date</label><input id="shift_date" type="date"></div><div><label class="fieldLabel">Manager</label><input id="manager_name" type="text" placeholder="Manager name"></div><div><label class="fieldLabel">Shift</label><select id="shift_type"><option>Morning</option><option>Evening</option><option selected>Overnight</option></select></div></div><button class="generateBtn" onclick="calculateKPIHealth()" type="button">Calculate Shift Health</button><div id="shift_health_output" class="healthScore"><div class="score">--</div><div class="label">Enter KPI data and calculate</div></div><div id="kpi_health_grid" class="healthGrid"></div><div id="kpi_coach_output" class="coachBox">KPI coaching tips will appear here after calculation.</div>
+<section id="dashboardScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a8 8 0 0 1 16 0"/><path d="M12 14l4-5"/><path d="M5 19h14"/><path d="M7 14h.01"/><path d="M12 10h.01"/><path d="M17 14h.01"/></svg><h2>Dashboard</h2></div><div class="grid"><div><label class="fieldLabel">Date</label><input id="shift_date" type="text" placeholder="dd/mm/yyyy" inputmode="numeric" maxlength="10" autocomplete="off"></div><div><label class="fieldLabel">Manager</label><input id="manager_name" type="text" placeholder="Manager name"></div><div><label class="fieldLabel">Shift</label><select id="shift_type"><option>Morning</option><option>Evening</option><option selected>Overnight</option></select></div></div><button class="generateBtn" onclick="calculateKPIHealth()" type="button">Calculate Shift Health</button><div id="shift_health_output" class="healthScore"><div class="score">--</div><div class="label">Enter KPI data and calculate</div></div><div id="kpi_health_grid" class="healthGrid"></div><div id="kpi_coach_output" class="coachBox">KPI coaching tips will appear here after calculation.</div>
 <div id="shift_score_card" class="healthScore">
 <div class="score">--</div>
 <div class="label">Shift Score</div>
@@ -1992,6 +1977,41 @@ function resetSavedData(){
       }
     });
   });
+})();
+</script>
+
+
+<script>
+(function(){
+  function formatShiftDateInput(){
+    var el = document.getElementById('shift_date');
+    if(!el) return;
+
+    el.addEventListener('input', function(){
+      var digits = String(el.value || '').replace(/\D/g, '').slice(0, 8);
+      var out = '';
+
+      if(digits.length <= 2){
+        out = digits;
+      }else if(digits.length <= 4){
+        out = digits.slice(0,2) + '/' + digits.slice(2);
+      }else{
+        out = digits.slice(0,2) + '/' + digits.slice(2,4) + '/' + digits.slice(4);
+      }
+
+      el.value = out;
+
+      if(typeof saveData === 'function'){
+        try{ saveData(); }catch(e){}
+      }
+    });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', formatShiftDateInput);
+  }else{
+    formatShiftDateInput();
+  }
 })();
 </script>
 
