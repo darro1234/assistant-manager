@@ -2502,6 +2502,334 @@ window.confirm=function(msg){
 })();
 </script>
 
+
+<script>
+/* Manager+ v6.0.1 fix: visible editable tasks + target defaults */
+(function(){
+  const PROFILE_KEY = 'manager_plus_profile_v60';
+  const TASKS_KEY = 'manager_plus_shift_tasks_v60';
+
+  function deepClone(obj){
+    return JSON.parse(JSON.stringify(obj || {}));
+  }
+
+  const DEFAULT_SHIFT_TASKS = deepClone(window.checklistData || {
+    Morning:{
+      "Opening / Breakfast":["Breakfast area ready","Coffee machine ready","Egg cooker ready","Muffins ready","Breakfast stock up complete"],
+      "Food Safety":["Food Safety Walk complete","Temperature checks complete","Date dot check complete","Delivery checked"],
+      "Service":["Lobby open and clean","Customer toilets checked","DT ready","Lunch transition planned"],
+      "Handover":["Issues from overnight reviewed","Manager communication updated"]
+    },
+    Evening:{
+      "Pre-Rush":["Dinner rush preparation complete","Break plan ready","Stock up complete","Deployment checked"],
+      "Operations":["Waste monitored","DT flow checked","Kitchen positioning checked","McDelivery area organised"],
+      "Cleaning":["Lobby cleaning plan complete","Customer toilets checked","Beverage area stocked","Fries station ready"],
+      "Handover to Overnight":["Maintenance issues communicated","Waste notes communicated","Staffing notes communicated","Overnight priorities prepared"]
+    },
+    Overnight:{
+      "Food Safety":["Food Safety Walk complete","Temperature checks complete","DFS complete","Waste entered","Date dot check complete"],
+      "Equipment":["Coffee machine cleaned","Beverage area cleaned","Dishwasher checked","Ice machine checked","Grills / Fryers checked"],
+      "Security & Cash":["Back door locked","DT windows locked","Safe count complete","Tills checked"],
+      "Breakfast":["Breakfast prepared","Egg cooker ready","Muffins ready","Breakfast stock up complete"],
+      "Close / Open":["Kiosks restarted","Lobby ready","Kitchen ready","Stock up complete","Shift handover complete"]
+    }
+  });
+
+  function toast(msg){
+    if(typeof window.amToast === 'function') window.amToast(msg);
+    else if(window.alert) window.alert(msg);
+  }
+
+  function loadTasks(){
+    try{
+      const saved = JSON.parse(localStorage.getItem(TASKS_KEY) || 'null');
+      if(saved && typeof saved === 'object') return saved;
+    }catch(e){}
+    const fresh = deepClone(DEFAULT_SHIFT_TASKS);
+    localStorage.setItem(TASKS_KEY, JSON.stringify(fresh));
+    return fresh;
+  }
+
+  function saveTasks(data){
+    localStorage.setItem(TASKS_KEY, JSON.stringify(data));
+  }
+
+  function loadProfile(){
+    try{
+      return JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
+    }catch(e){
+      return {};
+    }
+  }
+
+  function saveProfile(){
+    const profile = {
+      restaurantName: String(document.getElementById('restaurant_name')?.value || '').trim(),
+      defaultManagerName: String(document.getElementById('default_manager_name')?.value || '').trim()
+    };
+    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+
+    const manager = document.getElementById('manager_name');
+    if(manager && !String(manager.value || '').trim() && profile.defaultManagerName){
+      manager.value = profile.defaultManagerName;
+      manager.dispatchEvent(new Event('input', {bubbles:true}));
+    }
+
+    if(typeof saveData === 'function') saveData();
+  }
+
+  function applyProfile(){
+    const profile = loadProfile();
+    const restaurantInput = document.getElementById('restaurant_name');
+    const managerDefaultInput = document.getElementById('default_manager_name');
+    const managerInput = document.getElementById('manager_name');
+
+    if(restaurantInput && profile.restaurantName) restaurantInput.value = profile.restaurantName;
+    if(managerDefaultInput && profile.defaultManagerName) managerDefaultInput.value = profile.defaultManagerName;
+    if(managerInput && !String(managerInput.value || '').trim() && profile.defaultManagerName){
+      managerInput.value = profile.defaultManagerName;
+    }
+  }
+
+  function ensureTargetDefaults(){
+    const defaults = {
+      target_oepe:'110',
+      target_kvs:'55',
+      target_r2p:'80',
+      target_mcdelivery:'150',
+      target_raw:'0.25',
+      target_full:'0.20',
+      target_crew:'0.50',
+      target_nonrecipe:'0.90'
+    };
+
+    Object.keys(defaults).forEach(id => {
+      const el = document.getElementById(id);
+      if(el && String(el.value || '').trim() === ''){
+        el.value = defaults[id];
+        el.dispatchEvent(new Event('input', {bubbles:true}));
+      }
+    });
+  }
+
+  window.renderShiftTaskEditor = function(){
+    const holder = document.getElementById('shift_task_editor');
+    if(!holder) return;
+
+    const data = loadTasks();
+    const shifts = ['Morning','Evening','Overnight'];
+
+    holder.innerHTML = '';
+
+    shifts.forEach(shift => {
+      const groupBox = document.createElement('div');
+      groupBox.className = 'taskEditorGroup';
+
+      const title = document.createElement('h4');
+      title.textContent = shift;
+      groupBox.appendChild(title);
+
+      const groups = data[shift] || {};
+      const groupNames = Object.keys(groups);
+
+      if(!groupNames.length){
+        const empty = document.createElement('div');
+        empty.className = 'customTaskRow';
+        empty.innerHTML = '<span>No tasks yet.</span>';
+        groupBox.appendChild(empty);
+      }
+
+      groupNames.forEach(group => {
+        const tasks = groups[group] || [];
+        if(tasks.length){
+          const label = document.createElement('label');
+          label.className = 'fieldLabel';
+          label.textContent = group;
+          groupBox.appendChild(label);
+        }
+
+        tasks.forEach((task, index) => {
+          const row = document.createElement('div');
+          row.className = 'customTaskRow';
+
+          const span = document.createElement('span');
+          span.textContent = task;
+
+          const btn = document.createElement('button');
+          btn.className = 'deleteTaskBtn';
+          btn.type = 'button';
+          btn.textContent = 'Delete';
+          btn.addEventListener('click', function(){
+            window.deleteShiftTask(shift, group, index);
+          });
+
+          row.appendChild(span);
+          row.appendChild(btn);
+          groupBox.appendChild(row);
+        });
+      });
+
+      const addBox = document.createElement('div');
+      addBox.className = 'addTaskBox';
+
+      const input = document.createElement('input');
+      input.id = 'new_task_' + shift;
+      input.type = 'text';
+      input.placeholder = 'Add new ' + shift + ' task';
+
+      const addBtn = document.createElement('button');
+      addBtn.className = 'generateBtn';
+      addBtn.type = 'button';
+      addBtn.textContent = 'Add Task';
+      addBtn.addEventListener('click', function(){
+        window.addShiftTask(shift);
+      });
+
+      addBox.appendChild(input);
+      addBox.appendChild(addBtn);
+      groupBox.appendChild(addBox);
+
+      holder.appendChild(groupBox);
+    });
+  };
+
+  window.addShiftTask = function(shift){
+    const input = document.getElementById('new_task_' + shift);
+    const task = String(input?.value || '').trim();
+
+    if(!task){
+      toast('Enter task name first.');
+      return;
+    }
+
+    const data = loadTasks();
+    if(!data[shift]) data[shift] = {};
+    if(!data[shift]['Custom Tasks']) data[shift]['Custom Tasks'] = [];
+
+    data[shift]['Custom Tasks'].push(task);
+    saveTasks(data);
+
+    if(input) input.value = '';
+
+    window.renderShiftTaskEditor();
+    if(typeof window.renderShiftChecklist === 'function') window.renderShiftChecklist();
+
+    toast('Task added.');
+  };
+
+  window.deleteShiftTask = function(shift, group, index){
+    const data = loadTasks();
+
+    if(!data[shift] || !data[shift][group]) return;
+
+    data[shift][group].splice(index, 1);
+    if(data[shift][group].length === 0){
+      delete data[shift][group];
+    }
+
+    saveTasks(data);
+
+    window.renderShiftTaskEditor();
+    if(typeof window.renderShiftChecklist === 'function') window.renderShiftChecklist();
+
+    toast('Task deleted.');
+  };
+
+  window.restoreDefaultShiftTasks = function(){
+    const fresh = deepClone(DEFAULT_SHIFT_TASKS);
+    saveTasks(fresh);
+    window.renderShiftTaskEditor();
+    if(typeof window.renderShiftChecklist === 'function') window.renderShiftChecklist();
+    toast('Default tasks restored.');
+  };
+
+  window.renderShiftChecklist = function(){
+    const shift = document.getElementById('shift_type')?.value || document.getElementById('checklist_shift')?.value || 'Overnight';
+    const hiddenShift = document.getElementById('checklist_shift');
+    if(hiddenShift) hiddenShift.value = shift;
+
+    const box = document.getElementById('dynamic_checklist');
+    if(!box) return;
+
+    const data = loadTasks();
+    const groups = data[shift] || {};
+    box.innerHTML = '';
+
+    Object.keys(groups).forEach(group => {
+      const groupWrap = document.createElement('div');
+      groupWrap.className = 'taskGroup';
+
+      const h = document.createElement('h3');
+      h.textContent = group;
+      groupWrap.appendChild(h);
+
+      (groups[group] || []).forEach(task => {
+        const id = 'cl_' + safeId(shift + '_' + group + '_' + task);
+
+        const label = document.createElement('label');
+        label.className = 'taskCheck';
+
+        const input = document.createElement('input');
+        input.id = id;
+        input.type = 'checkbox';
+        input.setAttribute('data-checklist-task', task);
+
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(' ' + task));
+        groupWrap.appendChild(label);
+      });
+
+      box.appendChild(groupWrap);
+    });
+
+    if(typeof loadData === 'function') loadData();
+
+    document.querySelectorAll('input[data-checklist-task]').forEach(el => {
+      el.addEventListener('change', () => {
+        if(typeof saveData === 'function') saveData();
+        if(typeof calculateChecklistCompletion === 'function') calculateChecklistCompletion();
+      });
+    });
+
+    if(typeof calculateChecklistCompletion === 'function') calculateChecklistCompletion();
+  };
+
+  const previousFullReport = window.generateFullShiftReport;
+  window.generateFullShiftReport = function(){
+    if(typeof previousFullReport === 'function') previousFullReport();
+
+    const profile = loadProfile();
+    const restaurant = profile.restaurantName || String(document.getElementById('restaurant_name')?.value || '').trim();
+    const out = document.getElementById('full_shift_report');
+
+    if(out && restaurant && out.value && out.value.indexOf('Restaurant:') === -1){
+      out.value = out.value.replace('MANAGER DETAILS\n', 'MANAGER DETAILS\nRestaurant: ' + restaurant + '\n');
+      out.dispatchEvent(new Event('input', {bubbles:true}));
+    }
+  };
+
+  document.addEventListener('DOMContentLoaded', function(){
+    ensureTargetDefaults();
+    applyProfile();
+
+    ['restaurant_name','default_manager_name'].forEach(id => {
+      const el = document.getElementById(id);
+      if(el){
+        el.addEventListener('input', saveProfile);
+        el.addEventListener('change', saveProfile);
+      }
+    });
+
+    setTimeout(function(){
+      ensureTargetDefaults();
+      applyProfile();
+      window.renderShiftTaskEditor();
+      window.renderShiftChecklist();
+    }, 250);
+  });
+})();
+</script>
+
 </body>
 
 </html>
