@@ -158,6 +158,19 @@ textarea{min-height:96px;resize:vertical}
   padding:5px 10px;
 }
 
+
+.toastMsg{
+position:fixed;left:50%;bottom:95px;transform:translateX(-50%);
+background:linear-gradient(180deg,#151515,#080808);
+border:1px solid rgba(255,188,13,.25);
+color:#fff;padding:12px 18px;border-radius:14px;
+z-index:99999;font-weight:800;
+box-shadow:0 18px 40px rgba(0,0,0,.6);
+opacity:0;transition:.25s;
+pointer-events:none;
+}
+.toastMsg.show{opacity:1}
+
 </style>
 
 <link rel="manifest" href="manifest.json">
@@ -2134,6 +2147,34 @@ function fallbackCopyTextarea(el){
   }
 }
 </script>
+
+<script>
+(function(){
+window.amToast=function(msg){
+ let t=document.getElementById('amToast');
+ if(!t){
+   t=document.createElement('div');
+   t.id='amToast';
+   t.className='toastMsg';
+   document.body.appendChild(t);
+ }
+ t.textContent=msg;
+ t.classList.add('show');
+ clearTimeout(window.__amToastTimer);
+ window.__amToastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+};
+
+window.alert=function(msg){
+ amToast(String(msg||''));
+};
+
+window.confirm=function(msg){
+ amToast(String(msg||''));
+ return true;
+};
+})();
+</script>
+
 </body>
 
 </html>
