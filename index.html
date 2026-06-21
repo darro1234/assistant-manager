@@ -312,7 +312,14 @@ Not affiliated with McDonald's Corporation.
 
 <section id="checklistScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h6"/><path d="M9 3h6v4H9z"/><path d="M7 5H5v16h14V5h-2"/><path d="M8 14l3 3 5-6"/></svg><h2>Shift Checklist</h2></div><h3 id="checklist_dynamic_title" style="color:var(--yellow);margin:8px 0 12px">Overnight Checklist</h3><input type="hidden" id="checklist_shift" value="Overnight"><div class="progressCard"><div class="progressPercent" id="checklist_percent">0%</div><div id="checklist_title">Shift Completion</div><div class="progressBar"><div class="progressFill" id="checklist_fill"></div></div><small id="checklist_count">0 / 0 tasks completed</small></div><div id="dynamic_checklist"></div><div class="missingList" id="checklist_missing">Missing tasks will appear here.</div></div></section>
 
-<section id="handoverScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h13"/><path d="M17 4l3 3-3 3"/><path d="M17 17H4"/><path d="M7 14l-3 3 3 3"/></svg><h2>Quick Handover</h2></div><label class="fieldLabel">Quick Wins</label><div class="stationBox"><label class="check"><input id="hw_breakfast_ready" type="checkbox"> Breakfast ready</label><label class="check"><input id="hw_stockup_done" type="checkbox"> Stock up completed</label><label class="check"><input id="hw_coffee_clean" type="checkbox"> Coffee machine cleaned</label><label class="check"><input id="hw_lobby_clean" type="checkbox"> Lobby clean</label><label class="check"><input id="hw_kitchen_good" type="checkbox"> Kitchen standards good</label><label class="check"><input id="hw_dt_good" type="checkbox"> DT flow stable</label></div><label class="fieldLabel">Quick Issues / Follow Up</label><div class="stationBox"><label class="check"><input id="hf_raw_watch" type="checkbox"> Watch raw waste</label><label class="check"><input id="hf_full_watch" type="checkbox"> Watch full waste</label><label class="check"><input id="hf_oepe_focus" type="checkbox"> Focus on OEPE</label><label class="check"><input id="hf_kvs_focus" type="checkbox"> Focus on KVS</label><label class="check"><input id="hf_stock_low" type="checkbox"> Stock needs checking</label><label class="check"><input id="hf_delivery_check" type="checkbox"> Delivery follow up</label></div><label class="fieldLabel">Optional Notes</label><textarea id="handover_optional" placeholder="Optional notes"></textarea><button class="generateBtn" onclick="generateHandover()">Generate Quick Handover</button><button class="generateBtn" onclick="copyTextarea('handover_output')">Copy Handover</button><label class="fieldLabel">Generated Handover</label><textarea id="handover_output" placeholder="Generated handover will appear here."></textarea></div></section>
+<section id="handoverScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h13"/><path d="M17 4l3 3-3 3"/><path d="M17 17H4"/><path d="M7 14l-3 3 3 3"/></svg><h2>Quick Handover</h2></div>
+<label class="fieldLabel">Shift Handover Items</label>
+<p style="color:var(--muted);line-height:1.45;margin-top:0">These items come from the current shift checklist and your Settings configuration.</p>
+<div id="dynamic_handover_items" class="stationBox"></div>
+<label class="fieldLabel">Optional Notes</label><textarea id="handover_optional" placeholder="Optional notes"></textarea>
+<button class="generateBtn" onclick="generateHandover()">Generate Quick Handover</button>
+<button class="generateBtn" onclick="copyTextarea('handover_output')">Copy Handover</button>
+<label class="fieldLabel">Generated Handover</label><textarea id="handover_output" placeholder="Generated handover will appear here."></textarea></div></section>
 
 <section id="starScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 3"/><path d="M17 6h3a3 3 0 0 1-3 3"/></svg><h2>Star of the Shift</h2></div><div class="grid"><div><label class="fieldLabel">Name</label><input id="star_name" type="text" placeholder="e.g. Troy"></div><div><label class="fieldLabel">Tone</label><select id="star_tone"><option>Professional</option><option>Warm</option><option>Short</option><option>Very positive</option></select></div><div><label class="fieldLabel">Shift Type</label><select id="star_shift_type"><option>Overnight</option><option>Morning</option><option>Breakfast</option><option>Day Shift</option><option>Evening</option></select></div><div><label class="fieldLabel">Feedback Length</label><select id="star_length"><option>Standard</option><option>Short</option><option>Detailed</option></select></div></div><label class="fieldLabel">Stations / Areas</label><div class="stationBox"><label class="check"><input id="st_kitchen" type="checkbox"> Kitchen</label><label class="check"><input id="st_dt1" type="checkbox"> DT Window 1</label><label class="check"><input id="st_dt2" type="checkbox"> DT Window 2</label><label class="check"><input id="st_mcdelivery" type="checkbox"> McDelivery</label><label class="check"><input id="st_lobby" type="checkbox"> Lobby</label><label class="check"><input id="st_beverage" type="checkbox"> Beverage</label><label class="check"><input id="st_stock" type="checkbox"> Stock Up</label><label class="check"><input id="st_breakfast" type="checkbox"> Breakfast</label></div><label class="fieldLabel">Strengths</label><div class="stationBox"><label class="check"><input id="str_teamwork" type="checkbox"> Teamwork</label><label class="check"><input id="str_cleanliness" type="checkbox"> Cleanliness</label><label class="check"><input id="str_speed" type="checkbox"> Speed</label><label class="check"><input id="str_customer" type="checkbox"> Customer Service</label><label class="check"><input id="str_stock" type="checkbox"> Stock Up</label><label class="check"><input id="str_initiative" type="checkbox"> Initiative</label></div><label class="fieldLabel">What did they do well?</label><textarea id="star_notes" placeholder="Optional notes"></textarea><button class="generateBtn" onclick="generateStarFeedback()">Generate Star of the Shift</button><button class="generateBtn" onclick="copyTextarea('star_output')">Copy Star of the Shift</button><label class="fieldLabel">Generated text</label><textarea id="star_output" placeholder="Generated feedback will appear here."></textarea></div></section>
 
@@ -3048,6 +3055,122 @@ window.confirm=function(msg){
 
     reader.readAsText(file);
   };
+})();
+</script>
+
+
+<script>
+/* Manager+ v6.0.4 Dynamic Handover from Settings Tasks */
+(function(){
+  const TASKS_KEY = 'manager_plus_shift_tasks_v60';
+
+  function readTasks(){
+    try{
+      const saved = JSON.parse(localStorage.getItem(TASKS_KEY) || 'null');
+      if(saved && typeof saved === 'object') return saved;
+    }catch(e){}
+    return window.checklistData || checklistData || {};
+  }
+
+  function getCurrentShift(){
+    return document.getElementById('shift_type')?.value || document.getElementById('checklist_shift')?.value || 'Overnight';
+  }
+
+  function taskId(shift, group, task){
+    return 'hw_dyn_' + safeId(shift + '_' + group + '_' + task);
+  }
+
+  window.renderDynamicHandover = function(){
+    const box = document.getElementById('dynamic_handover_items');
+    if(!box) return;
+
+    const shift = getCurrentShift();
+    const data = readTasks();
+    const groups = data[shift] || {};
+    let html = '';
+
+    Object.keys(groups).forEach(group => {
+      (groups[group] || []).forEach(task => {
+        const id = taskId(shift, group, task);
+        html += '<label class="check"><input id="' + id + '" type="checkbox" data-handover-task="' + task + '" data-handover-group="' + group + '"> ' + task + '</label>';
+      });
+    });
+
+    if(!html){
+      html = '<div class="coachBox" style="margin-top:0">No handover items available for this shift. Add tasks in Settings.</div>';
+    }
+
+    box.innerHTML = html;
+
+    if(typeof loadData === 'function') loadData();
+
+    document.querySelectorAll('input[data-handover-task]').forEach(el => {
+      el.addEventListener('change', () => {
+        if(typeof saveData === 'function') saveData();
+      });
+    });
+  };
+
+  window.generateHandover = function(){
+    const shift = getValueClean ? getValueClean('shift_type', 'Shift') : getCurrentShift();
+    const date = getValueClean ? getValueClean('shift_date', 'Today') : (document.getElementById('shift_date')?.value || 'Today');
+
+    const selected = Array.from(document.querySelectorAll('input[data-handover-task]:checked'))
+      .map(el => String(el.getAttribute('data-handover-task') || '').trim())
+      .filter(Boolean);
+
+    const optional = getValueClean ? getValueClean('handover_optional') : String(document.getElementById('handover_optional')?.value || '').trim();
+
+    const lines = [
+      `${shift} Handover – ${date}`,
+      '',
+      'PERFORMANCE KPIs',
+      `• OEPE: ${getValueClean ? getValueClean('oepe', 'N/A') : (document.getElementById('oepe')?.value || 'N/A')} sec`,
+      `• KVS: ${getValueClean ? getValueClean('kvs', 'N/A') : (document.getElementById('kvs')?.value || 'N/A')} sec`,
+      `• R2P: ${getValueClean ? getValueClean('r2p', 'N/A') : (document.getElementById('r2p')?.value || 'N/A')} sec`,
+      `• McDelivery: ${getValueClean ? getValueClean('mcdelivery', 'N/A') : (document.getElementById('mcdelivery')?.value || 'N/A')} sec`,
+      '',
+      'WASTE',
+      `• Raw Waste: ${getValueClean ? getValueClean('raw_waste', 'N/A') : (document.getElementById('raw_waste')?.value || 'N/A')}%`,
+      `• Full Waste: ${getValueClean ? getValueClean('full_waste', 'N/A') : (document.getElementById('full_waste')?.value || 'N/A')}%`,
+      `• Crew Meals: ${getValueClean ? getValueClean('crew_meals', 'N/A') : (document.getElementById('crew_meals')?.value || 'N/A')}%`,
+      `• Non-Recipe: ${getValueClean ? getValueClean('non_recipe', 'N/A') : (document.getElementById('non_recipe')?.value || 'N/A')}%`,
+      '',
+      'COMPLETED / READY',
+      selected.length ? selected.map(x => '• ' + x).join('\\n') : '• No handover items selected.',
+      '',
+      'FOLLOW UP / NOTES',
+      optional ? '• ' + optional : '• No additional notes.',
+      '',
+      'NEXT SHIFT NOTE',
+      '• Please continue to monitor open issues and keep communication clear during the next shift.'
+    ].join('\\n');
+
+    const out = document.getElementById('handover_output');
+    if(out){
+      out.value = typeof cleanGeneratedText === 'function' ? cleanGeneratedText(lines) : lines;
+      out.dispatchEvent(new Event('input', {bubbles:true}));
+    }
+  };
+
+  const oldRenderShiftChecklist = window.renderShiftChecklist;
+  if(typeof oldRenderShiftChecklist === 'function'){
+    window.renderShiftChecklist = function(){
+      oldRenderShiftChecklist.apply(this, arguments);
+      setTimeout(window.renderDynamicHandover, 50);
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(window.renderDynamicHandover, 300);
+
+    const shiftSelect = document.getElementById('shift_type');
+    if(shiftSelect){
+      shiftSelect.addEventListener('change', function(){
+        setTimeout(window.renderDynamicHandover, 80);
+      });
+    }
+  });
 })();
 </script>
 
