@@ -64,7 +64,7 @@ textarea{min-height:96px;resize:vertical}
 .footer{margin-top:18px;padding:20px 16px;border:1px solid rgba(255,188,13,.18);border-radius:26px;background:linear-gradient(180deg,#101010,#050505);color:#bdbdc4;text-align:center;font-size:13px;line-height:1.45}.footer .brand{color:var(--yellow);font-weight:900}.prototype{display:inline-block;margin:8px 0;padding:6px 11px;border-radius:999px;background:rgba(255,188,13,.08);border:1px solid rgba(255,188,13,.24);color:var(--yellow);font-weight:900}
 .bottomNav{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);width:min(820px,calc(100% - 20px));background:rgba(15,15,15,.9);border:1px solid rgba(255,255,255,.12);border-radius:26px;padding:9px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 24px 70px rgba(0,0,0,.75);display:grid;grid-template-columns:repeat(5,1fr);gap:6px;z-index:50}
 .navItem{text-align:center;color:#aaaab0;font-size:11px;font-weight:800;border-radius:16px;padding:8px 4px;cursor:pointer;-webkit-tap-highlight-color:transparent}.navItem svg{width:22px;height:22px;display:block;margin:0 auto 3px}
-#home:checked ~ .app #homeScreen,#dash:checked ~ .app #dashboardScreen,#kpi:checked ~ .app #kpiScreen,#waste:checked ~ .app #wasteScreen,#checklist:checked ~ .app #checklistScreen,#handover:checked ~ .app #handoverScreen,#star:checked ~ .app #starScreen,#settings:checked ~ .app #settingsScreen,#report:checked ~ .app #reportScreen{display:block}
+#home:checked ~ .app #homeScreen,#dash:checked ~ .app #dashboardScreen,#kpi:checked ~ .app #kpiScreen,#waste:checked ~ .app #wasteScreen,#checklist:checked ~ .app #checklistScreen,#handover:checked ~ .app #handoverScreen,#star:checked ~ .app #starScreen,#settings:checked ~ .app #settingsScreen,#report:checked ~ .app #reportScreen,#history:checked ~ .app #historyScreen{display:block}
 #home:checked ~ .bottomNav label[for="home"],#dash:checked ~ .bottomNav label[for="dash"],#kpi:checked ~ .bottomNav label[for="kpi"],#waste:checked ~ .bottomNav label[for="waste"],#handover:checked ~ .bottomNav label[for="handover"]{color:var(--yellow);background:rgba(255,188,13,.08)}
 @media(min-width:680px){.tiles{grid-template-columns:repeat(4,1fr)}.grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:430px){h1{font-size:34px}.logo{width:118px;height:94px}.subtitle{font-size:21px}.tile{min-height:154px}.stationBox{grid-template-columns:1fr}}
@@ -238,6 +238,21 @@ pointer-events:none;
   .addTaskBox button{width:100%}
 }
 
+
+/* Manager+ v7.0 History module */
+.historyStats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0 14px}
+.historyStat{background:#080808;border:1px solid #28282b;border-radius:16px;padding:13px}
+.historyStat small{display:block;color:var(--muted);font-size:12px;font-weight:800;margin-bottom:5px}
+.historyStat strong{color:var(--yellow);font-size:22px;line-height:1}
+.historyRecord{background:#080808;border:1px solid #28282b;border-radius:18px;padding:14px;margin:10px 0}
+.historyRecordTitle{font-weight:950;color:#fff}
+.historyRecordMeta{color:var(--muted);font-size:13px;line-height:1.35;margin-top:4px}
+.historyActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.historyActions button{margin-top:0}
+.historyReportBox{margin-top:10px;display:none}
+.historyReportBox textarea{min-height:280px}
+@media(max-width:430px){.historyStats{grid-template-columns:1fr}.historyActions{grid-template-columns:1fr}}
+
 </style>
 
 <link rel="manifest" href="manifest.json">
@@ -265,6 +280,7 @@ pointer-events:none;
 <input class="navRadio" type="radio" name="screen" id="star">
 <input class="navRadio" type="radio" name="screen" id="settings">
 <input class="navRadio" type="radio" name="screen" id="report">
+<input class="navRadio" type="radio" name="screen" id="history">
 
 <div class="app">
 <section id="homeScreen" class="screen">
@@ -282,7 +298,7 @@ pointer-events:none;
 <label class="tile" for="handover"><svg class="blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h13"/><path d="M17 4l3 3-3 3"/><path d="M17 17H4"/><path d="M7 14l-3 3 3 3"/></svg><h2>Handover</h2><p>Quick handover generator</p><div class="arrow">›</div></label>
 <label class="tile" for="star"><svg class="yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 3"/><path d="M17 6h3a3 3 0 0 1-3 3"/></svg><h2>Star</h2><p>Star of the Shift generator</p><div class="arrow">›</div></label>
 <label class="tile" for="settings"><svg class="purple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.5"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1a7 7 0 0 0-1.8-1L14.4 3h-4.8l-.3 3.1a7 7 0 0 0-1.8 1l-2.4-1-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1a7 7 0 0 0 1.8 1l.3 3.1h4.8l.3-3.1a7 7 0 0 0 1.8-1l2.4 1 2-3.4-2-1.5c.1-.3.1-.7.1-1z"/></svg><h2>Settings</h2><p>Targets and preferences</p><div class="arrow">›</div></label>
-<label class="tile" for="report"><svg class="white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg><h2>Report</h2><p>Summary area</p><div class="arrow">›</div></label>
+<label class="tile" for="report"><svg class="white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg><h2>Report</h2><p>Summary area</p><div class="arrow">›</div></label><label class="tile" for="history"><svg class="orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v6h6"/><path d="M12 7v5l3 2"/><path d="M8 18h8"/></svg><h2>History</h2><p>Saved shifts and statistics</p><div class="arrow">›</div></label>
 </main>
 <div class="homeControls">
   <button id="btnLoadDemo" class="generateBtn" type="button" onclick="amTouchLoadDemo(this)" ontouchend="amTouchLoadDemo(this); return false;">Load Demo Data</button>
@@ -354,10 +370,13 @@ Not affiliated with McDonald's Corporation.
 <section id="reportScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg><h2>Full Shift Report</h2></div>
 <p style="color:var(--muted);line-height:1.45">Generate a full shift summary from Dashboard, KPI, Waste, Checklist, Handover and Star of the Shift.</p>
 <button class="generateBtn" onclick="generateFullShiftReport()">Generate Full Shift Report</button>
+<button class="generateBtn" onclick="saveShiftToHistory()">Save Shift to History</button>
 <button class="generateBtn" onclick="copyFullShiftReport()">Copy Report</button>
 <label class="fieldLabel">Generated Report</label>
 <textarea id="full_shift_report" style="min-height:360px" placeholder="Generated report will appear here."></textarea>
 </div></section>
+
+<section id="historyScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v6h6"/><path d="M12 7v5l3 2"/><path d="M8 18h8"/></svg><h2>History</h2></div><p style="color:var(--muted);line-height:1.45">Save completed shifts, review previous reports and compare basic performance over time.</p><div id="history_stats" class="historyStats"></div><button class="generateBtn" type="button" onclick="saveShiftToHistory()">Save Current Shift</button><button class="generateBtn" type="button" onclick="exportHistoryToFile()">Export History to File</button><button class="generateBtn" type="button" onclick="document.getElementById('managerplus_history_file').click()">Load History from File</button><input id="managerplus_history_file" type="file" accept="application/json,.json" style="display:none" onchange="importHistoryFromFile(event)"><button class="resetBtn" type="button" onclick="clearShiftHistory()">Clear History</button><label class="fieldLabel">Saved Shifts</label><div id="history_list" class="coachBox">No saved shifts yet.</div></div></section>
 </div>
 
 <nav class="bottomNav"><label class="navItem" for="home"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 11l9-8 9 8v10h-6v-6H9v6H3z"/></svg>Home</label><label class="navItem" for="dash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14a8 8 0 0 1 16 0"/><path d="M12 14l4-5"/><path d="M5 19h14"/></svg>Dash</label><label class="navItem" for="kpi"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="12" width="3" height="8" rx="1"/><rect x="10" y="8" width="3" height="12" rx="1"/><rect x="16" y="4" width="3" height="16" rx="1"/></svg>KPI</label><label class="navItem" for="waste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M6 7l1 14h10l1-14"/><path d="M9 7V4h6v3"/></svg>Waste</label><label class="navItem" for="handover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h13"/><path d="M17 4l3 3-3 3"/><path d="M17 17H4"/><path d="M7 14l-3 3 3 3"/></svg>Handover</label></nav>
@@ -3287,6 +3306,110 @@ window.confirm=function(msg){
       }
     });
   });
+})();
+</script>
+
+
+<script>
+/* Manager+ v7.0 History module */
+(function(){
+  const HISTORY_KEY='manager_plus_shift_history_v70';
+  function toast(msg){ if(typeof window.amToast==='function') window.amToast(msg); else alert(msg); }
+  function getText(id,fallback=''){ return String(document.getElementById(id)?.value || '').trim() || fallback; }
+  function num(id){ const v=parseFloat(String(document.getElementById(id)?.value||'').replace(',','.')); return isNaN(v)?null:v; }
+  function loadHistory(){ try{ const d=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]'); return Array.isArray(d)?d:[]; }catch(e){ return []; } }
+  function saveHistory(records){ localStorage.setItem(HISTORY_KEY, JSON.stringify(records)); }
+  function checklistStats(){ const tasks=Array.from(document.querySelectorAll('input[data-checklist-task]')); const done=tasks.filter(t=>t.checked).length; return {done,total:tasks.length,percent:tasks.length?Math.round(done/tasks.length*100):0}; }
+  function avg(arr){ const a=arr.filter(v=>typeof v==='number'&&!isNaN(v)); return a.length?a.reduce((x,y)=>x+y,0)/a.length:null; }
+  function fmt(v,s=''){ if(v===null||v===undefined||isNaN(v)) return 'N/A'; return (Number.isInteger(v)?v:v.toFixed(2))+s; }
+  function shiftScore(){ if(typeof calculateShiftScore==='function') calculateShiftScore(); const s=parseInt(document.querySelector('#shift_score_card .score')?.textContent||'',10); return isNaN(s)?null:s; }
+  function healthScore(){ if(typeof calculateKPIHealth==='function') calculateKPIHealth(); const s=parseInt(document.querySelector('#shift_health_output .score')?.textContent||'',10); return isNaN(s)?null:s; }
+  function buildRecord(){
+    if(typeof generateFullShiftReport==='function') generateFullShiftReport();
+    const ch=checklistStats();
+    return {
+      id:'hist_'+Date.now(),
+      savedAt:new Date().toISOString(),
+      date:getText('shift_date','Today'),
+      shift:getText('shift_type','Shift'),
+      manager:getText('manager_name','Manager'),
+      restaurant:getText('restaurant_name',''),
+      healthScore:healthScore(),
+      shiftScore:shiftScore(),
+      checklistPercent:ch.percent,
+      checklistDone:ch.done,
+      checklistTotal:ch.total,
+      kpi:{sales:num('sales'),guests:num('guests'),oepe:num('oepe'),kvs:num('kvs'),r2p:num('r2p'),mcdelivery:num('mcdelivery'),labour:num('labour'),csat:num('csat')},
+      waste:{raw:num('raw_waste'),full:num('full_waste'),promo:num('promo_waste'),crewMeals:num('crew_meals'),nonRecipe:num('non_recipe')},
+      report:String(document.getElementById('full_shift_report')?.value||'').trim()
+    };
+  }
+  window.saveShiftToHistory=function(){
+    const r=buildRecord();
+    if(!r.report){ toast('Generate report first.'); return; }
+    const records=loadHistory();
+    records.unshift(r);
+    saveHistory(records);
+    renderHistory();
+    toast('Shift saved to history.');
+  };
+  function compare(records){
+    if(records.length<2) return 'Need at least 2 saved shifts to compare.';
+    const a=records[0], b=records[1], out=[];
+    function t(label,newer,older,lowerBetter){
+      if(newer===null||newer===undefined||older===null||older===undefined) return;
+      const same=Number(newer)===Number(older);
+      const better=lowerBetter?Number(newer)<Number(older):Number(newer)>Number(older);
+      out.push(label+': '+older+' → '+newer+' '+(same?'• same':better?'✅ better':'⚠ worse'));
+    }
+    t('Shift Score',a.shiftScore,b.shiftScore,false);
+    t('Checklist',a.checklistPercent,b.checklistPercent,false);
+    t('OEPE',a.kpi?.oepe,b.kpi?.oepe,true);
+    t('KVS',a.kpi?.kvs,b.kpi?.kvs,true);
+    t('Raw Waste',a.waste?.raw,b.waste?.raw,true);
+    t('Full Waste',a.waste?.full,b.waste?.full,true);
+    return out.length?out.join('\\n'):'Not enough comparable data.';
+  }
+  window.renderHistory=function(){
+    const records=loadHistory();
+    const stats=document.getElementById('history_stats');
+    const list=document.getElementById('history_list');
+    if(stats){
+      if(!records.length){
+        stats.innerHTML='<div class="historyStat"><small>Saved Shifts</small><strong>0</strong></div><div class="historyStat"><small>Average Score</small><strong>N/A</strong></div><div class="historyStat"><small>Average Checklist</small><strong>N/A</strong></div><div class="historyStat"><small>Average OEPE</small><strong>N/A</strong></div>';
+      }else{
+        stats.innerHTML='<div class="historyStat"><small>Saved Shifts</small><strong>'+records.length+'</strong></div><div class="historyStat"><small>Average Score</small><strong>'+fmt(avg(records.map(r=>r.shiftScore)))+'</strong></div><div class="historyStat"><small>Average Checklist</small><strong>'+fmt(avg(records.map(r=>r.checklistPercent)),'%')+'</strong></div><div class="historyStat"><small>Average OEPE</small><strong>'+fmt(avg(records.map(r=>r.kpi?.oepe)),' sec')+'</strong></div><div class="historyStat"><small>Average Raw Waste</small><strong>'+fmt(avg(records.map(r=>r.waste?.raw)),'%')+'</strong></div><div class="historyStat"><small>Last vs Previous</small><strong style="font-size:14px;white-space:pre-wrap">'+compare(records)+'</strong></div>';
+      }
+    }
+    if(!list) return;
+    if(!records.length){ list.textContent='No saved shifts yet.'; return; }
+    list.innerHTML=records.map((r,i)=>{
+      const title=(r.date||'Today')+' – '+(r.shift||'Shift')+' – Score '+(r.shiftScore===null?'N/A':r.shiftScore);
+      const meta=(r.restaurant?'Restaurant: '+r.restaurant+'<br>':'')+'Manager: '+(r.manager||'Manager')+'<br>Checklist: '+(r.checklistPercent??0)+'%<br>OEPE: '+(r.kpi?.oepe??'N/A')+' sec<br>Raw Waste: '+(r.waste?.raw??'N/A')+'%';
+      const report=String(r.report||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      return '<div class="historyRecord"><div class="historyRecordTitle">'+title+'</div><div class="historyRecordMeta">'+meta+'</div><div class="historyActions"><button class="generateBtn" type="button" onclick="toggleHistoryReport('+i+')">View Report</button><button class="resetBtn" type="button" onclick="deleteHistoryRecord(\\''+r.id+'\\')">Delete</button></div><div id="history_report_'+i+'" class="historyReportBox"><textarea readonly>'+report+'</textarea><button class="generateBtn" type="button" onclick="copyHistoryReport('+i+')">Copy This Report</button></div></div>';
+    }).join('');
+  };
+  window.toggleHistoryReport=function(i){ const b=document.getElementById('history_report_'+i); if(b) b.style.display=b.style.display==='block'?'none':'block'; };
+  window.deleteHistoryRecord=function(id){ saveHistory(loadHistory().filter(r=>r.id!==id)); renderHistory(); toast('History record deleted.'); };
+  window.copyHistoryReport=function(i){ const r=loadHistory()[i]?.report||''; if(!r){toast('Nothing to copy.');return;} if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(r).then(()=>toast('Report copied.')).catch(()=>toast('Copy failed.'));}else toast('Copy not available.'); };
+  window.clearShiftHistory=function(){ localStorage.removeItem(HISTORY_KEY); renderHistory(); toast('History cleared.'); };
+  window.exportHistoryToFile=function(){
+    const blob=new Blob([JSON.stringify({app:'Manager+',version:'7.0',exportedAt:new Date().toISOString(),history:loadHistory()},null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob), a=document.createElement('a');
+    a.href=url; a.download='managerplus-history.json'; document.body.appendChild(a); a.click();
+    setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},100);
+    toast('History file saved.');
+  };
+  window.importHistoryFromFile=function(event){
+    const input=event.target, file=input.files&&input.files[0];
+    if(!file){toast('No file selected.');return;}
+    const reader=new FileReader();
+    reader.onload=e=>{try{const p=JSON.parse(e.target.result); const h=Array.isArray(p)?p:p.history; if(!Array.isArray(h)){toast('Invalid history file.');return;} saveHistory(h); renderHistory(); toast('History loaded.');}catch(err){toast('Invalid history file.');}finally{input.value='';}};
+    reader.onerror=()=>{toast('Could not read history file.'); input.value='';};
+    reader.readAsText(file);
+  };
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(renderHistory,500));
 })();
 </script>
 
