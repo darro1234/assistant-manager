@@ -3413,6 +3413,369 @@ window.confirm=function(msg){
 })();
 </script>
 
+
+<script>
+/* Manager+ v7.0.1 History visibility/save hotfix */
+(function(){
+  const HISTORY_KEY = 'manager_plus_shift_history_v70';
+
+  function toast(msg){
+    if(typeof window.amToast === 'function') window.amToast(msg);
+    else alert(msg);
+  }
+
+  function getVal(id, fallback=''){
+    return String(document.getElementById(id)?.value || '').trim() || fallback;
+  }
+
+  function getNum(id){
+    const v = parseFloat(String(document.getElementById(id)?.value || '').replace(',', '.'));
+    return isNaN(v) ? null : v;
+  }
+
+  function loadHistory(){
+    try{
+      const data = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+      return Array.isArray(data) ? data : [];
+    }catch(e){
+      return [];
+    }
+  }
+
+  function saveHistory(records){
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(records));
+  }
+
+  function checklistStats(){
+    const tasks = Array.from(document.querySelectorAll('input[data-checklist-task]'));
+    const done = tasks.filter(t => t.checked).length;
+    return {
+      done,
+      total: tasks.length,
+      percent: tasks.length ? Math.round(done / tasks.length * 100) : 0
+    };
+  }
+
+  function readShiftScore(){
+    if(typeof window.calculateShiftScore === 'function'){
+      try{ window.calculateShiftScore(); }catch(e){}
+    }
+    const value = parseInt(document.querySelector('#shift_score_card .score')?.textContent || '', 10);
+    return isNaN(value) ? null : value;
+  }
+
+  function readHealthScore(){
+    if(typeof window.calculateKPIHealth === 'function'){
+      try{ window.calculateKPIHealth(); }catch(e){}
+    }
+    const value = parseInt(document.querySelector('#shift_health_output .score')?.textContent || '', 10);
+    return isNaN(value) ? null : value;
+  }
+
+  function average(values){
+    const clean = values.filter(v => typeof v === 'number' && !isNaN(v));
+    if(!clean.length) return null;
+    return clean.reduce((a,b) => a + b, 0) / clean.length;
+  }
+
+  function formatValue(value, suffix=''){
+    if(value === null || value === undefined || isNaN(value)) return 'N/A';
+    return (Number.isInteger(value) ? value : value.toFixed(2)) + suffix;
+  }
+
+  function compareLastTwo(records){
+    if(records.length < 2) return 'Need 2 saved shifts.';
+
+    const current = records[0];
+    const previous = records[1];
+    const rows = [];
+
+    function row(label, now, before, lowerIsBetter){
+      if(now === null || now === undefined || before === null || before === undefined) return;
+      const n = Number(now);
+      const b = Number(before);
+      if(isNaN(n) || isNaN(b)) return;
+
+      const same = n === b;
+      const better = lowerIsBetter ? n < b : n > b;
+      rows.push(label + ': ' + before + ' → ' + now + ' ' + (same ? '• same' : better ? '✅ better' : '⚠ worse'));
+    }
+
+    row('Score', current.shiftScore, previous.shiftScore, false);
+    row('Checklist', current.checklistPercent, previous.checklistPercent, false);
+    row('OEPE', current.kpi?.oepe, previous.kpi?.oepe, true);
+    row('KVS', current.kpi?.kvs, previous.kpi?.kvs, true);
+    row('Raw', current.waste?.raw, previous.waste?.raw, true);
+    row('Full', current.waste?.full, previous.waste?.full, true);
+
+    return rows.length ? rows.join('\n') : 'Not enough comparable data.';
+  }
+
+  function buildRecord(){
+    if(typeof window.generateFullShiftReport === 'function'){
+      try{ window.generateFullShiftReport(); }catch(e){}
+    }
+
+    const checklist = checklistStats();
+    const reportText = String(document.getElementById('full_shift_report')?.value || '').trim();
+
+    return {
+      id: 'hist_' + Date.now(),
+      savedAt: new Date().toISOString(),
+      date: getVal('shift_date', 'Today'),
+      shift: getVal('shift_type', 'Shift'),
+      manager: getVal('manager_name', 'Manager'),
+      restaurant: getVal('restaurant_name', ''),
+      healthScore: readHealthScore(),
+      shiftScore: readShiftScore(),
+      checklistPercent: checklist.percent,
+      checklistDone: checklist.done,
+      checklistTotal: checklist.total,
+      kpi: {
+        sales: getNum('sales'),
+        guests: getNum('guests'),
+        oepe: getNum('oepe'),
+        kvs: getNum('kvs'),
+        r2p: getNum('r2p'),
+        mcdelivery: getNum('mcdelivery'),
+        labour: getNum('labour'),
+        csat: getNum('csat')
+      },
+      waste: {
+        raw: getNum('raw_waste'),
+        full: getNum('full_waste'),
+        promo: getNum('promo_waste'),
+        crewMeals: getNum('crew_meals'),
+        nonRecipe: getNum('non_recipe')
+      },
+      report: reportText
+    };
+  }
+
+  window.saveShiftToHistory = function(){
+    const record = buildRecord();
+
+    if(!record.report){
+      toast('Generate report first.');
+      return;
+    }
+
+    const records = loadHistory();
+    records.unshift(record);
+    saveHistory(records);
+
+    window.renderHistory();
+
+    const historyRadio = document.getElementById('history');
+    if(historyRadio) historyRadio.checked = true;
+
+    toast('Shift saved to history.');
+  };
+
+  window.renderHistory = function(){
+    const records = loadHistory();
+    const stats = document.getElementById('history_stats');
+    const list = document.getElementById('history_list');
+
+    if(stats){
+      if(!records.length){
+        stats.innerHTML =
+          '<div class="historyStat"><small>Saved Shifts</small><strong>0</strong></div>' +
+          '<div class="historyStat"><small>Average Score</small><strong>N/A</strong></div>' +
+          '<div class="historyStat"><small>Average Checklist</small><strong>N/A</strong></div>' +
+          '<div class="historyStat"><small>Average OEPE</small><strong>N/A</strong></div>';
+      }else{
+        stats.innerHTML =
+          '<div class="historyStat"><small>Saved Shifts</small><strong>' + records.length + '</strong></div>' +
+          '<div class="historyStat"><small>Average Score</small><strong>' + formatValue(average(records.map(r => r.shiftScore))) + '</strong></div>' +
+          '<div class="historyStat"><small>Average Checklist</small><strong>' + formatValue(average(records.map(r => r.checklistPercent)), '%') + '</strong></div>' +
+          '<div class="historyStat"><small>Average OEPE</small><strong>' + formatValue(average(records.map(r => r.kpi?.oepe)), ' sec') + '</strong></div>' +
+          '<div class="historyStat"><small>Average Raw Waste</small><strong>' + formatValue(average(records.map(r => r.waste?.raw)), '%') + '</strong></div>' +
+          '<div class="historyStat"><small>Last vs Previous</small><strong style="font-size:14px;white-space:pre-wrap">' + compareLastTwo(records) + '</strong></div>';
+      }
+    }
+
+    if(!list) return;
+
+    if(!records.length){
+      list.textContent = 'No saved shifts yet.';
+      return;
+    }
+
+    list.innerHTML = '';
+
+    records.forEach(function(record, index){
+      const card = document.createElement('div');
+      card.className = 'historyRecord';
+
+      const title = document.createElement('div');
+      title.className = 'historyRecordTitle';
+      title.textContent = (record.date || 'Today') + ' – ' + (record.shift || 'Shift') + ' – Score ' + (record.shiftScore === null || record.shiftScore === undefined ? 'N/A' : record.shiftScore);
+
+      const meta = document.createElement('div');
+      meta.className = 'historyRecordMeta';
+      meta.innerHTML =
+        (record.restaurant ? 'Restaurant: ' + record.restaurant + '<br>' : '') +
+        'Manager: ' + (record.manager || 'Manager') + '<br>' +
+        'Checklist: ' + (record.checklistPercent ?? 0) + '%<br>' +
+        'OEPE: ' + (record.kpi?.oepe ?? 'N/A') + ' sec<br>' +
+        'Raw Waste: ' + (record.waste?.raw ?? 'N/A') + '%';
+
+      const actions = document.createElement('div');
+      actions.className = 'historyActions';
+
+      const viewBtn = document.createElement('button');
+      viewBtn.className = 'generateBtn';
+      viewBtn.type = 'button';
+      viewBtn.textContent = 'View Report';
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'resetBtn';
+      deleteBtn.type = 'button';
+      deleteBtn.textContent = 'Delete';
+
+      const reportBox = document.createElement('div');
+      reportBox.className = 'historyReportBox';
+
+      const area = document.createElement('textarea');
+      area.readOnly = true;
+      area.value = record.report || '';
+
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'generateBtn';
+      copyBtn.type = 'button';
+      copyBtn.textContent = 'Copy This Report';
+
+      viewBtn.addEventListener('click', function(){
+        reportBox.style.display = reportBox.style.display === 'block' ? 'none' : 'block';
+      });
+
+      deleteBtn.addEventListener('click', function(){
+        const updated = loadHistory().filter(r => r.id !== record.id);
+        saveHistory(updated);
+        window.renderHistory();
+        toast('History record deleted.');
+      });
+
+      copyBtn.addEventListener('click', function(){
+        const text = record.report || '';
+        if(!text){
+          toast('Nothing to copy.');
+          return;
+        }
+
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(text).then(() => toast('Report copied.')).catch(() => toast('Copy failed.'));
+        }else{
+          area.focus();
+          area.select();
+          try{
+            document.execCommand('copy');
+            toast('Report copied.');
+          }catch(e){
+            toast('Copy failed.');
+          }
+        }
+      });
+
+      actions.appendChild(viewBtn);
+      actions.appendChild(deleteBtn);
+      reportBox.appendChild(area);
+      reportBox.appendChild(copyBtn);
+
+      card.appendChild(title);
+      card.appendChild(meta);
+      card.appendChild(actions);
+      card.appendChild(reportBox);
+
+      list.appendChild(card);
+    });
+  };
+
+  window.clearShiftHistory = function(){
+    localStorage.removeItem(HISTORY_KEY);
+    window.renderHistory();
+    toast('History cleared.');
+  };
+
+  window.exportHistoryToFile = function(){
+    const records = loadHistory();
+    const blob = new Blob([JSON.stringify({
+      app: 'Manager+',
+      version: '7.0.1',
+      exportedAt: new Date().toISOString(),
+      history: records
+    }, null, 2)], {type:'application/json'});
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+
+    a.href = url;
+    a.download = 'managerplus-history.json';
+
+    document.body.appendChild(a);
+    a.click();
+
+    setTimeout(function(){
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+
+    toast('History file saved.');
+  };
+
+  window.importHistoryFromFile = function(event){
+    const input = event.target;
+    const file = input.files && input.files[0];
+
+    if(!file){
+      toast('No file selected.');
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function(e){
+      try{
+        const parsed = JSON.parse(e.target.result);
+        const imported = Array.isArray(parsed) ? parsed : parsed.history;
+
+        if(!Array.isArray(imported)){
+          toast('Invalid history file.');
+          return;
+        }
+
+        saveHistory(imported);
+        window.renderHistory();
+        toast('History loaded.');
+      }catch(err){
+        toast('Invalid history file.');
+      }finally{
+        input.value = '';
+      }
+    };
+
+    reader.onerror = function(){
+      toast('Could not read history file.');
+      input.value = '';
+    };
+
+    reader.readAsText(file);
+  };
+
+  document.addEventListener('DOMContentLoaded', function(){
+    setTimeout(window.renderHistory, 500);
+
+    const historyRadio = document.getElementById('history');
+    if(historyRadio){
+      historyRadio.addEventListener('change', function(){
+        if(historyRadio.checked) setTimeout(window.renderHistory, 50);
+      });
+    }
+  });
+})();
+</script>
+
 </body>
 
 </html>
