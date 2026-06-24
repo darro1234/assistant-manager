@@ -1,5 +1,15 @@
 # Manager+ Changelog
 
+## 7.4.0 - 2026-06-24
+- Added an English/Polish language switch in Settings.
+- Added Polish translations for the main navigation, key screens, footer and Info/Privacy content.
+- Updated the PWA cache version for the language feature.
+
+## 7.3.0 - 2026-06-24
+- Added a dedicated Info screen with app details, Data Storage & Privacy and latest updates.
+- Added a footer link to the privacy/storage information.
+- Updated the PWA cache version for the new app screen.
+
 ## 7.2.3 - 2026-06-24
 - Fixed the remaining History separator text after the file split.
 - Refreshed the PWA cache version so browsers load the cleaned files.

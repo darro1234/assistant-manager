@@ -3376,7 +3376,8 @@ window.confirm=function(msg){
 
 ;
 
-const MANAGER_PLUS_VERSION = document.querySelector('meta[name="manager-plus-version"]')?.content || "7.2.3";
+const MANAGER_PLUS_VERSION = document.querySelector('meta[name="manager-plus-version"]')?.content || "7.4.0";
+const MANAGER_PLUS_LANGUAGE_KEY = "manager_plus_language";
 
 function updateManagerPlusVersion(){
   const versionLabel = document.getElementById("appVersion");
@@ -3395,16 +3396,190 @@ function openManagerPlusRouteFromHash(){
     "#star": "star",
     "#settings": "settings",
     "#report": "report",
-    "#history": "history"
+    "#history": "history",
+    "#info": "info",
+    "#privacy": "info"
   };
   const target = routes[window.location.hash.toLowerCase()];
   const radio = target ? document.getElementById(target) : null;
   if (radio) radio.checked = true;
 }
 
+const MANAGER_PLUS_TRANSLATIONS = {
+  en: {
+    htmlLang: "en",
+    title: "Manager+",
+    text: {
+      ".subtitle": "Shift Management",
+      ".byline": "Designated & Created by",
+      'label[for="dash"].tile h2': "Dashboard",
+      'label[for="dash"].tile p': "Shift overview and health",
+      'label[for="kpi"].tile h2': "KPI",
+      'label[for="kpi"].tile p': "Key performance indicators",
+      'label[for="waste"].tile h2': "Waste",
+      'label[for="waste"].tile p': "Waste target control",
+      'label[for="checklist"].tile h2': "Checklist",
+      'label[for="checklist"].tile p': "Morning, Evening, Overnight",
+      'label[for="handover"].tile h2': "Handover",
+      'label[for="handover"].tile p': "Quick handover generator",
+      'label[for="star"].tile h2': "Star",
+      'label[for="star"].tile p': "Star of the Shift generator",
+      'label[for="settings"].tile h2': "Settings",
+      'label[for="settings"].tile p': "Targets and preferences",
+      'label[for="report"].tile h2': "Report",
+      'label[for="report"].tile p': "Summary area",
+      'label[for="history"].tile h2': "History",
+      'label[for="history"].tile p': "Saved shifts and statistics",
+      'label[for="info"].tile h2': "Info",
+      'label[for="info"].tile p': "App details, privacy and updates",
+      "#btnLoadDemo": "Load Demo Data",
+      "#btnClearData": "Clear All Data",
+      ".footerInfoLink": "Data Storage & Privacy",
+      ".footer .prototype": "Version",
+      "#settingsScreen .screenTitle h2": "Settings",
+      "#settingsScreen .settingsSection:nth-of-type(1) h3": "Language",
+      'label[for="home"].backLabel': "Back Home",
+      "#dashboardScreen .screenTitle h2": "Dashboard",
+      "#kpiScreen .screenTitle h2": "KPI",
+      "#wasteScreen .screenTitle h2": "Waste",
+      "#checklistScreen .screenTitle h2": "Shift Checklist",
+      "#handoverScreen .screenTitle h2": "Quick Handover",
+      "#starScreen .screenTitle h2": "Star of the Shift",
+      "#reportScreen .screenTitle h2": "Full Shift Report",
+      "#historyScreen .screenTitle h2": "History",
+      "#infoScreen .screenTitle h2": "Info",
+      "#infoScreen .infoHero h3": "Manager+ Shift Management",
+      "#infoScreen .infoHero p": "Manager+ is a progressive web app designed to support shift leaders with KPI checks, waste control, checklists, handovers, reports and saved shift history in one focused workspace.",
+      "#infoScreen .infoPanel:nth-of-type(1) h3": "About The App",
+      "#infoScreen .infoPanel:nth-of-type(2) h3": "Data Storage & Privacy",
+      "#infoScreen .infoPanel:nth-of-type(2) p": "Manager+ stores shift data locally in this browser or installed app using local storage. Data is not sent to any Manager+ server and is not shared with third parties by this app.",
+      "#infoScreen .infoPanel:nth-of-type(3) h3": "Useful Notes",
+      "#infoScreen .infoPanel:nth-of-type(4) h3": "Latest Updates"
+    },
+    html: {
+      ".byline": 'Designated & Created by <strong>Dariusz Kaniewski</strong>',
+      ".footer": "<strong>&copy; 2026 Dariusz Kaniewski</strong><br><span class=\"brand\">Manager+</span><br><span class=\"prototype\">Version <span id=\"appVersion\">" + MANAGER_PLUS_VERSION + "</span></span><br><label class=\"footerInfoLink\" for=\"info\">Data Storage & Privacy</label><br>Independent prototype created for operational and educational purposes.<br>Not affiliated with McDonald's Corporation.",
+      "#infoScreen .infoPanel:nth-of-type(1) .infoList": "<li>Works as an installable PWA on supported browsers and mobile devices.</li><li>Designed for fast shift reviews, not for official corporate reporting.</li><li>Created as an independent operational and educational prototype by Dariusz Kaniewski.</li><li>Not affiliated with McDonald's Corporation.</li>",
+      "#infoScreen .infoPanel:nth-of-type(2) .infoList": "<li>Saved data may include KPI values, waste values, checklist status, manager name, restaurant name, generated reports and history records.</li><li>You can remove stored data using Clear All Data or Clear History.</li><li>You can export and import history manually as a JSON file.</li><li>Clearing browser data, uninstalling the PWA, changing browser or using another device may remove or hide saved records.</li>",
+      "#infoScreen .infoPanel:nth-of-type(3) .infoList": "<li>For best results, install the app from your browser menu and use it from the same device.</li><li>Export History regularly if you want a backup outside the browser.</li><li>Targets and checklist tasks can be adjusted in Settings.</li><li>Offline support depends on the browser cache after the app has loaded at least once.</li>",
+      "#infoScreen .infoPanel:nth-of-type(4) .updateList": "<li><strong>7.4.0</strong> - Added English/Polish language switch in Settings.</li><li><strong>7.3.0</strong> - Added Info, Data Storage & Privacy and latest updates.</li><li><strong>7.2.3</strong> - Cleaned remaining text encoding issues after splitting the app files.</li><li><strong>7.2.0</strong> - Split the project into separate HTML, CSS and JavaScript files.</li>"
+    }
+  },
+  pl: {
+    htmlLang: "pl",
+    title: "Manager+",
+    text: {
+      ".subtitle": "Zarządzanie zmianą",
+      ".byline": "Zaprojektowane i stworzone przez",
+      'label[for="dash"].tile h2': "Panel",
+      'label[for="dash"].tile p': "Podgląd zmiany i wyników",
+      'label[for="kpi"].tile h2': "KPI",
+      'label[for="kpi"].tile p': "Kluczowe wskaźniki pracy",
+      'label[for="waste"].tile h2': "Straty",
+      'label[for="waste"].tile p': "Kontrola celów waste",
+      'label[for="checklist"].tile h2': "Checklista",
+      'label[for="checklist"].tile p': "Morning, Evening, Overnight",
+      'label[for="handover"].tile h2': "Przekazanie",
+      'label[for="handover"].tile p': "Szybki generator handover",
+      'label[for="star"].tile h2': "Gwiazda",
+      'label[for="star"].tile p': "Generator Star of the Shift",
+      'label[for="settings"].tile h2': "Ustawienia",
+      'label[for="settings"].tile p': "Cele i preferencje",
+      'label[for="report"].tile h2': "Raport",
+      'label[for="report"].tile p': "Podsumowanie zmiany",
+      'label[for="history"].tile h2': "Historia",
+      'label[for="history"].tile p': "Zapisane zmiany i statystyki",
+      'label[for="info"].tile h2': "Info",
+      'label[for="info"].tile p': "Aplikacja, prywatność i aktualizacje",
+      "#btnLoadDemo": "Wczytaj dane demo",
+      "#btnClearData": "Wyczyść wszystkie dane",
+      ".footerInfoLink": "Przechowywanie danych i prywatność",
+      ".footer .prototype": "Wersja",
+      "#settingsScreen .screenTitle h2": "Ustawienia",
+      "#settingsScreen .settingsSection:nth-of-type(1) h3": "Język",
+      'label[for="home"].backLabel': "Powrót",
+      "#dashboardScreen .screenTitle h2": "Panel",
+      "#kpiScreen .screenTitle h2": "KPI",
+      "#wasteScreen .screenTitle h2": "Straty",
+      "#checklistScreen .screenTitle h2": "Checklista zmiany",
+      "#handoverScreen .screenTitle h2": "Szybkie przekazanie",
+      "#starScreen .screenTitle h2": "Gwiazda zmiany",
+      "#reportScreen .screenTitle h2": "Pełny raport zmiany",
+      "#historyScreen .screenTitle h2": "Historia",
+      "#infoScreen .screenTitle h2": "Info",
+      "#infoScreen .infoHero h3": "Manager+ Zarządzanie zmianą",
+      "#infoScreen .infoHero p": "Manager+ to aplikacja PWA wspierająca liderów zmiany w kontroli KPI, strat, checklist, przekazania zmiany, raportów i historii zapisanych zmian.",
+      "#infoScreen .infoPanel:nth-of-type(1) h3": "O aplikacji",
+      "#infoScreen .infoPanel:nth-of-type(2) h3": "Przechowywanie danych i prywatność",
+      "#infoScreen .infoPanel:nth-of-type(2) p": "Manager+ zapisuje dane lokalnie w tej przeglądarce lub zainstalowanej aplikacji przy użyciu local storage. Dane nie są wysyłane na żaden serwer Manager+ i nie są udostępniane stronom trzecim przez tę aplikację.",
+      "#infoScreen .infoPanel:nth-of-type(3) h3": "Przydatne informacje",
+      "#infoScreen .infoPanel:nth-of-type(4) h3": "Ostatnie aktualizacje"
+    },
+    html: {
+      ".byline": 'Zaprojektowane i stworzone przez <strong>Dariusz Kaniewski</strong>',
+      ".footer": "<strong>&copy; 2026 Dariusz Kaniewski</strong><br><span class=\"brand\">Manager+</span><br><span class=\"prototype\">Wersja <span id=\"appVersion\">" + MANAGER_PLUS_VERSION + "</span></span><br><label class=\"footerInfoLink\" for=\"info\">Przechowywanie danych i prywatność</label><br>Niezależny prototyp stworzony do celów operacyjnych i edukacyjnych.<br>Nie jest powiązany z McDonald's Corporation.",
+      "#infoScreen .infoPanel:nth-of-type(1) .infoList": "<li>Działa jako instalowalna aplikacja PWA w obsługiwanych przeglądarkach i na urządzeniach mobilnych.</li><li>Przeznaczona do szybkich przeglądów zmiany, nie do oficjalnego raportowania firmowego.</li><li>Niezależny prototyp operacyjny i edukacyjny stworzony przez Dariusza Kaniewskiego.</li><li>Nie jest powiązana z McDonald's Corporation.</li>",
+      "#infoScreen .infoPanel:nth-of-type(2) .infoList": "<li>Zapisane dane mogą obejmować wartości KPI, waste, status checklisty, imię managera, nazwę restauracji, wygenerowane raporty i historię zmian.</li><li>Dane możesz usunąć przyciskiem Wyczyść wszystkie dane albo Wyczyść historię.</li><li>Historię możesz ręcznie eksportować i importować jako plik JSON.</li><li>Wyczyszczenie danych przeglądarki, odinstalowanie PWA, zmiana przeglądarki albo urządzenia może usunąć lub ukryć zapisane rekordy.</li>",
+      "#infoScreen .infoPanel:nth-of-type(3) .infoList": "<li>Najlepiej zainstalować aplikację z menu przeglądarki i używać jej na tym samym urządzeniu.</li><li>Regularnie eksportuj historię, jeśli chcesz mieć kopię poza przeglądarką.</li><li>Cele i zadania checklisty możesz zmienić w Ustawieniach.</li><li>Tryb offline zależy od cache przeglądarki po pierwszym załadowaniu aplikacji.</li>",
+      "#infoScreen .infoPanel:nth-of-type(4) .updateList": "<li><strong>7.4.0</strong> - Dodano przełącznik języka angielski/polski w Ustawieniach.</li><li><strong>7.3.0</strong> - Dodano ekran Info, prywatność danych i ostatnie aktualizacje.</li><li><strong>7.2.3</strong> - Usunięto pozostałe problemy z kodowaniem tekstu po rozdzieleniu plików.</li><li><strong>7.2.0</strong> - Rozdzielono projekt na osobne pliki HTML, CSS i JavaScript.</li>"
+    }
+  }
+};
+
+function setText(selector, value){
+  document.querySelectorAll(selector).forEach(function(el){
+    el.textContent = value;
+  });
+}
+
+function setHTML(selector, value){
+  document.querySelectorAll(selector).forEach(function(el){
+    el.innerHTML = value;
+  });
+}
+
+function getManagerPlusLanguage(){
+  return localStorage.getItem(MANAGER_PLUS_LANGUAGE_KEY) || "en";
+}
+
+function applyManagerPlusLanguage(language){
+  const lang = MANAGER_PLUS_TRANSLATIONS[language] ? language : "en";
+  const pack = MANAGER_PLUS_TRANSLATIONS[lang];
+
+  document.documentElement.lang = pack.htmlLang;
+  document.title = pack.title;
+
+  Object.keys(pack.text).forEach(function(selector){
+    setText(selector, pack.text[selector]);
+  });
+
+  Object.keys(pack.html).forEach(function(selector){
+    setHTML(selector, pack.html[selector]);
+  });
+
+  updateManagerPlusVersion();
+
+  const languageSelect = document.getElementById("app_language");
+  if(languageSelect) languageSelect.value = lang;
+}
+
+function setupManagerPlusLanguage(){
+  const languageSelect = document.getElementById("app_language");
+  applyManagerPlusLanguage(getManagerPlusLanguage());
+
+  if(languageSelect){
+    languageSelect.addEventListener("change", function(){
+      localStorage.setItem(MANAGER_PLUS_LANGUAGE_KEY, languageSelect.value);
+      applyManagerPlusLanguage(languageSelect.value);
+      if(typeof toast === "function") toast(languageSelect.value === "pl" ? "Język zmieniony." : "Language updated.");
+    });
+  }
+}
+
 window.addEventListener("DOMContentLoaded", function(){
   updateManagerPlusVersion();
   openManagerPlusRouteFromHash();
+  setupManagerPlusLanguage();
 });
 window.addEventListener("hashchange", openManagerPlusRouteFromHash);
 
