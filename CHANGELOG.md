@@ -1,5 +1,21 @@
 # Manager+ Changelog
 
+## 7.2.3 - 2026-06-24
+- Fixed the remaining History separator text after the file split.
+- Refreshed the PWA cache version so browsers load the cleaned files.
+
+## 7.2.2 - 2026-06-24
+- Normalized generated text separators and repaired ternary operators after the file split.
+- Confirmed `app.js` and `service-worker.js` pass syntax checks.
+
+## 7.2.1 - 2026-06-24
+- Cleaned old mojibake text in generated messages, reports and history records after moving JavaScript into `app.js`.
+
+## 7.2.0 - 2026-06-24
+- Split the monolithic HTML into `index.html`, `styles.css` and `app.js`.
+- Updated the PWA cache list to include the new CSS and JavaScript files.
+- Kept the existing app behavior while moving toward a professional project structure.
+
 ## 7.1.3 - 2026-06-24
 - Changed PWA navigation caching to network-first to prevent old GitHub Pages builds from being served after an update.
 - Confirmed the deployed History inline handler syntax fix is present locally.
