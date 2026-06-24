@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="MyLife Planner dark icon">
+  <defs>
+    <linearGradient id="stroke" x1="110" y1="80" x2="408" y2="432" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7aa2ff"/>
+      <stop offset=".55" stop-color="#a78bfa"/>
+      <stop offset="1" stop-color="#3dd6c6"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#101722"/>
+  <circle cx="256" cy="256" r="156" fill="none" stroke="url(#stroke)" stroke-width="12" opacity=".22"/>
+  <circle cx="256" cy="256" r="82" fill="none" stroke="url(#stroke)" stroke-width="14" opacity=".5"/>
+  <g fill="none" stroke="url(#stroke)" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="17" d="M256 82c-43 54-43 102 0 160 43-58 43-106 0-160Z"/>
+    <path stroke-width="17" d="M256 430c43-54 43-102 0-160-43 58-43 106 0 160Z"/>
+    <path stroke-width="17" d="M82 256c54-43 102-43 160 0-58 43-106 43-160 0Z"/>
+    <path stroke-width="17" d="M430 256c-54 43-102 43-160 0 58-43 106-43 160 0Z"/>
+    <path stroke-width="13" d="M134 134c68 8 103 42 112 112-70-9-104-44-112-112Z"/>
+    <path stroke-width="13" d="M378 134c-8 68-42 103-112 112 9-70 44-104 112-112Z"/>
+    <path stroke-width="13" d="M134 378c8-68 42-103 112-112-9 70-44 104-112 112Z"/>
+    <path stroke-width="13" d="M378 378c-68-8-103-42-112-112 70 9 104 44 112 112Z"/>
+  </g>
+  <g fill="url(#stroke)">
+    <circle cx="256" cy="256" r="23"/>
+    <circle cx="256" cy="75" r="10"/>
+    <circle cx="256" cy="437" r="10"/>
+    <circle cx="75" cy="256" r="10"/>
+    <circle cx="437" cy="256" r="10"/>
+    <circle cx="128" cy="128" r="8" opacity=".82"/>
+    <circle cx="384" cy="128" r="8" opacity=".82"/>
+    <circle cx="128" cy="384" r="8" opacity=".82"/>
+    <circle cx="384" cy="384" r="8" opacity=".82"/>
+  </g>
+</svg>

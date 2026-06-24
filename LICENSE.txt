@@ -1,0 +1,14 @@
+Copyright (c) 2026 D.K Apps
+Dariusz Kaniewski
+
+All Rights Reserved.
+
+This software and all associated files, source code,
+graphics, designs, documentation and other materials
+are the exclusive property of D.K Apps.
+
+No part of this software may be copied, modified,
+distributed, published, sublicensed, sold or used
+without prior written permission from the copyright holder.
+
+Unauthorized use, reproduction or distribution is prohibited.

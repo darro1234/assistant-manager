@@ -1,3441 +1,638 @@
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html lang="pl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Manager+</title>
-<style>
-:root{
-  --bg:#000; --card:#101010; --card2:#171717; --line:#2b2b2e; --text:#f5f5f7; --muted:#aaaab0;
-  --yellow:#ffbc0d; --yellow2:#ffd95a; --green:#39d353; --red:#ff3838; --blue:#4da3ff; --purple:#9b5cff; --orange:#ff9f0a;
-}
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;background:#000}
-body{margin:0;color:var(--text);background:radial-gradient(circle at top,rgba(255,188,13,.12),transparent 30%),linear-gradient(180deg,#050505,#000 55%,#050505);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Arial,sans-serif}
-input.navRadio{display:none}
-.app{max-width:860px;margin:0 auto;min-height:100vh;padding:14px 14px 110px}
-.hero{text-align:center;border:1px solid rgba(255,255,255,.12);background:radial-gradient(circle at top,rgba(255,188,13,.12),transparent 42%),linear-gradient(145deg,#151515,#080808);border-radius:30px;padding:34px 18px 30px;margin:8px 0 18px;box-shadow:0 22px 60px rgba(0,0,0,.72),inset 0 1px 0 rgba(255,255,255,.07)}
-.logo{width:132px;height:104px;margin:0 auto 22px;color:var(--yellow);filter:drop-shadow(0 0 30px rgba(255,188,13,.34))}
-.logo svg{width:100%;height:100%;display:block}
-h1{font-size:38px;line-height:1.02;letter-spacing:-1.2px;margin:0 0 10px}
-.subtitle{color:var(--yellow);font-size:23px;font-weight:850;margin-bottom:16px}
-.divider{width:48px;height:2px;background:var(--yellow);border-radius:99px;margin:0 auto 18px}
-.byline{color:#d4d4d8;font-size:14px;line-height:1.45}.byline strong{display:block;font-size:18px;color:#fff;margin-top:3px}
-.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.tile{border:1px solid rgba(255,255,255,.12);background:linear-gradient(145deg,#151515,#070707);border-radius:22px;padding:18px 14px;min-height:160px;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;box-shadow:0 16px 38px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.06);cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
-.tile:active{transform:scale(.98)}.tile svg{width:48px;height:48px;margin-bottom:15px}.tile h2{margin:0 0 8px;font-size:20px}.tile p{margin:0;color:#c5c5ca;font-size:14px;line-height:1.3}.arrow{color:var(--yellow);font-size:26px;margin-top:12px}
-.yellow{color:var(--yellow)}.green{color:var(--green)}.red{color:var(--red)}.blue{color:var(--blue)}.purple{color:var(--purple)}.white{color:#f5f5f7}.orange{color:var(--orange)}
-.screen{display:none}.screenCard{border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,#101010,#070707);border-radius:26px;padding:18px;box-shadow:0 18px 46px rgba(0,0,0,.58),inset 0 1px 0 rgba(255,255,255,.05);margin-bottom:16px}
-.screenTitle{display:flex;align-items:center;gap:12px;margin-bottom:14px}.screenTitle svg{width:32px;height:32px}.screenTitle h2{margin:0;font-size:24px}.backLabel{display:inline-flex;align-items:center;gap:8px;color:var(--yellow);font-weight:900;margin-bottom:14px;cursor:pointer}
-.grid{display:grid;grid-template-columns:1fr;gap:10px}
-label.fieldLabel{display:block;color:#d7d7dc;font-size:13px;font-weight:750;margin:12px 0 6px}
-input[type="text"],input[type="date"],input[type="number"],select,textarea{width:100%;border-radius:15px;border:1px solid #2c2c30;background:#050505;color:#fff;padding:13px;font-size:16px}
-textarea{min-height:96px;resize:vertical}
-.generateBtn:active,.resetBtn:active{transform:scale(.97);filter:brightness(1.35)}
-.generateBtn,.resetBtn{margin-top:12px;border:1px solid rgba(255,188,13,.25);background:rgba(255,188,13,.08);color:var(--yellow);border-radius:14px;padding:12px 14px;font-weight:900;width:100%;font-size:15px}
-.kpiBox{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#080808;border:1px solid #28282b;border-radius:16px;padding:13px;margin-top:10px}
-.badge{padding:7px 10px;border-radius:999px;font-size:11px;font-weight:900;white-space:nowrap;color:var(--yellow);background:rgba(255,188,13,.09);border:1px solid rgba(255,188,13,.18)}
-.statusOK{color:var(--green);background:rgba(57,211,83,.12);border-color:rgba(57,211,83,.25)}
-.statusWarn{color:var(--yellow);background:rgba(255,188,13,.10);border-color:rgba(255,188,13,.25)}
-.statusBad{color:var(--red);background:rgba(255,56,56,.10);border-color:rgba(255,56,56,.25)}
-.healthScore,.progressCard{margin:14px 0;padding:18px;border-radius:22px;background:linear-gradient(145deg,#171717,#070707);border:1px solid rgba(255,188,13,.20);text-align:center}
-.healthScore .score,.progressPercent{font-size:44px;font-weight:950;color:var(--yellow);line-height:1}
-.healthScore .label{font-size:18px;font-weight:900;margin-top:6px}
-.healthGrid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px}
-.healthItem{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#080808;border:1px solid #28282b;border-radius:16px;padding:12px}
-.coachBox,.missingList{margin-top:14px;background:#080808;border:1px solid #28282b;border-radius:18px;padding:14px;color:#d7d7dc;line-height:1.45;white-space:pre-wrap}
-.progressBar{height:14px;background:#080808;border:1px solid #28282b;border-radius:999px;overflow:hidden;margin:14px 0}.progressFill{height:100%;width:0%;background:linear-gradient(90deg,var(--yellow),var(--yellow2));border-radius:999px;transition:width .25s}
-.taskGroup{margin-top:14px;padding-top:8px;border-top:1px solid #232326}.taskGroup h3{margin:10px 0 8px;font-size:17px;color:var(--yellow)}
-.taskCheck{display:flex;align-items:center;gap:10px;background:#080808;border:1px solid #28282b;border-radius:14px;padding:11px;margin:8px 0;color:#fff}.taskCheck input{width:auto;accent-color:var(--yellow);transform:scale(1.08)}
-.stationBox{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}.check{display:flex;align-items:center;gap:8px;background:#080808;border:1px solid #28282b;border-radius:14px;padding:10px;margin:0;color:#fff;font-size:14px}.check input{width:auto;accent-color:var(--yellow)}
-.homeControls{
-  margin:14px 0 18px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-.homeControls .resetBtn,
-.homeControls .generateBtn{
-  margin-top:0;
-}
-@media(max-width:430px){
-  .homeControls{grid-template-columns:1fr}
-}
-.footer{margin-top:18px;padding:20px 16px;border:1px solid rgba(255,188,13,.18);border-radius:26px;background:linear-gradient(180deg,#101010,#050505);color:#bdbdc4;text-align:center;font-size:13px;line-height:1.45}.footer .brand{color:var(--yellow);font-weight:900}.prototype{display:inline-block;margin:8px 0;padding:6px 11px;border-radius:999px;background:rgba(255,188,13,.08);border:1px solid rgba(255,188,13,.24);color:var(--yellow);font-weight:900}
-.bottomNav{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);width:min(820px,calc(100% - 20px));background:rgba(15,15,15,.9);border:1px solid rgba(255,255,255,.12);border-radius:26px;padding:9px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 24px 70px rgba(0,0,0,.75);display:grid;grid-template-columns:repeat(5,1fr);gap:6px;z-index:50}
-.navItem{text-align:center;color:#aaaab0;font-size:11px;font-weight:800;border-radius:16px;padding:8px 4px;cursor:pointer;-webkit-tap-highlight-color:transparent}.navItem svg{width:22px;height:22px;display:block;margin:0 auto 3px}
-#home:checked ~ .app #homeScreen,#dash:checked ~ .app #dashboardScreen,#kpi:checked ~ .app #kpiScreen,#waste:checked ~ .app #wasteScreen,#checklist:checked ~ .app #checklistScreen,#handover:checked ~ .app #handoverScreen,#star:checked ~ .app #starScreen,#settings:checked ~ .app #settingsScreen,#report:checked ~ .app #reportScreen,#history:checked ~ .app #historyScreen{display:block}
-#home:checked ~ .bottomNav label[for="home"],#dash:checked ~ .bottomNav label[for="dash"],#kpi:checked ~ .bottomNav label[for="kpi"],#waste:checked ~ .bottomNav label[for="waste"],#handover:checked ~ .bottomNav label[for="handover"]{color:var(--yellow);background:rgba(255,188,13,.08)}
-@media(min-width:680px){.tiles{grid-template-columns:repeat(4,1fr)}.grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:430px){h1{font-size:34px}.logo{width:118px;height:94px}.subtitle{font-size:21px}.tile{min-height:154px}.stationBox{grid-template-columns:1fr}}
-
-.homeControls{
-  position:relative;
-  z-index:9999;
-  pointer-events:auto;
-}
-.homeControls button{
-  position:relative;
-  z-index:10000;
-  pointer-events:auto;
-  min-height:54px;
-  touch-action:manipulation;
-  -webkit-tap-highlight-color:rgba(255,188,13,.25);
-  user-select:none;
-  -webkit-user-select:none;
-}
-.touchFlash{
-  transform:scale(.96)!important;
-  filter:brightness(1.55)!important;
-}
-
-
-/* Manager+ v7.0.1 polish */
-.footer .brand{
-  display:inline-block;
-  margin-top:4px;
-  font-size:15px;
-  color:var(--yellow);
-  font-weight:950;
-}
-#shift_date{
-  max-width:100%;
-  min-width:0;
-  width:100%;
-  -webkit-appearance:none;
-  appearance:none;
-  letter-spacing:.2px;
-}
-
-
-/* Manager+ home logo: sharp iPhone/Safari version */
-.logo.managerLogo{
-  width:218px;
-  height:136px;
-  margin:0 auto -20px;
-  color:var(--yellow);
-  filter:none !important;
-  -webkit-filter:none !important;
-  overflow:visible;
-}
-.logo.managerLogo img{
-  width:100%;
-  height:100%;
-  display:block;
-  object-fit:contain;
-  transform:none !important;
-  -webkit-transform:none !important;
-  filter:none !important;
-  -webkit-filter:none !important;
-  image-rendering:auto;
-}
-@media(max-width:430px){
-  .logo.managerLogo{
-    width:198px;
-    height:124px;
-    margin-bottom:-18px;
-  }
-}
-
-
-/* Manager+ footer/byline spacing fix - only visual spacing changes */
-.byline{
-  line-height:1.18;
-}
-.byline strong{
-  margin-top:1px;
-}
-.footer{
-  padding:16px 16px 18px;
-  line-height:1.32;
-}
-.footer .brand{
-  margin-top:2px;
-  margin-bottom:0;
-}
-.prototype{
-  margin:6px 0 7px;
-  padding:5px 10px;
-}
-
-
-.toastMsg{
-position:fixed;left:50%;bottom:95px;transform:translateX(-50%);
-background:linear-gradient(180deg,#151515,#080808);
-border:1px solid rgba(255,188,13,.25);
-color:#fff;padding:12px 18px;border-radius:14px;
-z-index:99999;font-weight:800;
-box-shadow:0 18px 40px rgba(0,0,0,.6);
-opacity:0;transition:.25s;
-pointer-events:none;
-}
-.toastMsg.show{opacity:1}
-
-
-/* Manager+ v6.0 configurable restaurant profile and checklist tasks */
-.settingsSection{
-  margin-top:16px;
-  padding-top:12px;
-  border-top:1px solid #232326;
-}
-.settingsSection h3{
-  margin:8px 0 12px;
-  color:var(--yellow);
-  font-size:18px;
-}
-.taskEditorGroup{
-  margin-top:14px;
-  background:#080808;
-  border:1px solid #28282b;
-  border-radius:18px;
-  padding:14px;
-}
-.taskEditorGroup h4{
-  margin:0 0 10px;
-  color:#fff;
-  font-size:16px;
-}
-.customTaskRow{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  padding:9px 0;
-  border-bottom:1px solid #202024;
-  color:#d7d7dc;
-  font-size:14px;
-}
-.customTaskRow:last-child{
-  border-bottom:0;
-}
-.deleteTaskBtn{
-  width:auto;
-  margin:0;
-  padding:7px 10px;
-  border-radius:10px;
-  border:1px solid rgba(255,56,56,.25);
-  background:rgba(255,56,56,.08);
-  color:var(--red);
-  font-weight:900;
-  font-size:12px;
-}
-.addTaskBox{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:8px;
-  margin-top:10px;
-}
-.addTaskBox input{
-  min-width:0;
-}
-.addTaskBox button{
-  width:auto;
-  margin-top:0;
-  white-space:nowrap;
-}
-@media(max-width:430px){
-  .addTaskBox{grid-template-columns:1fr}
-  .addTaskBox button{width:100%}
-}
-
-
-/* Manager+ v7.0 History module */
-.historyStats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0 14px}
-.historyStat{background:#080808;border:1px solid #28282b;border-radius:16px;padding:13px}
-.historyStat small{display:block;color:var(--muted);font-size:12px;font-weight:800;margin-bottom:5px}
-.historyStat strong{color:var(--yellow);font-size:22px;line-height:1}
-.historyRecord{background:#080808;border:1px solid #28282b;border-radius:18px;padding:14px;margin:10px 0}
-.historyRecordTitle{font-weight:950;color:#fff}
-.historyRecordMeta{color:var(--muted);font-size:13px;line-height:1.35;margin-top:4px}
-.historyActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.historyActions button{margin-top:0}
-.historyReportBox{margin-top:10px;display:none}
-.historyReportBox textarea{min-height:280px}
-@media(max-width:430px){.historyStats{grid-template-columns:1fr}.historyActions{grid-template-columns:1fr}}
-
-</style>
-
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="shortcut icon" href="favicon.ico">
-
-<meta name="theme-color" content="#000000">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Manager+">
-<meta name="application-name" content="Manager+">
-<meta name="msapplication-TileColor" content="#000000">
-<meta name="msapplication-TileImage" content="icon-192.png">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#3b5bdb" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg?v=2.09" />
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2.09" />
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png?v=2.09" />
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=2.09" />
+  <meta name="apple-mobile-web-app-title" content="MyLife" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <title>MyLife Planner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=2.09" />
 </head>
 <body>
-<input class="navRadio" type="radio" name="screen" id="home" checked>
-<input class="navRadio" type="radio" name="screen" id="dash">
-<input class="navRadio" type="radio" name="screen" id="kpi">
-<input class="navRadio" type="radio" name="screen" id="waste">
-<input class="navRadio" type="radio" name="screen" id="checklist">
-<input class="navRadio" type="radio" name="screen" id="handover">
-<input class="navRadio" type="radio" name="screen" id="star">
-<input class="navRadio" type="radio" name="screen" id="settings">
-<input class="navRadio" type="radio" name="screen" id="report">
-<input class="navRadio" type="radio" name="screen" id="history">
-
-<div class="app">
-<section id="homeScreen" class="screen">
-<header class="hero">
-<div class="logo managerLogo">
-  <img src="manager-icon.svg?v=5" alt="Manager+ icon">
-</div>
-<h1>Manager+</h1><div class="subtitle">Shift Management</div><div class="divider"></div><div class="byline">Designed & Created by <strong>Dariusz Kaniewski</strong></div>
-</header>
-<main class="tiles">
-<label class="tile" for="dash"><svg class="yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a8 8 0 0 1 16 0"/><path d="M12 14l4-5"/><path d="M5 19h14"/><path d="M7 14h.01"/><path d="M12 10h.01"/><path d="M17 14h.01"/></svg><h2>Dashboard</h2><p>Shift overview and health</p><div class="arrow">›</div></label>
-<label class="tile" for="kpi"><svg class="white" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="12" width="3" height="8" rx="1"/><rect x="10" y="8" width="3" height="12" rx="1"/><rect x="16" y="4" width="3" height="16" rx="1"/></svg><h2>KPI</h2><p>Key performance indicators</p><div class="arrow">›</div></label>
-<label class="tile" for="waste"><svg class="red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M6 7l1 14h10l1-14"/><path d="M9 7V4h6v3"/></svg><h2>Waste</h2><p>Waste target control</p><div class="arrow">›</div></label>
-<label class="tile" for="checklist"><svg class="green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h6"/><path d="M9 3h6v4H9z"/><path d="M7 5H5v16h14V5h-2"/><path d="M8 14l3 3 5-6"/></svg><h2>Checklist</h2><p>Morning, Evening, Overnight</p><div class="arrow">›</div></label>
-<label class="tile" for="handover"><svg class="blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h13"/><path d="M17 4l3 3-3 3"/><path d="M17 17H4"/><path d="M7 14l-3 3 3 3"/></svg><h2>Handover</h2><p>Quick handover generator</p><div class="arrow">›</div></label>
-<label class="tile" for="star"><svg class="yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 3"/><path d="M17 6h3a3 3 0 0 1-3 3"/></svg><h2>Star</h2><p>Star of the Shift generator</p><div class="arrow">›</div></label>
-<label class="tile" for="settings"><svg class="purple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.5"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1a7 7 0 0 0-1.8-1L14.4 3h-4.8l-.3 3.1a7 7 0 0 0-1.8 1l-2.4-1-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1a7 7 0 0 0 1.8 1l.3 3.1h4.8l.3-3.1a7 7 0 0 0 1.8-1l2.4 1 2-3.4-2-1.5c.1-.3.1-.7.1-1z"/></svg><h2>Settings</h2><p>Targets and preferences</p><div class="arrow">›</div></label>
-<label class="tile" for="report"><svg class="white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg><h2>Report</h2><p>Summary area</p><div class="arrow">›</div></label><label class="tile" for="history"><svg class="orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3.5 2"/></svg><h2>History</h2><p>Saved shifts and statistics</p><div class="arrow">›</div></label>
-</main>
-<div class="homeControls">
-  <button id="btnLoadDemo" class="generateBtn" type="button" onclick="amTouchLoadDemo(this)" ontouchend="amTouchLoadDemo(this); return false;">Load Demo Data</button>
-  <button id="btnClearData" class="resetBtn" type="button" onclick="amTouchClearData(this)" ontouchend="amTouchClearData(this); return false;">Clear All Data</button>
-</div>
-<div id="homeActionStatus" class="coachBox" style="display:none;margin-top:0"></div>
-<footer class="footer">
-<strong>© 2026 Dariusz Kaniewski</strong><br>
-<span class="brand">Manager+</span><br>
-<span class="prototype">Version 7.0.1</span><br>
-Independent prototype created for operational and educational purposes.<br>
-Not affiliated with McDonald's Corporation.
-</footer>
-</section>
-
-<section id="dashboardScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a8 8 0 0 1 16 0"/><path d="M12 14l4-5"/><path d="M5 19h14"/><path d="M7 14h.01"/><path d="M12 10h.01"/><path d="M17 14h.01"/></svg><h2>Dashboard</h2></div><div class="grid"><div><label class="fieldLabel">Date</label><input id="shift_date" type="text" placeholder="dd/mm/yyyy" inputmode="numeric" maxlength="10" autocomplete="off"></div><div><label class="fieldLabel">Manager</label><input id="manager_name" type="text" placeholder="Manager name"></div><div><label class="fieldLabel">Shift</label><select id="shift_type"><option>Morning</option><option>Evening</option><option selected>Overnight</option></select></div></div><button class="generateBtn" onclick="calculateKPIHealth()" type="button">Calculate Shift Health</button><div id="shift_health_output" class="healthScore"><div class="score">--</div><div class="label">Enter KPI data and calculate</div></div><div id="kpi_health_grid" class="healthGrid"></div><div id="kpi_coach_output" class="coachBox">KPI coaching tips will appear here after calculation.</div>
-<div id="shift_score_card" class="healthScore">
-<div class="score">--</div>
-<div class="label">Shift Score</div>
-</div>
-<div id="ai_coach_card" class="coachBox">Smart AI Coach recommendations will appear here after calculating Shift Health.</div>
-</div></section>
-
-<section id="kpiScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="white" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="12" width="3" height="8" rx="1"/><rect x="10" y="8" width="3" height="12" rx="1"/><rect x="16" y="4" width="3" height="16" rx="1"/></svg><h2>KPI</h2></div><div class="grid"><div><label class="fieldLabel">Sales €</label><input id="sales" type="number" step="0.01"></div><div><label class="fieldLabel">Guests</label><input id="guests" type="number"></div><div><label class="fieldLabel">OEPE sec / target 110</label><input id="oepe" type="number"></div><div><label class="fieldLabel">KVS sec / target 55</label><input id="kvs" type="number"></div><div><label class="fieldLabel">R2P sec / target 80</label><input id="r2p" type="number"></div><div><label class="fieldLabel">McDelivery sec / target 150</label><input id="mcdelivery" type="number"></div><div><label class="fieldLabel">Labour %</label><input id="labour" type="number" step="0.01"></div><div><label class="fieldLabel">CSAT %</label><input id="csat" type="number" step="0.01"></div></div></div></section>
-
-<section id="wasteScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M6 7l1 14h10l1-14"/><path d="M9 7V4h6v3"/></svg><h2>Waste</h2></div><div class="grid"><div><label class="fieldLabel">Raw Waste % / target 0.25%</label><input id="raw_waste" type="number" step="0.01"></div><div><label class="fieldLabel">Full Waste % / target 0.20%</label><input id="full_waste" type="number" step="0.01"></div><div><label class="fieldLabel">Promo % / target 0.05%</label><input id="promo_waste" type="number" step="0.01"></div><div><label class="fieldLabel">Crew Meals % / target 0.50%</label><input id="crew_meals" type="number" step="0.01"></div><div><label class="fieldLabel">Non-Recipe % / target 0.90%</label><input id="non_recipe" type="number" step="0.01"></div></div></div></section>
-
-<section id="checklistScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="green" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h6"/><path d="M9 3h6v4H9z"/><path d="M7 5H5v16h14V5h-2"/><path d="M8 14l3 3 5-6"/></svg><h2>Shift Checklist</h2></div><h3 id="checklist_dynamic_title" style="color:var(--yellow);margin:8px 0 12px">Overnight Checklist</h3><input type="hidden" id="checklist_shift" value="Overnight"><div class="progressCard"><div class="progressPercent" id="checklist_percent">0%</div><div id="checklist_title">Shift Completion</div><div class="progressBar"><div class="progressFill" id="checklist_fill"></div></div><small id="checklist_count">0 / 0 tasks completed</small></div><div id="dynamic_checklist"></div><div class="missingList" id="checklist_missing">Missing tasks will appear here.</div></div></section>
-
-<section id="handoverScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h13"/><path d="M17 4l3 3-3 3"/><path d="M17 17H4"/><path d="M7 14l-3 3 3 3"/></svg><h2>Quick Handover</h2></div>
-<label class="fieldLabel">Shift Handover Items</label>
-<p style="color:var(--muted);line-height:1.45;margin-top:0">These items come from the current shift checklist and your Settings configuration.</p>
-<div id="dynamic_handover_items" class="stationBox"></div>
-<label class="fieldLabel">Optional Notes</label><textarea id="handover_optional" placeholder="Optional notes"></textarea>
-<button class="generateBtn" onclick="generateHandover()">Generate Quick Handover</button>
-<button class="generateBtn" onclick="copyTextarea('handover_output')">Copy Handover</button>
-<label class="fieldLabel">Generated Handover</label><textarea id="handover_output" placeholder="Generated handover will appear here."></textarea></div></section>
-
-<section id="starScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 3"/><path d="M17 6h3a3 3 0 0 1-3 3"/></svg><h2>Star of the Shift</h2></div><div class="grid"><div><label class="fieldLabel">Name</label><input id="star_name" type="text" placeholder="e.g. Troy"></div><div><label class="fieldLabel">Tone</label><select id="star_tone"><option>Professional</option><option>Warm</option><option>Short</option><option>Very positive</option></select></div><div><label class="fieldLabel">Shift Type</label><select id="star_shift_type"><option>Overnight</option><option>Morning</option><option>Breakfast</option><option>Day Shift</option><option>Evening</option></select></div><div><label class="fieldLabel">Feedback Length</label><select id="star_length"><option>Standard</option><option>Short</option><option>Detailed</option></select></div></div><label class="fieldLabel">Stations / Areas</label><div class="stationBox"><label class="check"><input id="st_kitchen" type="checkbox"> Kitchen</label><label class="check"><input id="st_dt1" type="checkbox"> DT Window 1</label><label class="check"><input id="st_dt2" type="checkbox"> DT Window 2</label><label class="check"><input id="st_mcdelivery" type="checkbox"> McDelivery</label><label class="check"><input id="st_lobby" type="checkbox"> Lobby</label><label class="check"><input id="st_beverage" type="checkbox"> Beverage</label><label class="check"><input id="st_stock" type="checkbox"> Stock Up</label><label class="check"><input id="st_breakfast" type="checkbox"> Breakfast</label></div><label class="fieldLabel">Strengths</label><div class="stationBox"><label class="check"><input id="str_teamwork" type="checkbox"> Teamwork</label><label class="check"><input id="str_cleanliness" type="checkbox"> Cleanliness</label><label class="check"><input id="str_speed" type="checkbox"> Speed</label><label class="check"><input id="str_customer" type="checkbox"> Customer Service</label><label class="check"><input id="str_stock" type="checkbox"> Stock Up</label><label class="check"><input id="str_initiative" type="checkbox"> Initiative</label></div><label class="fieldLabel">What did they do well?</label><textarea id="star_notes" placeholder="Optional notes"></textarea><button class="generateBtn" onclick="generateStarFeedback()">Generate Star of the Shift</button><button class="generateBtn" onclick="copyTextarea('star_output')">Copy Star of the Shift</button><label class="fieldLabel">Generated text</label><textarea id="star_output" placeholder="Generated feedback will appear here."></textarea></div></section>
-
-<section id="settingsScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="purple" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.5"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1a7 7 0 0 0-1.8-1L14.4 3h-4.8l-.3 3.1a7 7 0 0 0-1.8 1l-2.4-1-2 3.4 2 1.5a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1a7 7 0 0 0 1.8 1l.3 3.1h4.8l.3-3.1a7 7 0 0 0 1.8-1l2.4 1 2-3.4-2-1.5c.1-.3.1-.7.1-1z"/></svg><h2>Settings</h2></div>
-
-<div class="settingsSection">
-<h3>Restaurant Profile</h3>
-<div class="grid">
-<div><label class="fieldLabel">Restaurant Name</label><input id="restaurant_name" type="text" placeholder="e.g. Kylemore Road"></div>
-<div><label class="fieldLabel">Default Manager Name</label><input id="default_manager_name" type="text" placeholder="e.g. Dariusz Kaniewski"></div>
-</div>
-</div>
-
-<div class="settingsSection">
-<h3>KPI Targets</h3>
-<div class="grid"><div><label class="fieldLabel">OEPE target sec</label><input id="target_oepe" type="number" value="110"></div><div><label class="fieldLabel">KVS target sec</label><input id="target_kvs" type="number" value="55"></div><div><label class="fieldLabel">R2P target sec</label><input id="target_r2p" type="number" value="80"></div><div><label class="fieldLabel">McDelivery target sec</label><input id="target_mcdelivery" type="number" value="150"></div><div><label class="fieldLabel">Raw Waste target %</label><input id="target_raw" type="number" step="0.01" value="0.25"></div><div><label class="fieldLabel">Full Waste target %</label><input id="target_full" type="number" step="0.01" value="0.20"></div><div><label class="fieldLabel">Crew Meals target %</label><input id="target_crew" type="number" step="0.01" value="0.50"></div><div><label class="fieldLabel">Non-Recipe target %</label><input id="target_nonrecipe" type="number" step="0.01" value="0.90"></div></div>
-</div>
-
-<div class="settingsSection">
-<h3>Shift Tasks</h3>
-<p style="color:var(--muted);line-height:1.45;margin-top:0">Add or delete checklist tasks for Morning, Evening and Overnight. These tasks are used directly in the Checklist screen.</p>
-<div id="shift_task_editor"></div>
-<button class="resetBtn" type="button" onclick="restoreDefaultShiftTasks()">Restore Default Tasks</button>
-<button class="generateBtn" type="button" onclick="saveManagerPlusConfiguration()">Save Configuration</button>
-<button class="generateBtn" type="button" onclick="exportManagerPlusConfiguration()">Save Configuration to File</button>
-<button class="generateBtn" type="button" onclick="document.getElementById('managerplus_config_file').click()">Load Configuration from File</button>
-<input id="managerplus_config_file" type="file" accept="application/json,.json" style="display:none" onchange="importManagerPlusConfigurationFile(event)">
-</div>
-
-</div></section>
-
-<section id="reportScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M8 13h8"/><path d="M8 17h6"/></svg><h2>Full Shift Report</h2></div>
-<p style="color:var(--muted);line-height:1.45">Generate a full shift summary from Dashboard, KPI, Waste, Checklist, Handover and Star of the Shift.</p>
-<button class="generateBtn" onclick="generateFullShiftReport()">Generate Full Shift Report</button>
-<button class="generateBtn" onclick="saveShiftToHistory()">Save Shift to History</button>
-<button class="generateBtn" onclick="copyFullShiftReport()">Copy Report</button>
-<label class="fieldLabel">Generated Report</label>
-<textarea id="full_shift_report" style="min-height:360px" placeholder="Generated report will appear here."></textarea>
-</div></section>
-
-<section id="historyScreen" class="screen"><label class="backLabel" for="home">‹ Home</label><div class="screenCard"><div class="screenTitle"><svg class="orange" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v5l3.5 2"/></svg><h2>History</h2></div><p style="color:var(--muted);line-height:1.45">Save completed shifts, review previous reports and compare basic performance over time.</p><div id="history_stats" class="historyStats"></div><button class="generateBtn" type="button" onclick="saveShiftToHistory()">Save Current Shift</button><button class="generateBtn" type="button" onclick="exportHistoryToFile()">Export History to File</button><button class="generateBtn" type="button" onclick="document.getElementById('managerplus_history_file').click()">Load History from File</button><input id="managerplus_history_file" type="file" accept="application/json,.json" style="display:none" onchange="importHistoryFromFile(event)"><button class="resetBtn" type="button" onclick="clearShiftHistory()">Clear History</button><label class="fieldLabel">Saved Shifts</label><div id="history_list" class="coachBox">No saved shifts yet.</div></div></section>
-</div>
-
-<nav class="bottomNav"><label class="navItem" for="home"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 11l9-8 9 8v10h-6v-6H9v6H3z"/></svg>Home</label><label class="navItem" for="dash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14a8 8 0 0 1 16 0"/><path d="M12 14l4-5"/><path d="M5 19h14"/></svg>Dash</label><label class="navItem" for="kpi"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="12" width="3" height="8" rx="1"/><rect x="10" y="8" width="3" height="12" rx="1"/><rect x="16" y="4" width="3" height="16" rx="1"/></svg>KPI</label><label class="navItem" for="waste"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16"/><path d="M6 7l1 14h10l1-14"/><path d="M9 7V4h6v3"/></svg>Waste</label><label class="navItem" for="handover"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h13"/><path d="M17 4l3 3-3 3"/><path d="M17 17H4"/><path d="M7 14l-3 3 3 3"/></svg>Handover</label></nav>
-
-<script>
-const SAVE_KEY='assistant_manager_mcd_v40';
-const checklistData={
-  Morning:{
-    "Opening / Breakfast":["Breakfast area ready","Coffee machine ready","Egg cooker ready","Muffins ready","Breakfast stock up complete"],
-    "Food Safety":["Food Safety Walk complete","Temperature checks complete","Date dot check complete","Delivery checked"],
-    "Service":["Lobby open and clean","Customer toilets checked","DT ready","Lunch transition planned"],
-    "Handover":["Issues from overnight reviewed","Manager communication updated"]
-  },
-  Evening:{
-    "Pre-Rush":["Dinner rush preparation complete","Break plan ready","Stock up complete","Deployment checked"],
-    "Operations":["Waste monitored","DT flow checked","Kitchen positioning checked","McDelivery area organised"],
-    "Cleaning":["Lobby cleaning plan complete","Customer toilets checked","Beverage area stocked","Fries station ready"],
-    "Handover to Overnight":["Maintenance issues communicated","Waste notes communicated","Staffing notes communicated","Overnight priorities prepared"]
-  },
-  Overnight:{
-    "Food Safety":["Food Safety Walk complete","Temperature checks complete","DFS complete","Waste entered","Date dot check complete"],
-    "Equipment":["Coffee machine cleaned","Beverage area cleaned","Dishwasher checked","Ice machine checked","Grills / Fryers checked"],
-    "Security & Cash":["Back door locked","DT windows locked","Safe count complete","Tills checked"],
-    "Breakfast":["Breakfast prepared","Egg cooker ready","Muffins ready","Breakfast stock up complete"],
-    "Close / Open":["Kiosks restarted","Lobby ready","Kitchen ready","Stock up complete","Shift handover complete"]
-  }
-};
-function q(id){return document.getElementById(id)}
-function safeId(s){return s.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')}
-function renderShiftChecklist(){
-  const shift = q('shift_type')?.value || q('checklist_shift')?.value || 'Overnight';
-  if(q('checklist_shift')) q('checklist_shift').value = shift;
-
-  const box=q('dynamic_checklist');
-  if(!box)return;
-
-  let html='';
-  const groups=checklistData[shift] || checklistData['Overnight'];
-
-  Object.keys(groups).forEach(group=>{
-    html += `<div class="taskGroup"><h3>${group}</h3>`;
-    groups[group].forEach(task=>{
-      const id='cl_'+safeId(shift+'_'+group+'_'+task);
-      html += `<label class="taskCheck"><input id="${id}" type="checkbox" data-checklist-task="${task}"> ${task}</label>`;
-    });
-    html += '</div>';
-  });
-
-  box.innerHTML=html;
-  loadData();
-
-  document.querySelectorAll('input[data-checklist-task]').forEach(el=>{
-    el.addEventListener('change',()=>{saveData();calculateChecklistCompletion();});
-  });
-
-  calculateChecklistCompletion();
-}
-function calculateChecklistCompletion(){
-  const tasks=[...document.querySelectorAll('input[data-checklist-task]')];
-  const done=tasks.filter(t=>t.checked).length;
-  const total=tasks.length||1;
-  const percent=Math.round(done/total*100);
-  if(q('checklist_percent'))q('checklist_percent').textContent=percent+'%';
-  if(q('checklist_fill'))q('checklist_fill').style.width=percent+'%';
-  if(q('checklist_count'))q('checklist_count').textContent=done+' / '+total+' tasks completed';
-  const shift=q('shift_type')?.value || q('checklist_shift')?.value || 'Shift';
-  if(q('checklist_title'))q('checklist_title').textContent=shift+' Completion'; if(q('checklist_dynamic_title'))q('checklist_dynamic_title').textContent=shift+' Checklist';
-  const missing=tasks.filter(t=>!t.checked).map(t=>t.getAttribute('data-checklist-task'));
-  let msg=percent===100?'✅ '+shift+' checklist complete. Shift is ready for handover.':'Missing:\\n- '+missing.join('\\n- ');
-  if(missing.includes('Waste entered'))msg+='\\n\\n⚠️ Warning: Waste has not been entered yet.';
-  if(missing.includes('Breakfast prepared'))msg+='\\n⚠️ Warning: Breakfast preparation is not complete.';
-  if(missing.includes('Food Safety Walk complete'))msg+='\\n⚠️ Warning: Food Safety Walk is not complete.';
-  if(missing.includes('Back door locked'))msg+='\\n⚠️ Warning: Back Door lock check is missing.';
-  if(missing.includes('Safe count complete'))msg+='\\n⚠️ Warning: Safe Count is not complete.';
-  if(q('checklist_missing'))q('checklist_missing').textContent=msg;
-}
-function amNumber(id){const v=parseFloat(String(q(id)?.value||'').replace(',','.'));return isNaN(v)?null:v}
-function amTarget(id,f){const v=amNumber(id);return v===null?f:v}
-function calculateKPIHealth(){
-  const targets={oepe:amTarget('target_oepe',110),kvs:amTarget('target_kvs',55),r2p:amTarget('target_r2p',80),mcdelivery:amTarget('target_mcdelivery',150),raw_waste:amTarget('target_raw',0.25),full_waste:amTarget('target_full',0.20),crew_meals:amTarget('target_crew',0.50),non_recipe:amTarget('target_nonrecipe',0.90)};
-  const items=[['oepe','OEPE',' sec',targets.oepe],['kvs','KVS',' sec',targets.kvs],['r2p','R2P',' sec',targets.r2p],['mcdelivery','McDelivery',' sec',targets.mcdelivery],['raw_waste','Raw Waste','%',targets.raw_waste],['full_waste','Full Waste','%',targets.full_waste],['crew_meals','Crew Meals','%',targets.crew_meals],['non_recipe','Non-Recipe','%',targets.non_recipe]];
-  let total=0,count=0,rows='',problems=[],warnings=[];
-  items.forEach(([id,name,suffix,target])=>{
-    const value=amNumber(id);let text='Missing',cls='',points=null;
-    if(value!==null){count++; if(value<=target){text='OK';cls='statusOK';points=100}else if(value<=target*1.1){text='Close';cls='statusWarn';points=75;warnings.push(name)}else{text='Above Target';cls='statusBad';points=45;problems.push(name)} total+=points;}
-    rows+=`<div class="healthItem"><div><strong>${name}</strong><br><small>${value===null?'No data':value+suffix} / target ${target}${suffix}</small></div><span class="badge ${cls}">${text}</span></div>`;
-  });
-  const score=count?Math.round(total/count):0;let label='No KPI data',cls='statusWarn';
-  if(count){if(score>=90){label='Excellent Shift';cls='statusOK'}else if(score>=75){label='Good Shift';cls='statusWarn'}else if(score>=60){label='Needs Attention';cls='statusWarn'}else{label='Critical Focus Needed';cls='statusBad'}}
-  const healthHtml=`<div class="score">${count?score:'--'}</div><div class="label">${label}</div><small>${count?count+' KPI checked':'Enter KPI data first'}</small>`;
-  ['shift_health_output','kpi_screen_health_output'].forEach(id=>{if(q(id)){q(id).innerHTML=healthHtml;q(id).classList.remove('statusOK','statusWarn','statusBad');q(id).classList.add(cls);}});
-  ['kpi_health_grid','kpi_screen_health_grid'].forEach(id=>{if(q(id))q(id).innerHTML=rows;});
-  let coach=!count?'Enter KPI and Waste data first, then calculate Shift Health.':(!problems.length&&!warnings.length?'Great result. All entered KPI values are within target. Keep focus on service rhythm, communication and standards.':'Focus areas: '+(problems.length?problems.join(', ')+'. ':'')+(warnings.length?'Close to target: '+warnings.join(', ')+'. ':'')+'Review positioning, stock, order flow, crew meals, non-recipe entries and waste control.');
-  ['kpi_coach_output','kpi_screen_coach_output'].forEach(id=>{if(q(id))q(id).textContent=coach;});
-  saveData();
-}
-function generateHandover(){
-  const val=id=>(q(id)?.value||'').trim(); const checked=id=>q(id)?.checked;
-  const shift=val('shift_type')||'Shift', date=val('shift_date')||'Today';
-  const wins=[]; if(checked('hw_breakfast_ready'))wins.push('Breakfast was prepared and ready on time.'); if(checked('hw_stockup_done'))wins.push('Stock up was completed.'); if(checked('hw_coffee_clean'))wins.push('Coffee machine was cleaned.'); if(checked('hw_lobby_clean'))wins.push('Lobby was left clean.'); if(checked('hw_kitchen_good'))wins.push('Kitchen standards were good.'); if(checked('hw_dt_good'))wins.push('DT flow was stable.');
-  const follow=[]; if(checked('hf_raw_watch'))follow.push('Please monitor Raw Waste.'); if(checked('hf_full_watch'))follow.push('Please monitor Full Waste.'); if(checked('hf_oepe_focus'))follow.push('Continue focus on OEPE.'); if(checked('hf_kvs_focus'))follow.push('Continue focus on KVS.'); if(checked('hf_stock_low'))follow.push('Stock needs checking.'); if(checked('hf_delivery_check'))follow.push('Delivery area needs follow up.');
-  const note=val('handover_optional'); if(note)follow.push(note);
-  let output=`${shift} Handover – ${date}\\n\\nPerformance KPIs:\\n- OEPE: ${val('oepe')||'N/A'} sec\\n- KVS: ${val('kvs')||'N/A'} sec\\n- R2P: ${val('r2p')||'N/A'} sec\\n- McDelivery: ${val('mcdelivery')||'N/A'} sec\\n\\nWaste:\\n- Raw Waste: ${val('raw_waste')||'N/A'}%\\n- Full Waste: ${val('full_waste')||'N/A'}%\\n\\nWins Today:\\n- ${(wins.length?wins:['No specific wins selected.']).join('\\n- ')}\\n\\nFollow Up:\\n- ${(follow.length?follow:['No follow up selected.']).join('\\n- ')}\\n\\nPlease continue to monitor open issues and keep communication clear during the next shift.`;
-  if(q('handover_output')){q('handover_output').value=output;q('handover_output').dispatchEvent(new Event('input',{bubbles:true}));}
-}
-function generateStarFeedback(){
-  const pick=a=>a[Math.floor(Math.random()*a.length)], name=(q('star_name')?.value||'Team Member').trim(), tone=q('star_tone')?.value||'Professional', notes=(q('star_notes')?.value||'').trim();
-  const stationMap=[['st_kitchen','Kitchen'],['st_dt1','DT Window 1'],['st_dt2','DT Window 2'],['st_mcdelivery','McDelivery'],['st_lobby','Lobby'],['st_beverage','Beverage'],['st_stock','Stock Up'],['st_breakfast','Breakfast']];
-  const stations=stationMap.filter(([id])=>q(id)?.checked).map(([,l])=>l); const st=stations.length?stations.join(', '):'their assigned station';
-  const openings=['Star of the Shift goes to '+name+'.',name+' is our Star of the Shift.','Today’s Star of the Shift is '+name+'.'];
-  const closings=['Great work and thank you.','Well done and thank you for your hard work.','Thank you for your support and positive attitude.'];
-  let output=`${pick(openings)} ${name} worked effectively on ${st} and supported the shift with good standards and teamwork. ${notes?notes+'. ':''}${pick(closings)}`;
-  if(q('star_output')){q('star_output').value=output;q('star_output').dispatchEvent(new Event('input',{bubbles:true}));}
-}
-function fields(){return document.querySelectorAll('input:not(.navRadio), textarea, select')}
-function saveData(){const data={};fields().forEach((el,i)=>{const k=el.id||el.name||('field_'+i);data[k]=el.type==='checkbox'?el.checked:el.value});localStorage.setItem(SAVE_KEY,JSON.stringify(data));}
-function loadData(){const raw=localStorage.getItem(SAVE_KEY);if(!raw)return;try{const data=JSON.parse(raw);fields().forEach((el,i)=>{const k=el.id||el.name||('field_'+i);if(!(k in data))return;if(el.type==='checkbox')el.checked=!!data[k];else el.value=data[k];});}catch(e){}}
-function resetSavedData(){if(confirm('Delete all saved data?')){localStorage.removeItem(SAVE_KEY);location.reload();}}
-document.addEventListener('DOMContentLoaded',()=>{
-  loadData();
-  renderShiftChecklist();
-
-  fields().forEach(el=>{
-    el.addEventListener('input',saveData);
-    el.addEventListener('change',saveData);
-  });
-
-  const shiftSelect = q('shift_type');
-  if(shiftSelect){
-    shiftSelect.addEventListener('change',()=>{
-      saveData();
-      renderShiftChecklist();
-      if(q('star_shift_type')) q('star_shift_type').value = shiftSelect.value;
-    });
-  }
-
-  setTimeout(()=>{calculateChecklistCompletion();},100);
-});
-</script>
-
-<script>
-function generateFullShiftReport(){
-  const val = id => (document.getElementById(id)?.value || '').trim();
-  const checked = id => document.getElementById(id)?.checked;
-  const shift = val('shift_type') || 'Shift';
-  const date = val('shift_date') || 'Today';
-  const manager = val('manager_name') || 'Manager';
-
-  // Calculate checklist completion from current visible checklist
-  const checklistTasks = [...document.querySelectorAll('input[data-checklist-task]')];
-  const doneTasks = checklistTasks.filter(t => t.checked);
-  const missingTasks = checklistTasks.filter(t => !t.checked).map(t => t.getAttribute('data-checklist-task'));
-  const checklistPercent = checklistTasks.length ? Math.round(doneTasks.length / checklistTasks.length * 100) : 0;
-
-  // KPI score calculation
-  const n = id => {
-    const v = parseFloat(String(document.getElementById(id)?.value || '').replace(',', '.'));
-    return isNaN(v) ? null : v;
-  };
-  const t = (id, fallback) => {
-    const v = n(id);
-    return v === null ? fallback : v;
-  };
-  const targets = {
-    oepe: t('target_oepe',110),
-    kvs: t('target_kvs',55),
-    r2p: t('target_r2p',80),
-    mcdelivery: t('target_mcdelivery',150),
-    raw_waste: t('target_raw',0.25),
-    full_waste: t('target_full',0.20),
-    crew_meals: t('target_crew',0.50),
-    non_recipe: t('target_nonrecipe',0.90)
-  };
-  const kpiItems = [
-    ['oepe','OEPE',' sec',targets.oepe],
-    ['kvs','KVS',' sec',targets.kvs],
-    ['r2p','R2P',' sec',targets.r2p],
-    ['mcdelivery','McDelivery',' sec',targets.mcdelivery],
-    ['raw_waste','Raw Waste','%',targets.raw_waste],
-    ['full_waste','Full Waste','%',targets.full_waste],
-    ['crew_meals','Crew Meals','%',targets.crew_meals],
-    ['non_recipe','Non-Recipe','%',targets.non_recipe]
-  ];
-
-  let scoreTotal = 0, scoreCount = 0;
-  const kpiLines = [];
-  const focus = [];
-  kpiItems.forEach(([id,name,suffix,target])=>{
-    const v = n(id);
-    if(v === null){
-      kpiLines.push(`${name}: N/A / target ${target}${suffix}`);
-      return;
-    }
-    scoreCount++;
-    let status = 'OK';
-    let points = 100;
-    if(v > target && v <= target * 1.10){ status = 'Close'; points = 75; focus.push(name); }
-    else if(v > target * 1.10){ status = 'Above Target'; points = 45; focus.push(name); }
-    scoreTotal += points;
-    kpiLines.push(`${name}: ${v}${suffix} / target ${target}${suffix} — ${status}`);
-  });
-  const healthScore = scoreCount ? Math.round(scoreTotal / scoreCount) : null;
-  const healthLabel = healthScore === null ? 'No KPI data' : healthScore >= 90 ? 'Excellent Shift' : healthScore >= 75 ? 'Good Shift' : healthScore >= 60 ? 'Needs Attention' : 'Critical Focus Needed';
-
-  // Handover & Star
-  const handover = val('handover_output');
-  const star = val('star_output');
-
-  let report = '';
-  report += `FULL SHIFT REPORT\n`;
-  report += `=================\n\n`;
-  report += `Date: ${date}\n`;
-  report += `Manager: ${manager}\n`;
-  report += `Shift: ${shift}\n\n`;
-
-  report += `SHIFT HEALTH\n`;
-  report += `------------\n`;
-  report += `Score: ${healthScore === null ? 'N/A' : healthScore + '/100'}\n`;
-  report += `Status: ${healthLabel}\n`;
-  report += `Checklist Completion: ${checklistPercent}% (${doneTasks.length}/${checklistTasks.length || 0})\n\n`;
-
-  report += `KPI RESULTS\n`;
-  report += `-----------\n`;
-  report += `Sales: ${val('sales') ? '€' + val('sales') : 'N/A'}\n`;
-  report += `Guests: ${val('guests') || 'N/A'}\n`;
-  report += kpiLines.map(x => '- ' + x).join('\n') + '\n\n';
-
-  report += `CHECKLIST\n`;
-  report += `---------\n`;
-  if(checklistTasks.length){
-    report += `Completed: ${doneTasks.length}/${checklistTasks.length} (${checklistPercent}%)\n`;
-    if(missingTasks.length){
-      report += `Missing:\n- ${missingTasks.join('\n- ')}\n`;
-    }else{
-      report += `All checklist tasks completed.\n`;
-    }
-  }else{
-    report += `No checklist data.\n`;
-  }
-  report += `\n`;
-
-  report += `FOCUS AREAS\n`;
-  report += `-----------\n`;
-  if(focus.length){
-    report += `- ${focus.join('\n- ')}\n`;
-  }else{
-    report += `- No major KPI focus areas from entered data.\n`;
-  }
-  report += `\n`;
-
-  report += `HANDOVER\n`;
-  report += `--------\n`;
-  report += handover ? handover : 'No generated handover yet.';
-  report += `\n\n`;
-
-  report += `STAR OF THE SHIFT\n`;
-  report += `-----------------\n`;
-  report += star ? star : 'No Star of the Shift generated yet.';
-  report += `\n\n`;
-
-  report += `Generated by Manager+\n`;
-  report += `© 2026 Dariusz Kaniewski`;
-
-  const out = document.getElementById('full_shift_report');
-  if(out){
-    out.value = report;
-    out.dispatchEvent(new Event('input', {bubbles:true}));
-  }
-}
-
-function copyFullShiftReport(){
-  const out = document.getElementById('full_shift_report');
-  if(!out || !out.value.trim()){
-    generateFullShiftReport();
-  }
-  const text = document.getElementById('full_shift_report')?.value || '';
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(()=>alert('Report copied.')).catch(()=>{
-      fallbackCopyReport(text);
-    });
-  }else{
-    fallbackCopyReport(text);
-  }
-}
-
-function fallbackCopyReport(text){
-  const out = document.getElementById('full_shift_report');
-  if(out){
-    out.focus();
-    out.select();
-    try{
-      document.execCommand('copy');
-      alert('Report copied.');
-    }catch(e){
-      alert('Copy failed. Please select and copy manually.');
-    }
-  }
-}
-</script>
-
-
-<script>
-function reportValue(id, empty='N/A'){
-  const el = document.getElementById(id);
-  const v = el ? String(el.value || '').trim() : '';
-  return v || empty;
-}
-
-function reportNumber(id){
-  const el = document.getElementById(id);
-  if(!el) return null;
-  const v = parseFloat(String(el.value || '').replace(',', '.'));
-  return isNaN(v) ? null : v;
-}
-
-function reportTarget(id, fallback){
-  const v = reportNumber(id);
-  return v === null ? fallback : v;
-}
-
-function reportStatus(value, target){
-  if(value === null) return {icon:'•', text:'No data', focus:false};
-  if(value <= target) return {icon:'✓', text:'OK', focus:false};
-  if(value <= target * 1.10) return {icon:'⚠', text:'Close to target', focus:true};
-  return {icon:'✗', text:'Above target', focus:true};
-}
-
-function buildBulletLines(items){
-  if(!items || !items.length) return '• None';
-  return items.map(item => '• ' + item).join('\n');
-}
-
-function generateFullShiftReport(){
-  const shift = reportValue('shift_type', 'Shift');
-  const date = reportValue('shift_date', 'Today');
-  const manager = reportValue('manager_name', 'Manager');
-
-  const checklistTasks = Array.from(document.querySelectorAll('input[data-checklist-task]'));
-  const completedTasks = checklistTasks.filter(t => t.checked);
-  const missingTasks = checklistTasks
-    .filter(t => !t.checked)
-    .map(t => t.getAttribute('data-checklist-task'));
-
-  const checklistPercent = checklistTasks.length
-    ? Math.round((completedTasks.length / checklistTasks.length) * 100)
-    : 0;
-
-  const targets = {
-    oepe: reportTarget('target_oepe', 110),
-    kvs: reportTarget('target_kvs', 55),
-    r2p: reportTarget('target_r2p', 80),
-    mcdelivery: reportTarget('target_mcdelivery', 150),
-    raw_waste: reportTarget('target_raw', 0.25),
-    full_waste: reportTarget('target_full', 0.20),
-    crew_meals: reportTarget('target_crew', 0.50),
-    non_recipe: reportTarget('target_nonrecipe', 0.90)
-  };
-
-  const kpis = [
-    {id:'oepe', label:'OEPE', suffix:' sec', target:targets.oepe, section:'Service'},
-    {id:'kvs', label:'KVS', suffix:' sec', target:targets.kvs, section:'Service'},
-    {id:'r2p', label:'R2P', suffix:' sec', target:targets.r2p, section:'Service'},
-    {id:'mcdelivery', label:'McDelivery', suffix:' sec', target:targets.mcdelivery, section:'Service'},
-    {id:'raw_waste', label:'Raw Waste', suffix:'%', target:targets.raw_waste, section:'Waste'},
-    {id:'full_waste', label:'Full Waste', suffix:'%', target:targets.full_waste, section:'Waste'},
-    {id:'crew_meals', label:'Crew Meals', suffix:'%', target:targets.crew_meals, section:'Waste'},
-    {id:'non_recipe', label:'Non-Recipe', suffix:'%', target:targets.non_recipe, section:'Waste'}
-  ];
-
-  let totalPoints = 0;
-  let counted = 0;
-  const serviceLines = [];
-  const wasteLines = [];
-  const focusAreas = [];
-
-  kpis.forEach(kpi => {
-    const value = reportNumber(kpi.id);
-    const status = reportStatus(value, kpi.target);
-
-    if(value !== null){
-      counted++;
-      if(status.text === 'OK') totalPoints += 100;
-      else if(status.text === 'Close to target') totalPoints += 75;
-      else totalPoints += 45;
-    }
-
-    const valueText = value === null ? 'N/A' : value + kpi.suffix;
-    const line = `${status.icon} ${kpi.label}: ${valueText} / target ${kpi.target}${kpi.suffix} (${status.text})`;
-
-    if(kpi.section === 'Service') serviceLines.push(line);
-    else wasteLines.push(line);
-
-    if(status.focus) focusAreas.push(kpi.label);
-  });
-
-  const healthScore = counted ? Math.round(totalPoints / counted) : null;
-  const healthStatus =
-    healthScore === null ? 'No KPI data' :
-    healthScore >= 90 ? 'Excellent Shift' :
-    healthScore >= 75 ? 'Good Shift' :
-    healthScore >= 60 ? 'Needs Attention' :
-    'Critical Focus Needed';
-
-  const handover = reportValue('handover_output', '');
-  const star = reportValue('star_output', '');
-
-  const outstanding = [];
-  if(missingTasks.length) outstanding.push(...missingTasks.slice(0, 10));
-  if(focusAreas.length) outstanding.push('Review KPI focus areas: ' + focusAreas.join(', '));
-
-  let report = '';
-  report += `FULL SHIFT REPORT\n`;
-  report += `Manager+\n\n`;
-
-  report += `MANAGER DETAILS\n`;
-  report += `Manager: ${manager}\n`;
-  report += `Shift: ${shift}\n`;
-  report += `Date: ${date}\n\n`;
-
-  report += `SHIFT HEALTH\n`;
-  report += `Score: ${healthScore === null ? 'N/A' : healthScore + '/100'}\n`;
-  report += `Status: ${healthStatus}\n`;
-  report += `Checklist: ${checklistTasks.length ? checklistPercent + '% completed (' + completedTasks.length + '/' + checklistTasks.length + ')' : 'No checklist data'}\n\n`;
-
-  report += `SERVICE KPI SUMMARY\n`;
-  report += `${serviceLines.join('\n') || '• No service KPI data'}\n\n`;
-
-  report += `WASTE SUMMARY\n`;
-  report += `${wasteLines.join('\n') || '• No waste data'}\n\n`;
-
-  report += `OUTSTANDING ACTIONS\n`;
-  report += `${buildBulletLines(outstanding.length ? outstanding : ['No outstanding actions from entered data'])}\n\n`;
-
-  report += `MANAGER HANDOVER\n`;
-  report += `${handover || 'No generated handover added yet.'}\n\n`;
-
-  report += `STAR OF THE SHIFT\n`;
-  report += `${star || 'No Star of the Shift generated yet.'}\n\n`;
-
-  report += `NEXT SHIFT PRIORITY\n`;
-  if(focusAreas.length){
-    report += `• Continue focus on: ${focusAreas.join(', ')}.\n`;
-  }else{
-    report += `• Maintain current standards, communication and service rhythm.\n`;
-  }
-
-  report += `\nGenerated by Manager+\n`;
-  report += `© 2026 Dariusz Kaniewski`;
-
-  const out = document.getElementById('full_shift_report');
-  if(out){
-    out.value = report;
-    out.dispatchEvent(new Event('input', {bubbles:true}));
-  }
-}
-
-function copyFullShiftReport(){
-  const out = document.getElementById('full_shift_report');
-  if(!out || !out.value.trim()) generateFullShiftReport();
-
-  const text = document.getElementById('full_shift_report')?.value || '';
-
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text)
-      .then(()=>alert('Report copied.'))
-      .catch(()=>fallbackCopyReport());
-  }else{
-    fallbackCopyReport();
-  }
-}
-
-function fallbackCopyReport(){
-  const out = document.getElementById('full_shift_report');
-  if(!out) return;
-  out.focus();
-  out.select();
-  try{
-    document.execCommand('copy');
-    alert('Report copied.');
-  }catch(e){
-    alert('Copy failed. Please select and copy manually.');
-  }
-}
-</script>
-
-
-<script>
-function cleanGeneratedText(text){
-  if(!text) return '';
-  return String(text)
-    .replace(/\\n/g, '\n')
-    .replace(/(^|[\s])n-/g, '$1-')
-    .replace(/\nn-/g, '\n-')
-    .replace(/:\s*n-/g, ':\n-')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
-}
-
-function getValueClean(id, fallback=''){
-  const el = document.getElementById(id);
-  const v = el ? String(el.value || '').trim() : '';
-  return v || fallback;
-}
-
-function checkedClean(id){
-  return !!document.getElementById(id)?.checked;
-}
-
-function bulletList(items, fallback='• None'){
-  const clean = (items || []).map(x => cleanGeneratedText(x)).filter(Boolean);
-  if(!clean.length) return fallback;
-  return clean.map(x => '• ' + x).join('\n');
-}
-
-function generateHandover(){
-  const shift = getValueClean('shift_type', 'Shift');
-  const date = getValueClean('shift_date', 'Today');
-
-  const wins = [];
-  if(checkedClean('hw_breakfast_ready')) wins.push('Breakfast was prepared and ready on time.');
-  if(checkedClean('hw_stockup_done')) wins.push('Stock up was completed and key areas were left ready.');
-  if(checkedClean('hw_coffee_clean')) wins.push('Coffee machine was cleaned and left in good condition.');
-  if(checkedClean('hw_lobby_clean')) wins.push('Lobby and customer areas were left clean and presentable.');
-  if(checkedClean('hw_kitchen_good')) wins.push('Kitchen standards were maintained well.');
-  if(checkedClean('hw_dt_good')) wins.push('Drive Thru flow was stable and service was kept under control.');
-
-  const follow = [];
-  if(checkedClean('hf_raw_watch')) follow.push('Continue to monitor Raw Waste closely.');
-  if(checkedClean('hf_full_watch')) follow.push('Continue to monitor Full Waste and make sure entries are accurate.');
-  if(checkedClean('hf_oepe_focus')) follow.push('Continue focus on OEPE and Drive Thru flow.');
-  if(checkedClean('hf_kvs_focus')) follow.push('Continue focus on KVS times and kitchen flow.');
-  if(checkedClean('hf_stock_low')) follow.push('Stock levels need to be checked during the next shift.');
-  if(checkedClean('hf_delivery_check')) follow.push('Delivery area needs follow up and organisation.');
-
-  const optional = getValueClean('handover_optional');
-  if(optional) follow.push(optional);
-
-  const report = [
-    `${shift} Handover – ${date}`,
-    '',
-    'PERFORMANCE KPIs',
-    `• OEPE: ${getValueClean('oepe', 'N/A')} sec`,
-    `• KVS: ${getValueClean('kvs', 'N/A')} sec`,
-    `• R2P: ${getValueClean('r2p', 'N/A')} sec`,
-    `• McDelivery: ${getValueClean('mcdelivery', 'N/A')} sec`,
-    '',
-    'WASTE',
-    `• Raw Waste: ${getValueClean('raw_waste', 'N/A')}%`,
-    `• Full Waste: ${getValueClean('full_waste', 'N/A')}%`,
-    `• Crew Meals: ${getValueClean('crew_meals', 'N/A')}%`,
-    `• Non-Recipe: ${getValueClean('non_recipe', 'N/A')}%`,
-    '',
-    'WINS TODAY',
-    bulletList(wins, '• No specific wins selected.'),
-    '',
-    'FOLLOW UP',
-    bulletList(follow, '• No follow up selected.'),
-    '',
-    'NEXT SHIFT NOTE',
-    '• Please continue to monitor open issues and keep communication clear during the next shift.'
-  ].join('\n');
-
-  const out = document.getElementById('handover_output');
-  if(out){
-    out.value = cleanGeneratedText(report);
-    out.dispatchEvent(new Event('input', {bubbles:true}));
-  }
-}
-
-function reportNumberClean(id){
-  const v = parseFloat(String(document.getElementById(id)?.value || '').replace(',', '.'));
-  return isNaN(v) ? null : v;
-}
-
-function reportTargetClean(id, fallback){
-  const v = reportNumberClean(id);
-  return v === null ? fallback : v;
-}
-
-function statusClean(value, target){
-  if(value === null) return {icon:'•', text:'No data', points:null, focus:false};
-  if(value <= target) return {icon:'✓', text:'OK', points:100, focus:false};
-  if(value <= target * 1.10) return {icon:'⚠', text:'Close to target', points:75, focus:true};
-  return {icon:'✗', text:'Above target', points:45, focus:true};
-}
-
-function generateFullShiftReport(){
-  const shift = getValueClean('shift_type', 'Shift');
-  const date = getValueClean('shift_date', 'Today');
-  const manager = getValueClean('manager_name', 'Manager');
-
-  const checklistTasks = Array.from(document.querySelectorAll('input[data-checklist-task]'));
-  const completedTasks = checklistTasks.filter(t => t.checked);
-  const missingTasks = checklistTasks
-    .filter(t => !t.checked)
-    .map(t => t.getAttribute('data-checklist-task'))
-    .filter(Boolean);
-
-  const checklistPercent = checklistTasks.length
-    ? Math.round((completedTasks.length / checklistTasks.length) * 100)
-    : 0;
-
-  const targets = {
-    oepe: reportTargetClean('target_oepe', 110),
-    kvs: reportTargetClean('target_kvs', 55),
-    r2p: reportTargetClean('target_r2p', 80),
-    mcdelivery: reportTargetClean('target_mcdelivery', 150),
-    raw_waste: reportTargetClean('target_raw', 0.25),
-    full_waste: reportTargetClean('target_full', 0.20),
-    crew_meals: reportTargetClean('target_crew', 0.50),
-    non_recipe: reportTargetClean('target_nonrecipe', 0.90)
-  };
-
-  const kpis = [
-    {id:'oepe', label:'OEPE', suffix:' sec', target:targets.oepe, section:'Service'},
-    {id:'kvs', label:'KVS', suffix:' sec', target:targets.kvs, section:'Service'},
-    {id:'r2p', label:'R2P', suffix:' sec', target:targets.r2p, section:'Service'},
-    {id:'mcdelivery', label:'McDelivery', suffix:' sec', target:targets.mcdelivery, section:'Service'},
-    {id:'raw_waste', label:'Raw Waste', suffix:'%', target:targets.raw_waste, section:'Waste'},
-    {id:'full_waste', label:'Full Waste', suffix:'%', target:targets.full_waste, section:'Waste'},
-    {id:'crew_meals', label:'Crew Meals', suffix:'%', target:targets.crew_meals, section:'Waste'},
-    {id:'non_recipe', label:'Non-Recipe', suffix:'%', target:targets.non_recipe, section:'Waste'}
-  ];
-
-  let totalPoints = 0;
-  let counted = 0;
-  const serviceLines = [];
-  const wasteLines = [];
-  const focusAreas = [];
-
-  kpis.forEach(kpi => {
-    const value = reportNumberClean(kpi.id);
-    const status = statusClean(value, kpi.target);
-
-    if(value !== null){
-      counted++;
-      totalPoints += status.points;
-    }
-
-    const valueText = value === null ? 'N/A' : value + kpi.suffix;
-    const line = `${status.icon} ${kpi.label}: ${valueText} / target ${kpi.target}${kpi.suffix} (${status.text})`;
-
-    if(kpi.section === 'Service') serviceLines.push(line);
-    else wasteLines.push(line);
-
-    if(status.focus) focusAreas.push(kpi.label);
-  });
-
-  const healthScore = counted ? Math.round(totalPoints / counted) : null;
-  const healthStatus =
-    healthScore === null ? 'No KPI data' :
-    healthScore >= 90 ? 'Excellent Shift' :
-    healthScore >= 75 ? 'Good Shift' :
-    healthScore >= 60 ? 'Needs Attention' :
-    'Critical Focus Needed';
-
-  const outstanding = [];
-  if(missingTasks.length) outstanding.push(...missingTasks.slice(0, 10));
-  if(focusAreas.length) outstanding.push('Review KPI focus areas: ' + focusAreas.join(', '));
-
-  const handover = cleanGeneratedText(getValueClean('handover_output', ''));
-  const star = cleanGeneratedText(getValueClean('star_output', ''));
-
-  const report = [
-    'FULL SHIFT REPORT',
-    "Manager+",
-    '',
-    'MANAGER DETAILS',
-    `Manager: ${manager}`,
-    `Shift: ${shift}`,
-    `Date: ${date}`,
-    '',
-    'SHIFT HEALTH',
-    `Score: ${healthScore === null ? 'N/A' : healthScore + '/100'}`,
-    `Status: ${healthStatus}`,
-    `Checklist: ${checklistTasks.length ? checklistPercent + '% completed (' + completedTasks.length + '/' + checklistTasks.length + ')' : 'No checklist data'}`,
-    '',
-    'SERVICE KPI SUMMARY',
-    serviceLines.join('\n') || '• No service KPI data',
-    '',
-    'WASTE SUMMARY',
-    wasteLines.join('\n') || '• No waste data',
-    '',
-    'OUTSTANDING ACTIONS',
-    bulletList(outstanding.length ? outstanding : ['No outstanding actions from entered data']),
-    '',
-    'MANAGER HANDOVER',
-    handover || 'No generated handover added yet.',
-    '',
-    'STAR OF THE SHIFT',
-    star || 'No Star of the Shift generated yet.',
-    '',
-    'NEXT SHIFT PRIORITY',
-    focusAreas.length
-      ? `• Continue focus on: ${focusAreas.join(', ')}.`
-      : '• Maintain current standards, communication and service rhythm.',
-    '',
-    "Generated by Manager+",
-    '© 2026 Dariusz Kaniewski'
-  ].join('\n');
-
-  const out = document.getElementById('full_shift_report');
-  if(out){
-    out.value = cleanGeneratedText(report);
-    out.dispatchEvent(new Event('input', {bubbles:true}));
-  }
-}
-
-function copyFullShiftReport(){
-  const out = document.getElementById('full_shift_report');
-  if(!out || !out.value.trim()) generateFullShiftReport();
-
-  const text = cleanGeneratedText(document.getElementById('full_shift_report')?.value || '');
-
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text)
-      .then(()=>alert('Report copied.'))
-      .catch(()=>fallbackCopyReport());
-  }else{
-    fallbackCopyReport();
-  }
-}
-
-function fallbackCopyReport(){
-  const out = document.getElementById('full_shift_report');
-  if(!out) return;
-  out.value = cleanGeneratedText(out.value);
-  out.focus();
-  out.select();
-  try{
-    document.execCommand('copy');
-    alert('Report copied.');
-  }catch(e){
-    alert('Copy failed. Please select and copy manually.');
-  }
-}
-</script>
-
-
-<script>
-function calculateChecklistCompletion(){
-  const tasks = Array.from(document.querySelectorAll('input[data-checklist-task]'));
-  const done = tasks.filter(t => t.checked).length;
-  const total = tasks.length || 1;
-  const percent = Math.round((done / total) * 100);
-
-  const percentEl = document.getElementById('checklist_percent');
-  const fillEl = document.getElementById('checklist_fill');
-  const countEl = document.getElementById('checklist_count');
-  const missingEl = document.getElementById('checklist_missing');
-
-  if(percentEl) percentEl.textContent = percent + '%';
-  if(fillEl) fillEl.style.width = percent + '%';
-  if(countEl) countEl.textContent = done + ' / ' + tasks.length + ' tasks completed';
-
-  const shift = document.getElementById('shift_type')?.value || document.getElementById('checklist_shift')?.value || 'Shift';
-
-  const titleEl = document.getElementById('checklist_title');
-  const dynamicTitleEl = document.getElementById('checklist_dynamic_title');
-
-  if(titleEl) titleEl.textContent = shift + ' Completion';
-  if(dynamicTitleEl) dynamicTitleEl.textContent = shift + ' Checklist';
-
-  const missing = tasks
-    .filter(t => !t.checked)
-    .map(t => t.getAttribute('data-checklist-task'))
-    .filter(Boolean);
-
-  let message = '';
-
-  if(percent === 100){
-    message = '✅ ' + shift + ' checklist complete. Shift is ready for handover.';
-  }else if(missing.length){
-    message = 'Missing:\n' + missing.map(item => '• ' + item).join('\n');
-
-    const warnings = [];
-    if(missing.includes('Waste entered')) warnings.push('⚠️ Waste has not been entered yet.');
-    if(missing.includes('Breakfast prepared')) warnings.push('⚠️ Breakfast preparation is not complete.');
-    if(missing.includes('Food Safety Walk complete')) warnings.push('⚠️ Food Safety Walk is not complete.');
-    if(missing.includes('Back door locked')) warnings.push('⚠️ Back Door lock check is missing.');
-    if(missing.includes('Safe count complete')) warnings.push('⚠️ Safe Count is not complete.');
-
-    if(warnings.length){
-      message += '\n\nWarnings:\n' + warnings.map(item => '• ' + item).join('\n');
-    }
-  }else{
-    message = 'No checklist tasks available.';
-  }
-
-  if(missingEl) missingEl.textContent = message;
-
-  if(typeof saveData === 'function') saveData();
-}
-</script>
-
-
-<script>
-function calculateShiftScore(){
-  const healthText = document.querySelector('#shift_health_output .score');
-  let health = parseInt(healthText?.textContent || '0');
-  if(isNaN(health)) health = 0;
-
-  const tasks = Array.from(document.querySelectorAll('input[data-checklist-task]'));
-  const done = tasks.filter(t=>t.checked).length;
-  const checklist = tasks.length ? Math.round((done/tasks.length)*100) : 0;
-
-  const finalScore = Math.round((health*0.7) + (checklist*0.3));
-
-  let label='Needs Attention';
-  if(finalScore>=90) label='🟢 Excellent Shift';
-  else if(finalScore>=75) label='🟡 Good Shift';
-  else label='🔴 Action Needed';
-
-  const card=document.getElementById('shift_score_card');
-  if(card){
-    card.innerHTML='<div class="score">'+finalScore+'</div><div class="label">'+label+'</div><small>Health '+health+' | Checklist '+checklist+'%</small>';
-  }
-
-  const focus=[];
-  const check=(id,target)=>{
-    const el=document.getElementById(id);
-    if(!el || !el.value) return;
-    const v=parseFloat(el.value);
-    if(v>target) focus.push(id);
-  };
-
-  check('oepe',110);
-  check('kvs',55);
-  check('r2p',80);
-  check('mcdelivery',150);
-  check('raw_waste',0.25);
-  check('full_waste',0.20);
-
-  let coach='';
-  if(finalScore>=90){
-    coach='Excellent shift performance. Service targets are under control. Maintain current standards and deployment.';
-  }else{
-    if(focus.includes('oepe')) coach+='• Focus on Drive Thru flow and Window 2 speed.\n';
-    if(focus.includes('kvs')) coach+='• Review kitchen positioning and bottlenecks.\n';
-    if(focus.includes('r2p')) coach+='• Improve order assembly and presenting speed.\n';
-    if(focus.includes('mcdelivery')) coach+='• Organise McDelivery area and reduce waiting orders.\n';
-    if(focus.includes('raw_waste')) coach+='• Reduce cooking levels and review forecasting.\n';
-    if(focus.includes('full_waste')) coach+='• Review waste entries and production control.\n';
-    if(!coach) coach='Maintain focus on standards, communication and completion of checklist tasks.';
-  }
-
-  const ai=document.getElementById('ai_coach_card');
-  if(ai) ai.textContent=coach;
-}
-
-document.addEventListener('click', function(e){
-  if(e.target && e.target.getAttribute('onclick')==='calculateKPIHealth()'){
-    setTimeout(calculateShiftScore,100);
-  }
-});
-
-const oldCalc = window.calculateKPIHealth;
-if(oldCalc){
-  window.calculateKPIHealth = function(){
-    oldCalc();
-    setTimeout(calculateShiftScore,50);
-  }
-}
-</script>
-
-
-<script>
-function calculateShiftScore(){
-  const healthText = document.querySelector('#shift_health_output .score');
-  let health = parseInt(healthText?.textContent || '0');
-  if(isNaN(health)) health = 0;
-
-  const tasks = Array.from(document.querySelectorAll('input[data-checklist-task]'));
-  const done = tasks.filter(t=>t.checked).length;
-  const checklist = tasks.length ? Math.round((done/tasks.length)*100) : 0;
-
-  const finalScore = Math.round((health*0.7) + (checklist*0.3));
-
-  let label='Needs Attention';
-  if(finalScore>=90) label='🟢 Excellent Shift';
-  else if(finalScore>=75) label='🟡 Good Shift';
-  else label='🔴 Action Needed';
-
-  const card=document.getElementById('shift_score_card');
-  if(card){
-    card.innerHTML='<div class="score">'+finalScore+'</div><div class="label">'+label+'</div><small>Health '+health+' | Checklist '+checklist+'%</small>';
-  }
-
-  const num = id => {
-    const el=document.getElementById(id);
-    if(!el || el.value === '') return null;
-    const v=parseFloat(String(el.value).replace(',', '.'));
-    return isNaN(v) ? null : v;
-  };
-
-  const target = (id, fallback) => {
-    const v = num(id);
-    return v === null ? fallback : v;
-  };
-
-  const targets = {
-    oepe: target('target_oepe',110),
-    kvs: target('target_kvs',55),
-    r2p: target('target_r2p',80),
-    mcdelivery: target('target_mcdelivery',150),
-    raw: target('target_raw',0.25),
-    full: target('target_full',0.20),
-    crew: target('target_crew',0.50),
-    nonrecipe: target('target_nonrecipe',0.90)
-  };
-
-  const values = {
-    oepe: num('oepe'),
-    kvs: num('kvs'),
-    r2p: num('r2p'),
-    mcdelivery: num('mcdelivery'),
-    raw: num('raw_waste'),
-    full: num('full_waste'),
-    crew: num('crew_meals'),
-    nonrecipe: num('non_recipe')
-  };
-
-  let coach='';
-
-  if(finalScore>=90){
-    coach += 'Excellent shift performance. Service targets are under control. Maintain current standards, deployment and communication.\n';
-  }
-
-  if(values.oepe !== null && values.oepe > targets.oepe) coach+='• Focus on Drive Thru flow, order assembly and Window 2 speed.\n';
-  if(values.kvs !== null && values.kvs > targets.kvs) coach+='• Review kitchen positioning, UHC flow and possible bottlenecks.\n';
-  if(values.r2p !== null && values.r2p > targets.r2p) coach+='• Improve order readiness, packing and presenting speed.\n';
-  if(values.mcdelivery !== null && values.mcdelivery > targets.mcdelivery) coach+='• Organise McDelivery area, check pending orders and reduce waiting bags.\n';
-
-  if(values.raw !== null && values.raw > targets.raw) coach+='• Raw Waste is above target. Review cooking levels, production planning and forecasting.\n';
-  if(values.full !== null && values.full > targets.full) coach+='• Full Waste is above target. Check order accuracy, product control and waste entries.\n';
-
-  if(values.crew !== null){
-    if(values.crew > targets.crew){
-      coach+='• Crew Meals are above target. Review crew meal control and make sure entries are correct.\n';
-    }else if(values.crew < targets.crew * 0.35){
-      coach+='• Crew Meals are very low compared with target. Check if crew meals are being entered correctly into the system.\n';
-    }else if(values.crew < targets.crew * 0.60){
-      coach+='• Crew Meals are below expected level. This may be OK, but verify that crew meals were entered properly.\n';
-    }
-  }
-
-  if(values.nonrecipe !== null){
-    if(values.nonrecipe > targets.nonrecipe){
-      coach+='• Non-Recipe is above target. Review non-recipe entries, promo/product corrections and possible incorrect waste categorisation.\n';
-    }else if(values.nonrecipe > targets.nonrecipe * 0.85){
-      coach+='• Non-Recipe is close to target. Keep monitoring entries and make sure categories are accurate.\n';
-    }
-  }
-
-  if(checklist < 100){
-    coach+='• Checklist is not fully complete. Review missing tasks before handover.\n';
-  }
-
-  if(!coach.trim()){
-    coach='Maintain focus on standards, communication, food safety, waste accuracy and completion of checklist tasks.';
-  }
-
-  const ai=document.getElementById('ai_coach_card');
-  if(ai) ai.textContent=coach.trim();
-}
-</script>
-
-
-<script>
-function calculateShiftScore(){
-  const healthText = document.querySelector('#shift_health_output .score');
-  let health = parseInt(healthText?.textContent || '0');
-  if(isNaN(health)) health = 0;
-
-  const tasks = Array.from(document.querySelectorAll('input[data-checklist-task]'));
-  const done = tasks.filter(t => t.checked).length;
-  const checklist = tasks.length ? Math.round((done / tasks.length) * 100) : 0;
-  const missingTasks = tasks
-    .filter(t => !t.checked)
-    .map(t => t.getAttribute('data-checklist-task'))
-    .filter(Boolean);
-
-  const finalScore = Math.round((health * 0.7) + (checklist * 0.3));
-
-  let label = 'Needs Attention';
-  if(finalScore >= 90) label = '🟢 Excellent Shift';
-  else if(finalScore >= 75) label = '🟡 Good Shift';
-  else label = '🔴 Action Needed';
-
-  const card = document.getElementById('shift_score_card');
-  if(card){
-    card.innerHTML =
-      '<div class="score">' + finalScore + '</div>' +
-      '<div class="label">' + label + '</div>' +
-      '<small>Health ' + health + ' | Checklist ' + checklist + '%</small>';
-  }
-
-  const num = id => {
-    const el = document.getElementById(id);
-    if(!el || el.value === '') return null;
-    const v = parseFloat(String(el.value).replace(',', '.'));
-    return isNaN(v) ? null : v;
-  };
-
-  const target = (id, fallback) => {
-    const v = num(id);
-    return v === null ? fallback : v;
-  };
-
-  const targets = {
-    oepe: target('target_oepe', 110),
-    kvs: target('target_kvs', 55),
-    r2p: target('target_r2p', 80),
-    mcdelivery: target('target_mcdelivery', 150),
-    raw: target('target_raw', 0.25),
-    full: target('target_full', 0.20),
-    crew: target('target_crew', 0.50),
-    nonrecipe: target('target_nonrecipe', 0.90)
-  };
-
-  const values = {
-    oepe: num('oepe'),
-    kvs: num('kvs'),
-    r2p: num('r2p'),
-    mcdelivery: num('mcdelivery'),
-    raw: num('raw_waste'),
-    full: num('full_waste'),
-    crew: num('crew_meals'),
-    nonrecipe: num('non_recipe')
-  };
-
-  const shift = document.getElementById('shift_type')?.value || 'Shift';
-  const tips = [];
-
-  if(values.oepe !== null && values.oepe > targets.oepe){
-    tips.push('Focus on Drive Thru flow, order assembly and Window 2 speed.');
-  }
-  if(values.kvs !== null && values.kvs > targets.kvs){
-    tips.push('Review kitchen positioning, UHC flow and possible bottlenecks.');
-  }
-  if(values.r2p !== null && values.r2p > targets.r2p){
-    tips.push('Improve order readiness, packing and presenting speed.');
-  }
-  if(values.mcdelivery !== null && values.mcdelivery > targets.mcdelivery){
-    tips.push('Organise McDelivery area, check pending orders and reduce waiting bags.');
-  }
-
-  if(values.raw !== null && values.raw > targets.raw){
-    tips.push('Raw Waste is above target. Review cooking levels, production planning and forecasting.');
-  }
-  if(values.full !== null && values.full > targets.full){
-    tips.push('Full Waste is above target. Check order accuracy, product control and waste entries.');
-  }
-
-  if(values.crew !== null){
-    if(values.crew > targets.crew){
-      tips.push('Crew Meals are above target. Review crew meal control and make sure entries are correct.');
-    }else if(values.crew < targets.crew * 0.35){
-      tips.push('Crew Meals are very low compared with target. Check if crew meals are being entered correctly into the system.');
-    }else if(values.crew < targets.crew * 0.60){
-      tips.push('Crew Meals are below expected level. This may be OK, but verify that crew meals were entered properly.');
-    }
-  }
-
-  if(values.nonrecipe !== null){
-    if(values.nonrecipe > targets.nonrecipe){
-      tips.push('Non-Recipe is above target. Review non-recipe entries, promo/product corrections and possible incorrect waste categorisation.');
-    }else if(values.nonrecipe > targets.nonrecipe * 0.85){
-      tips.push('Non-Recipe is close to target. Keep monitoring entries and make sure categories are accurate.');
-    }
-  }
-
-  if(checklist < 100){
-    tips.push('Checklist is not fully complete. Review missing tasks before handover.');
-  }
-
-  const lowerMissing = missingTasks.map(x => x.toLowerCase());
-
-  if(shift === 'Overnight'){
-    if(lowerMissing.some(x => x.includes('breakfast prepared'))) tips.push('Overnight: breakfast preparation is not complete. Confirm breakfast readiness before morning handover.');
-    if(lowerMissing.some(x => x.includes('coffee machine'))) tips.push('Overnight: coffee machine cleaning/check has not been confirmed.');
-    if(lowerMissing.some(x => x.includes('waste entered'))) tips.push('Overnight: waste has not been entered yet. Complete waste before handover.');
-    if(lowerMissing.some(x => x.includes('back door'))) tips.push('Overnight: back door lock check is missing. Confirm security before leaving.');
-    if(lowerMissing.some(x => x.includes('safe count'))) tips.push('Overnight: safe count is not complete. Confirm cash/security before handover.');
-  }
-
-  if(shift === 'Morning'){
-    if(lowerMissing.some(x => x.includes('breakfast'))) tips.push('Morning: breakfast readiness needs attention before service builds.');
-    if(lowerMissing.some(x => x.includes('lobby'))) tips.push('Morning: lobby/customer areas should be checked before peak trading.');
-    if(lowerMissing.some(x => x.includes('delivery'))) tips.push('Morning: delivery check is missing. Review delivery and stock before the shift gets busy.');
-  }
-
-  if(shift === 'Evening'){
-    if(lowerMissing.some(x => x.includes('stock'))) tips.push('Evening: stock up needs attention before handover to overnight.');
-    if(lowerMissing.some(x => x.includes('waste'))) tips.push('Evening: waste monitoring or waste notes need follow-up.');
-    if(lowerMissing.some(x => x.includes('handover'))) tips.push('Evening: prepare clear handover notes for the overnight manager.');
-  }
-
-  let coach = '';
-
-  if(finalScore >= 90 && tips.length === 0){
-    coach = 'Excellent shift performance. KPI results and checklist completion are strong. Maintain current standards, deployment and communication.';
-  }else if(tips.length){
-    const topTips = tips.slice(0, 6);
-    coach = 'Smart AI Coach:\n' + topTips.map(t => '• ' + t).join('\n');
-  }else{
-    coach = 'Smart AI Coach:\n• Maintain focus on standards, communication, food safety, waste accuracy and completion of checklist tasks.';
-  }
-
-  const ai = document.getElementById('ai_coach_card');
-  if(ai) ai.textContent = coach;
-
-  if(typeof saveData === 'function') saveData();
-}
-</script>
-
-
-<script>
-function randomChoice(arr){
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function randomNumber(min, max, decimals=0){
-  const v = Math.random() * (max - min) + min;
-  return decimals ? v.toFixed(decimals) : Math.round(v);
-}
-
-function setField(id, value){
-  const el = document.getElementById(id);
-  if(!el) return;
-  el.value = value;
-  el.dispatchEvent(new Event('input', {bubbles:true}));
-  el.dispatchEvent(new Event('change', {bubbles:true}));
-}
-
-function setCheck(id, value){
-  const el = document.getElementById(id);
-  if(!el) return;
-  el.checked = !!value;
-  el.dispatchEvent(new Event('change', {bubbles:true}));
-}
-
-function loadDemoData(){
-  const managers = ['Dariusz', 'Anna', 'Mark', 'Sarah', 'Tom'];
-  const shifts = ['Morning', 'Evening', 'Overnight'];
-  const shift = randomChoice(shifts);
-
-  const today = new Date().toISOString().slice(0,10);
-
-  setField('shift_date', today);
-  setField('manager_name', randomChoice(managers));
-  setField('shift_type', shift);
-
-  if(typeof renderShiftChecklist === 'function') renderShiftChecklist();
-
-  setField('sales', randomNumber(3200, 7800, 2));
-  setField('guests', randomNumber(420, 1250));
-  setField('oepe', randomNumber(85, 155));
-  setField('kvs', randomNumber(40, 82));
-  setField('r2p', randomNumber(60, 115));
-  setField('mcdelivery', randomNumber(110, 210));
-  setField('labour', randomNumber(14, 24, 1));
-  setField('csat', randomNumber(82, 98, 1));
-
-  setField('raw_waste', randomNumber(0.12, 0.38, 2));
-  setField('full_waste', randomNumber(0.08, 0.32, 2));
-  setField('promo_waste', randomNumber(0.01, 0.08, 2));
-  setField('crew_meals', randomChoice([randomNumber(0.08, 0.22, 2), randomNumber(0.35, 0.65, 2)]));
-  setField('non_recipe', randomNumber(0.35, 1.10, 2));
-
-  // Random checklist completion
-  const tasks = Array.from(document.querySelectorAll('input[data-checklist-task]'));
-  tasks.forEach(task => {
-    setCheck(task.id, Math.random() > 0.22);
-  });
-
-  // Handover quick selections
-  ['hw_breakfast_ready','hw_stockup_done','hw_coffee_clean','hw_lobby_clean','hw_kitchen_good','hw_dt_good',
-   'hf_raw_watch','hf_full_watch','hf_oepe_focus','hf_kvs_focus','hf_stock_low','hf_delivery_check'
-  ].forEach(id => setCheck(id, Math.random() > 0.45));
-
-  setField('handover_optional', randomChoice([
-    'Please continue to monitor service times and waste entries.',
-    'Maintenance follow up may be needed if equipment issues continue.',
-    'Next shift should keep focus on DT flow and stock levels.',
-    'Please check that all waste and crew meals are entered correctly.'
-  ]));
-
-  // Star of the Shift demo
-  const names = ['Troy', 'Pavithra', 'Ishan', 'Najma', 'Kasya', 'Brijesh', 'Tayyabali'];
-  setField('star_name', randomChoice(names));
-  setField('star_tone', randomChoice(['Professional', 'Warm', 'Very positive', 'Short']));
-  setField('star_shift_type', shift);
-  setField('star_length', randomChoice(['Standard', 'Short', 'Detailed']));
-
-  ['st_kitchen','st_dt1','st_dt2','st_mcdelivery','st_lobby','st_beverage','st_stock','st_breakfast'].forEach(id => setCheck(id, false));
-  randomChoice([
-    ['st_kitchen','st_breakfast','st_stock'],
-    ['st_dt2','st_beverage','st_stock'],
-    ['st_mcdelivery','st_lobby'],
-    ['st_dt1','st_dt2'],
-    ['st_kitchen','st_stock']
-  ]).forEach(id => setCheck(id, true));
-
-  ['str_teamwork','str_cleanliness','str_speed','str_customer','str_stock','str_initiative'].forEach(id => setCheck(id, Math.random() > 0.5));
-
-  setField('star_notes', randomChoice([
-    'kept the station clean, completed stock up and supported the team',
-    'worked with great pace and helped maintain good service flow',
-    'showed a positive attitude and supported others during the shift',
-    'maintained high standards and helped prepare the next part of the shift'
-  ]));
-
-  if(typeof calculateChecklistCompletion === 'function') calculateChecklistCompletion();
-  if(typeof generateHandover === 'function') generateHandover();
-  if(typeof generateStarFeedback === 'function') generateStarFeedback();
-  if(typeof calculateKPIHealth === 'function') calculateKPIHealth();
-  if(typeof calculateShiftScore === 'function') calculateShiftScore();
-  if(typeof generateFullShiftReport === 'function') generateFullShiftReport();
-  if(typeof saveData === 'function') saveData();
-
-  alert('Demo data loaded.');
-}
-</script>
-
-
-<script>
-function resetSavedData(){
-  if(!confirm('Clear all Assistant Manager saved data?')) return;
-
-  try{
-    Object.keys(localStorage).forEach(function(key){
-      if(
-        key.startsWith('assistant_manager') ||
-        key.startsWith('assistant-manager') ||
-        key.startsWith('sb_')
-      ){
-        localStorage.removeItem(key);
-      }
-    });
-
-    // Also remove known older keys used during development
-    [
-      'assistant_manager_mcd_v26',
-      'assistant_manager_mcd_v40',
-      'assistant_manager_v26_autosave'
-    ].forEach(function(key){
-      localStorage.removeItem(key);
-    });
-  }catch(e){
-    localStorage.clear();
-  }
-
-  // Clear visible fields before reload for immediate feedback
-  document.querySelectorAll('input:not(.navRadio), textarea, select').forEach(function(el){
-    if(el.type === 'checkbox'){
-      el.checked = false;
-    }else if(el.tagName === 'SELECT'){
-      el.selectedIndex = 0;
-    }else{
-      el.value = '';
-    }
-  });
-
-  setTimeout(function(){
-    location.reload();
-  }, 100);
-}
-</script>
-
-
-<script>
-(function(){
-  const AM_KEYS = [
-    'assistant_manager_mcd_v26',
-    'assistant_manager_mcd_v40',
-    'assistant_manager_v26_autosave',
-    'assistant_manager_mcd_v44',
-    'assistant_manager_mcd_current'
-  ];
-
-  function removeAssistantManagerStorage(){
-    try{
-      for(let i = localStorage.length - 1; i >= 0; i--){
-        const key = localStorage.key(i);
-        if(
-          key &&
-          (
-            key.indexOf('assistant_manager') === 0 ||
-            key.indexOf('assistant-manager') === 0 ||
-            key.indexOf('assistantManager') === 0 ||
-            key.indexOf('sb_') === 0
-          )
-        ){
-          localStorage.removeItem(key);
-        }
-      }
-      AM_KEYS.forEach(k => localStorage.removeItem(k));
-    }catch(e){
-      try{ localStorage.clear(); }catch(err){}
-    }
-  }
-
-  function clearFields(){
-    document.querySelectorAll('input:not(.navRadio), textarea, select').forEach(el => {
-      if(el.type === 'checkbox'){
-        el.checked = false;
-      }else if(el.tagName === 'SELECT'){
-        if(el.id === 'shift_type') el.value = 'Overnight';
-        else if(el.id === 'checklist_shift') el.value = 'Overnight';
-        else el.selectedIndex = 0;
-      }else{
-        el.value = '';
-      }
-    });
-
-    const outputs = {
-      shift_health_output: '<div class="score">--</div><div class="label">Enter KPI data and calculate</div>',
-      kpi_health_grid: '',
-      kpi_coach_output: 'KPI coaching tips will appear here after calculation.',
-      shift_score_card: '<div class="score">--</div><div class="label">Shift Score</div>',
-      ai_coach_card: 'AI Coach recommendations will appear here.',
-      handover_output: '',
-      star_output: '',
-      full_shift_report: ''
-    };
-
-    Object.keys(outputs).forEach(id => {
-      const el = document.getElementById(id);
-      if(!el) return;
-      if(el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') el.value = outputs[id];
-      else el.innerHTML = outputs[id];
-    });
-  }
-
-  window.hardResetAppData = function(){
-    if(!confirm('Clear all saved data and demo data?')) return;
-
-    removeAssistantManagerStorage();
-
-    // Mark reset so older load functions do not restore immediately.
-    try{
-      sessionStorage.setItem('assistant_manager_hard_reset_done', '1');
-    }catch(e){}
-
-    clearFields();
-
-    setTimeout(function(){
-      location.href = location.pathname + '?reset=' + Date.now();
-    }, 150);
-  };
-
-  // Override older reset names too.
-  window.resetSavedData = window.hardResetAppData;
-
-  // On load after hard reset, remove storage again before old autosave can restore.
-  if(location.search.indexOf('reset=') !== -1){
-    removeAssistantManagerStorage();
-    try{ sessionStorage.removeItem('assistant_manager_hard_reset_done'); }catch(e){}
-    setTimeout(clearFields, 50);
-    setTimeout(function(){
-      if(history && history.replaceState){
-        history.replaceState(null, '', location.pathname);
-      }
-    }, 200);
-  }
-})();
-</script>
-
-
-<script>
-(function(){
-  const AM_STORAGE_KEYS = [
-    'assistant_manager_mcd_v26',
-    'assistant_manager_mcd_v40',
-    'assistant_manager_v26_autosave',
-    'assistant_manager_mcd_v44',
-    'assistant_manager_mcd_current'
-  ];
-
-  function clearAMStorage(){
-    try{
-      for(let i = localStorage.length - 1; i >= 0; i--){
-        const key = localStorage.key(i);
-        if(!key) continue;
-        if(
-          key.indexOf('assistant_manager') === 0 ||
-          key.indexOf('assistant-manager') === 0 ||
-          key.indexOf('assistantManager') === 0 ||
-          key.indexOf('sb_') === 0
-        ){
-          localStorage.removeItem(key);
-        }
-      }
-      AM_STORAGE_KEYS.forEach(k => localStorage.removeItem(k));
-    }catch(e){
-      try{ localStorage.clear(); }catch(err){}
-    }
-  }
-
-  function clearVisibleApp(){
-    document.querySelectorAll('input:not(.navRadio), textarea, select').forEach(el => {
-      if(el.type === 'checkbox'){
-        el.checked = false;
-      }else if(el.tagName === 'SELECT'){
-        if(el.id === 'shift_type' || el.id === 'checklist_shift') el.value = 'Overnight';
-        else el.selectedIndex = 0;
-      }else{
-        el.value = '';
-      }
-      el.dispatchEvent(new Event('input', {bubbles:true}));
-      el.dispatchEvent(new Event('change', {bubbles:true}));
-    });
-
-    const setHTML = (id, html) => {
-      const el = document.getElementById(id);
-      if(el) el.innerHTML = html;
-    };
-    const setText = (id, text) => {
-      const el = document.getElementById(id);
-      if(el) el.textContent = text;
-    };
-    const setVal = (id, val) => {
-      const el = document.getElementById(id);
-      if(el) el.value = val;
-    };
-
-    setHTML('shift_health_output','<div class="score">--</div><div class="label">Enter KPI data and calculate</div>');
-    setHTML('kpi_screen_health_output','<div class="score">--</div><div class="label">Enter KPI data and calculate</div>');
-    setHTML('shift_score_card','<div class="score">--</div><div class="label">Shift Score</div>');
-    setText('kpi_coach_output','KPI coaching tips will appear here after calculation.');
-    setText('kpi_screen_coach_output','KPI coaching tips will appear here after calculation.');
-    setText('ai_coach_card','AI Coach recommendations will appear here.');
-    setHTML('kpi_health_grid','');
-    setHTML('kpi_screen_health_grid','');
-    setVal('handover_output','');
-    setVal('star_output','');
-    setVal('full_shift_report','');
-
-    if(typeof renderShiftChecklist === 'function') renderShiftChecklist();
-    if(typeof calculateChecklistCompletion === 'function') calculateChecklistCompletion();
-    if(typeof calculateOvernightCompletion === 'function') calculateOvernightCompletion();
-  }
-
-  function buttonFeedback(btn, text){
-    if(!btn) return;
-    const old = btn.textContent;
-    btn.textContent = text;
-    btn.style.transform = 'scale(.97)';
-    btn.style.filter = 'brightness(1.4)';
-    setTimeout(() => {
-      btn.style.transform = '';
-      btn.style.filter = '';
-      btn.textContent = old;
-    }, 900);
-  }
-
-  window.clearAssistantManagerData = function(btn){
-    if(!confirm('Clear all saved data and demo data?')) return;
-
-    // Stop old autosave functions from immediately writing old values again.
-    window.__AM_RESETTING__ = true;
-
-    clearAMStorage();
-    clearVisibleApp();
-    clearAMStorage();
-
-    buttonFeedback(btn, 'Cleared ✓');
-
-    setTimeout(() => {
-      clearAMStorage();
-      window.__AM_RESETTING__ = false;
-    }, 500);
-  };
-
-  // Override old reset names.
-  window.resetSavedData = function(){ window.clearAssistantManagerData(document.activeElement); };
-  window.hardResetAppData = function(){ window.clearAssistantManagerData(document.activeElement); };
-
-  // Wrap old saveData if it exists, so it does nothing during reset.
-  if(typeof window.saveData === 'function'){
-    const oldSaveData = window.saveData;
-    window.saveData = function(){
-      if(window.__AM_RESETTING__) return;
-      return oldSaveData.apply(this, arguments);
-    };
-  }
-})();
-</script>
-
-
-<script>
-(function(){
-  let clearArmed = false;
-
-  function showStatus(message){
-    const box = document.getElementById('homeActionStatus');
-    if(!box) return;
-    box.style.display = 'block';
-    box.textContent = message;
-    setTimeout(()=>{ box.style.display = 'none'; }, 2200);
-  }
-
-  function clearAssistantStorageOnly(){
-    try{
-      for(let i = localStorage.length - 1; i >= 0; i--){
-        const key = localStorage.key(i);
-        if(!key) continue;
-        if(
-          key.indexOf('assistant_manager') === 0 ||
-          key.indexOf('assistant-manager') === 0 ||
-          key.indexOf('assistantManager') === 0 ||
-          key.indexOf('sb_') === 0
-        ){
-          localStorage.removeItem(key);
-        }
-      }
-      [
-        'assistant_manager_mcd_v26',
-        'assistant_manager_mcd_v40',
-        'assistant_manager_v26_autosave',
-        'assistant_manager_mcd_v44',
-        'assistant_manager_mcd_current'
-      ].forEach(k => localStorage.removeItem(k));
-    }catch(e){
-      try{ localStorage.clear(); }catch(err){}
-    }
-  }
-
-  function clearVisibleFields(){
-    document.querySelectorAll('input:not(.navRadio), textarea, select').forEach(el=>{
-      if(el.type === 'checkbox'){
-        el.checked = false;
-      }else if(el.tagName === 'SELECT'){
-        if(el.id === 'shift_type' || el.id === 'checklist_shift') el.value = 'Overnight';
-        else el.selectedIndex = 0;
-      }else{
-        el.value = '';
-      }
-      el.dispatchEvent(new Event('input', {bubbles:true}));
-      el.dispatchEvent(new Event('change', {bubbles:true}));
-    });
-
-    const htmlReset = {
-      shift_health_output:'<div class="score">--</div><div class="label">Enter KPI data and calculate</div>',
-      kpi_screen_health_output:'<div class="score">--</div><div class="label">Enter KPI data and calculate</div>',
-      shift_score_card:'<div class="score">--</div><div class="label">Shift Score</div>'
-    };
-    Object.keys(htmlReset).forEach(id=>{
-      const el = document.getElementById(id);
-      if(el) el.innerHTML = htmlReset[id];
-    });
-
-    ['kpi_health_grid','kpi_screen_health_grid'].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el) el.innerHTML='';
-    });
-
-    const textReset = {
-      kpi_coach_output:'KPI coaching tips will appear here after calculation.',
-      kpi_screen_coach_output:'KPI coaching tips will appear here after calculation.',
-      ai_coach_card:'AI Coach recommendations will appear here.',
-      checklist_missing:'Missing tasks will appear here.'
-    };
-    Object.keys(textReset).forEach(id=>{
-      const el=document.getElementById(id);
-      if(el) el.textContent=textReset[id];
-    });
-
-    ['handover_output','star_output','full_shift_report'].forEach(id=>{
-      const el=document.getElementById(id);
-      if(el) el.value='';
-    });
-
-    if(typeof renderShiftChecklist === 'function') renderShiftChecklist();
-    if(typeof calculateChecklistCompletion === 'function') calculateChecklistCompletion();
-  }
-
-  function iPhoneClearAll(btn){
-    if(!clearArmed){
-      clearArmed = true;
-      if(btn) btn.textContent = 'Tap again to clear';
-      showStatus('Tap Clear All Data again to confirm.');
-      setTimeout(()=>{
-        clearArmed = false;
-        if(btn) btn.textContent = 'Clear All Data';
-      }, 3500);
-      return;
-    }
-
-    clearArmed = false;
-    if(btn){
-      btn.textContent = 'Cleared ✓';
-      btn.style.transform = 'scale(.97)';
-      btn.style.filter = 'brightness(1.35)';
-    }
-
-    window.__AM_RESETTING__ = true;
-    clearAssistantStorageOnly();
-    clearVisibleFields();
-    clearAssistantStorageOnly();
-
-    setTimeout(()=>{
-      window.__AM_RESETTING__ = false;
-      if(btn){
-        btn.textContent = 'Clear All Data';
-        btn.style.transform = '';
-        btn.style.filter = '';
-      }
-      showStatus('All data cleared.');
-    }, 700);
-  }
-
-  function iPhoneLoadDemo(btn){
-    if(btn){
-      btn.textContent = 'Loading...';
-      btn.style.transform = 'scale(.97)';
-      btn.style.filter = 'brightness(1.35)';
-    }
-
-    try{
-      if(typeof window.loadDemoData === 'function'){
-        window.loadDemoData();
-      }else{
-        throw new Error('loadDemoData not found');
-      }
-      showStatus('Demo data loaded.');
-    }catch(e){
-      showStatus('Demo data could not load in this preview. Open in Safari or GitHub Pages.');
-    }
-
-    setTimeout(()=>{
-      if(btn){
-        btn.textContent = 'Load Demo Data';
-        btn.style.transform = '';
-        btn.style.filter = '';
-      }
-    }, 900);
-  }
-
-  window.clearAssistantManagerData = function(btn){ iPhoneClearAll(btn || document.getElementById('btnClearData')); };
-  window.resetSavedData = window.clearAssistantManagerData;
-  window.hardResetAppData = window.clearAssistantManagerData;
-
-  document.addEventListener('DOMContentLoaded', ()=>{
-    const demo = document.getElementById('btnLoadDemo');
-    const clear = document.getElementById('btnClearData');
-
-    if(demo){
-      demo.addEventListener('click', e=>{
-        e.preventDefault();
-        iPhoneLoadDemo(demo);
-      }, {passive:false});
-      demo.addEventListener('touchstart', ()=>demo.style.transform='scale(.97)', {passive:true});
-      demo.addEventListener('touchend', ()=>demo.style.transform='', {passive:true});
-    }
-
-    if(clear){
-      clear.addEventListener('click', e=>{
-        e.preventDefault();
-        iPhoneClearAll(clear);
-      }, {passive:false});
-      clear.addEventListener('touchstart', ()=>clear.style.transform='scale(.97)', {passive:true});
-      clear.addEventListener('touchend', ()=>clear.style.transform='', {passive:true});
-    }
-  });
-})();
-</script>
-
-
-<script>
-(function(){
-  let clearReady = false;
-  let lastTouch = 0;
-
-  function flash(btn, text){
-    if(!btn) return;
-    const old = btn.textContent;
-    btn.classList.add('touchFlash');
-    if(text) btn.textContent = text;
-    setTimeout(function(){
-      btn.classList.remove('touchFlash');
-      btn.textContent = old;
-    }, 850);
-  }
-
-  function showHomeStatus(msg){
-    let box = document.getElementById('homeActionStatus');
-    if(!box){
-      box = document.createElement('div');
-      box.id = 'homeActionStatus';
-      box.className = 'coachBox';
-      const controls = document.querySelector('.homeControls');
-      if(controls && controls.parentNode){
-        controls.parentNode.insertBefore(box, controls.nextSibling);
-      }
-    }
-    box.style.display = 'block';
-    box.textContent = msg;
-    setTimeout(function(){ box.style.display='none'; }, 2200);
-  }
-
-  function clearStorage(){
-    try{
-      for(let i=localStorage.length-1;i>=0;i--){
-        const k = localStorage.key(i);
-        if(!k) continue;
-        if(k.indexOf('assistant_manager')===0 || k.indexOf('assistant-manager')===0 || k.indexOf('assistantManager')===0 || k.indexOf('sb_')===0){
-          localStorage.removeItem(k);
-        }
-      }
-      ['assistant_manager_mcd_v26','assistant_manager_mcd_v40','assistant_manager_v26_autosave','assistant_manager_mcd_v44','assistant_manager_mcd_current'].forEach(function(k){
-        localStorage.removeItem(k);
-      });
-    }catch(e){
-      try{ localStorage.clear(); }catch(err){}
-    }
-  }
-
-  function clearFields(){
-    document.querySelectorAll('input:not(.navRadio), textarea, select').forEach(function(el){
-      if(el.type === 'checkbox') el.checked = false;
-      else if(el.tagName === 'SELECT'){
-        if(el.id === 'shift_type' || el.id === 'checklist_shift') el.value = 'Overnight';
-        else el.selectedIndex = 0;
-      }else el.value = '';
-      el.dispatchEvent(new Event('input', {bubbles:true}));
-      el.dispatchEvent(new Event('change', {bubbles:true}));
-    });
-
-    const htmls = {
-      shift_health_output:'<div class="score">--</div><div class="label">Enter KPI data and calculate</div>',
-      kpi_screen_health_output:'<div class="score">--</div><div class="label">Enter KPI data and calculate</div>',
-      shift_score_card:'<div class="score">--</div><div class="label">Shift Score</div>'
-    };
-    Object.keys(htmls).forEach(function(id){
-      const el=document.getElementById(id);
-      if(el) el.innerHTML=htmls[id];
-    });
-    ['kpi_health_grid','kpi_screen_health_grid'].forEach(function(id){
-      const el=document.getElementById(id);
-      if(el) el.innerHTML='';
-    });
-    ['handover_output','star_output','full_shift_report'].forEach(function(id){
-      const el=document.getElementById(id);
-      if(el) el.value='';
-    });
-    const txt = {
-      kpi_coach_output:'KPI coaching tips will appear here after calculation.',
-      kpi_screen_coach_output:'KPI coaching tips will appear here after calculation.',
-      ai_coach_card:'AI Coach recommendations will appear here.'
-    };
-    Object.keys(txt).forEach(function(id){
-      const el=document.getElementById(id);
-      if(el) el.textContent=txt[id];
-    });
-
-    if(typeof renderShiftChecklist === 'function') renderShiftChecklist();
-    if(typeof calculateChecklistCompletion === 'function') calculateChecklistCompletion();
-  }
-
-  window.amTouchLoadDemo = function(btn){
-    const now = Date.now();
-    if(now - lastTouch < 350) return;
-    lastTouch = now;
-    flash(btn, 'Loading...');
-    try{
-      if(typeof loadDemoData === 'function'){
-        loadDemoData();
-        showHomeStatus('Demo data loaded.');
-      }else{
-        showHomeStatus('Demo loader not available in this preview.');
-      }
-    }catch(e){
-      showHomeStatus('Open this file in Safari, not preview mode.');
-    }
-  };
-
-  window.amTouchClearData = function(btn){
-    const now = Date.now();
-    if(now - lastTouch < 350) return;
-    lastTouch = now;
-
-    if(!clearReady){
-      clearReady = true;
-      flash(btn, 'Tap again');
-      showHomeStatus('Tap Clear All Data again to confirm.');
-      setTimeout(function(){ clearReady=false; }, 3500);
-      return;
-    }
-
-    clearReady = false;
-    window.__AM_RESETTING__ = true;
-    clearStorage();
-    clearFields();
-    clearStorage();
-    flash(btn, 'Cleared ✓');
-    showHomeStatus('All data cleared.');
-    setTimeout(function(){ window.__AM_RESETTING__ = false; }, 800);
-  };
-
-  // Avoid old handlers fighting with this version
-  window.clearAssistantManagerData = window.amTouchClearData;
-  window.resetSavedData = function(){ window.amTouchClearData(document.getElementById('btnClearData')); };
-  window.hardResetAppData = window.resetSavedData;
-
-  document.addEventListener('DOMContentLoaded', function(){
-    const controls = document.querySelector('.homeControls');
-    if(controls){
-      controls.style.position = 'relative';
-      controls.style.zIndex = '9999';
-      controls.style.pointerEvents = 'auto';
-    }
-    ['btnLoadDemo','btnClearData'].forEach(function(id){
-      const b=document.getElementById(id);
-      if(b){
-        b.style.pointerEvents='auto';
-        b.style.position='relative';
-        b.style.zIndex='10000';
-      }
-    });
-  });
-})();
-</script>
-
-
-<script>
-(function(){
-  function setupManagerPlusDate(){
-    var el = document.getElementById('shift_date');
-    if(!el) return;
-
-    el.addEventListener('input', function(){
-      var digits = String(el.value || '').replace(/\D/g, '').slice(0, 8);
-      var formatted = '';
-
-      if(digits.length <= 2){
-        formatted = digits;
-      }else if(digits.length <= 4){
-        formatted = digits.slice(0,2) + '/' + digits.slice(2);
-      }else{
-        formatted = digits.slice(0,2) + '/' + digits.slice(2,4) + '/' + digits.slice(4);
-      }
-
-      el.value = formatted;
-
-      if(typeof saveData === 'function'){
-        try{ saveData(); }catch(e){}
-      }
-    });
-  }
-
-  if(document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', setupManagerPlusDate);
-  }else{
-    setupManagerPlusDate();
-  }
-})();
-</script>
-
-
-<script>
-function copyTextarea(id){
-  const el=document.getElementById(id);
-  if(!el || !el.value.trim()){
-    alert('Nothing to copy.');
-    return;
-  }
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(el.value)
-      .then(()=>alert('Copied.'))
-      .catch(()=>fallbackCopyTextarea(el));
-  }else{
-    fallbackCopyTextarea(el);
-  }
-}
-function fallbackCopyTextarea(el){
-  el.focus();
-  el.select();
-  try{
-    document.execCommand('copy');
-    alert('Copied.');
-  }catch(e){
-    alert('Copy failed.');
-  }
-}
-</script>
-
-<script>
-(function(){
-window.amToast=function(msg){
- let t=document.getElementById('amToast');
- if(!t){
-   t=document.createElement('div');
-   t.id='amToast';
-   t.className='toastMsg';
-   document.body.appendChild(t);
- }
- t.textContent=msg;
- t.classList.add('show');
- clearTimeout(window.__amToastTimer);
- window.__amToastTimer=setTimeout(()=>t.classList.remove('show'),2200);
-};
-
-window.alert=function(msg){
- amToast(String(msg||''));
-};
-
-window.confirm=function(msg){
- amToast(String(msg||''));
- return true;
-};
-})();
-</script>
-
-
-
-
-<script>
-/* Manager+ v6.0.1 fix: visible editable tasks + target defaults */
-(function(){
-  const PROFILE_KEY = 'manager_plus_profile_v60';
-  const TASKS_KEY = 'manager_plus_shift_tasks_v60';
-
-  function deepClone(obj){
-    return JSON.parse(JSON.stringify(obj || {}));
-  }
-
-  const DEFAULT_SHIFT_TASKS = deepClone(window.checklistData || {
-    Morning:{
-      "Opening / Breakfast":["Breakfast area ready","Coffee machine ready","Egg cooker ready","Muffins ready","Breakfast stock up complete"],
-      "Food Safety":["Food Safety Walk complete","Temperature checks complete","Date dot check complete","Delivery checked"],
-      "Service":["Lobby open and clean","Customer toilets checked","DT ready","Lunch transition planned"],
-      "Handover":["Issues from overnight reviewed","Manager communication updated"]
-    },
-    Evening:{
-      "Pre-Rush":["Dinner rush preparation complete","Break plan ready","Stock up complete","Deployment checked"],
-      "Operations":["Waste monitored","DT flow checked","Kitchen positioning checked","McDelivery area organised"],
-      "Cleaning":["Lobby cleaning plan complete","Customer toilets checked","Beverage area stocked","Fries station ready"],
-      "Handover to Overnight":["Maintenance issues communicated","Waste notes communicated","Staffing notes communicated","Overnight priorities prepared"]
-    },
-    Overnight:{
-      "Food Safety":["Food Safety Walk complete","Temperature checks complete","DFS complete","Waste entered","Date dot check complete"],
-      "Equipment":["Coffee machine cleaned","Beverage area cleaned","Dishwasher checked","Ice machine checked","Grills / Fryers checked"],
-      "Security & Cash":["Back door locked","DT windows locked","Safe count complete","Tills checked"],
-      "Breakfast":["Breakfast prepared","Egg cooker ready","Muffins ready","Breakfast stock up complete"],
-      "Close / Open":["Kiosks restarted","Lobby ready","Kitchen ready","Stock up complete","Shift handover complete"]
-    }
-  });
-
-  function toast(msg){
-    if(typeof window.amToast === 'function') window.amToast(msg);
-    else if(window.alert) window.alert(msg);
-  }
-
-  function loadTasks(){
-    try{
-      const saved = JSON.parse(localStorage.getItem(TASKS_KEY) || 'null');
-      if(saved && typeof saved === 'object') return saved;
-    }catch(e){}
-    const fresh = deepClone(DEFAULT_SHIFT_TASKS);
-    localStorage.setItem(TASKS_KEY, JSON.stringify(fresh));
-    return fresh;
-  }
-
-  function saveTasks(data){
-    localStorage.setItem(TASKS_KEY, JSON.stringify(data));
-  }
-
-  function loadProfile(){
-    try{
-      return JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
-    }catch(e){
-      return {};
-    }
-  }
-
-  function saveProfile(){
-    const profile = {
-      restaurantName: String(document.getElementById('restaurant_name')?.value || '').trim(),
-      defaultManagerName: String(document.getElementById('default_manager_name')?.value || '').trim()
-    };
-    localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
-
-    const manager = document.getElementById('manager_name');
-    if(manager && !String(manager.value || '').trim() && profile.defaultManagerName){
-      manager.value = profile.defaultManagerName;
-      manager.dispatchEvent(new Event('input', {bubbles:true}));
-    }
-
-    if(typeof saveData === 'function') saveData();
-  }
-
-  function applyProfile(){
-    const profile = loadProfile();
-    const restaurantInput = document.getElementById('restaurant_name');
-    const managerDefaultInput = document.getElementById('default_manager_name');
-    const managerInput = document.getElementById('manager_name');
-
-    if(restaurantInput && profile.restaurantName) restaurantInput.value = profile.restaurantName;
-    if(managerDefaultInput && profile.defaultManagerName) managerDefaultInput.value = profile.defaultManagerName;
-    if(managerInput && !String(managerInput.value || '').trim() && profile.defaultManagerName){
-      managerInput.value = profile.defaultManagerName;
-    }
-  }
-
-  function ensureTargetDefaults(){
-    const defaults = {
-      target_oepe:'110',
-      target_kvs:'55',
-      target_r2p:'80',
-      target_mcdelivery:'150',
-      target_raw:'0.25',
-      target_full:'0.20',
-      target_crew:'0.50',
-      target_nonrecipe:'0.90'
-    };
-
-    Object.keys(defaults).forEach(id => {
-      const el = document.getElementById(id);
-      if(el && String(el.value || '').trim() === ''){
-        el.value = defaults[id];
-        el.dispatchEvent(new Event('input', {bubbles:true}));
-      }
-    });
-  }
-
-  window.renderShiftTaskEditor = function(){
-    const holder = document.getElementById('shift_task_editor');
-    if(!holder) return;
-
-    const data = loadTasks();
-    const shifts = ['Morning','Evening','Overnight'];
-
-    holder.innerHTML = '';
-
-    shifts.forEach(shift => {
-      const groupBox = document.createElement('div');
-      groupBox.className = 'taskEditorGroup';
-
-      const title = document.createElement('h4');
-      title.textContent = shift;
-      groupBox.appendChild(title);
-
-      const groups = data[shift] || {};
-      const groupNames = Object.keys(groups);
-
-      if(!groupNames.length){
-        const empty = document.createElement('div');
-        empty.className = 'customTaskRow';
-        empty.innerHTML = '<span>No tasks yet.</span>';
-        groupBox.appendChild(empty);
-      }
-
-      groupNames.forEach(group => {
-        const tasks = groups[group] || [];
-        if(tasks.length){
-          const label = document.createElement('label');
-          label.className = 'fieldLabel';
-          label.textContent = group;
-          groupBox.appendChild(label);
-        }
-
-        tasks.forEach((task, index) => {
-          const row = document.createElement('div');
-          row.className = 'customTaskRow';
-
-          const span = document.createElement('span');
-          span.textContent = task;
-
-          const btn = document.createElement('button');
-          btn.className = 'deleteTaskBtn';
-          btn.type = 'button';
-          btn.textContent = 'Delete';
-          btn.addEventListener('click', function(){
-            window.deleteShiftTask(shift, group, index);
-          });
-
-          row.appendChild(span);
-          row.appendChild(btn);
-          groupBox.appendChild(row);
-        });
-      });
-
-      const addBox = document.createElement('div');
-      addBox.className = 'addTaskBox';
-
-      const input = document.createElement('input');
-      input.id = 'new_task_' + shift;
-      input.type = 'text';
-      input.placeholder = 'Add new ' + shift + ' task';
-
-      const addBtn = document.createElement('button');
-      addBtn.className = 'generateBtn';
-      addBtn.type = 'button';
-      addBtn.textContent = 'Add Task';
-      addBtn.addEventListener('click', function(){
-        window.addShiftTask(shift);
-      });
-
-      addBox.appendChild(input);
-      addBox.appendChild(addBtn);
-      groupBox.appendChild(addBox);
-
-      holder.appendChild(groupBox);
-    });
-  };
-
-  window.addShiftTask = function(shift){
-    const input = document.getElementById('new_task_' + shift);
-    const task = String(input?.value || '').trim();
-
-    if(!task){
-      toast('Enter task name first.');
-      return;
-    }
-
-    const data = loadTasks();
-    if(!data[shift]) data[shift] = {};
-    if(!data[shift]['Custom Tasks']) data[shift]['Custom Tasks'] = [];
-
-    data[shift]['Custom Tasks'].push(task);
-    saveTasks(data);
-
-    if(input) input.value = '';
-
-    window.renderShiftTaskEditor();
-    if(typeof window.renderShiftChecklist === 'function') window.renderShiftChecklist();
-
-    toast('Task added.');
-  };
-
-  window.deleteShiftTask = function(shift, group, index){
-    const data = loadTasks();
-
-    if(!data[shift] || !data[shift][group]) return;
-
-    data[shift][group].splice(index, 1);
-    if(data[shift][group].length === 0){
-      delete data[shift][group];
-    }
-
-    saveTasks(data);
-
-    window.renderShiftTaskEditor();
-    if(typeof window.renderShiftChecklist === 'function') window.renderShiftChecklist();
-
-    toast('Task deleted.');
-  };
-
-  window.restoreDefaultShiftTasks = function(){
-    const fresh = deepClone(DEFAULT_SHIFT_TASKS);
-    saveTasks(fresh);
-    window.renderShiftTaskEditor();
-    if(typeof window.renderShiftChecklist === 'function') window.renderShiftChecklist();
-    toast('Default tasks restored.');
-  };
-
-  window.renderShiftChecklist = function(){
-    const shift = document.getElementById('shift_type')?.value || document.getElementById('checklist_shift')?.value || 'Overnight';
-    const hiddenShift = document.getElementById('checklist_shift');
-    if(hiddenShift) hiddenShift.value = shift;
-
-    const box = document.getElementById('dynamic_checklist');
-    if(!box) return;
-
-    const data = loadTasks();
-    const groups = data[shift] || {};
-    box.innerHTML = '';
-
-    Object.keys(groups).forEach(group => {
-      const groupWrap = document.createElement('div');
-      groupWrap.className = 'taskGroup';
-
-      const h = document.createElement('h3');
-      h.textContent = group;
-      groupWrap.appendChild(h);
-
-      (groups[group] || []).forEach(task => {
-        const id = 'cl_' + safeId(shift + '_' + group + '_' + task);
-
-        const label = document.createElement('label');
-        label.className = 'taskCheck';
-
-        const input = document.createElement('input');
-        input.id = id;
-        input.type = 'checkbox';
-        input.setAttribute('data-checklist-task', task);
-
-        label.appendChild(input);
-        label.appendChild(document.createTextNode(' ' + task));
-        groupWrap.appendChild(label);
-      });
-
-      box.appendChild(groupWrap);
-    });
-
-    if(typeof loadData === 'function') loadData();
-
-    document.querySelectorAll('input[data-checklist-task]').forEach(el => {
-      el.addEventListener('change', () => {
-        if(typeof saveData === 'function') saveData();
-        if(typeof calculateChecklistCompletion === 'function') calculateChecklistCompletion();
-      });
-    });
-
-    if(typeof calculateChecklistCompletion === 'function') calculateChecklistCompletion();
-  };
-
-  const previousFullReport = window.generateFullShiftReport;
-  window.generateFullShiftReport = function(){
-    if(typeof previousFullReport === 'function') previousFullReport();
-
-    const profile = loadProfile();
-    const restaurant = profile.restaurantName || String(document.getElementById('restaurant_name')?.value || '').trim();
-    const out = document.getElementById('full_shift_report');
-
-    if(out && restaurant && out.value && out.value.indexOf('Restaurant:') === -1){
-      out.value = out.value.replace('MANAGER DETAILS\n', 'MANAGER DETAILS\nRestaurant: ' + restaurant + '\n');
-      out.dispatchEvent(new Event('input', {bubbles:true}));
-    }
-  };
-
-  document.addEventListener('DOMContentLoaded', function(){
-    ensureTargetDefaults();
-    applyProfile();
-
-    ['restaurant_name','default_manager_name'].forEach(id => {
-      const el = document.getElementById(id);
-      if(el){
-        el.addEventListener('input', saveProfile);
-        el.addEventListener('change', saveProfile);
-      }
-    });
-
-    setTimeout(function(){
-      ensureTargetDefaults();
-      applyProfile();
-      window.renderShiftTaskEditor();
-      window.renderShiftChecklist();
-    }, 250);
-  });
-})();
-</script>
-
-
-<script>
-/* Manager+ v6.0.2 Save Configuration + Export Configuration File */
-(function(){
-  const CONFIG_KEY = 'manager_plus_full_configuration_v602';
-  const PROFILE_KEY = 'manager_plus_profile_v60';
-  const TASKS_KEY = 'manager_plus_shift_tasks_v60';
-
-  function getValue(id){
-    return String(document.getElementById(id)?.value || '').trim();
-  }
-
-  function setValue(id, value){
-    const el = document.getElementById(id);
-    if(!el) return;
-    el.value = value;
-    el.dispatchEvent(new Event('input', {bubbles:true}));
-    el.dispatchEvent(new Event('change', {bubbles:true}));
-  }
-
-  function getJson(key, fallback){
-    try{
-      const parsed = JSON.parse(localStorage.getItem(key) || 'null');
-      return parsed || fallback;
-    }catch(e){
-      return fallback;
-    }
-  }
-
-  function toast(msg){
-    if(typeof window.amToast === 'function') window.amToast(msg);
-    else alert(msg);
-  }
-
-  function collectConfiguration(){
-    const profile = {
-      restaurantName: getValue('restaurant_name'),
-      defaultManagerName: getValue('default_manager_name')
-    };
-
-    const targets = {
-      oepe: getValue('target_oepe'),
-      kvs: getValue('target_kvs'),
-      r2p: getValue('target_r2p'),
-      mcdelivery: getValue('target_mcdelivery'),
-      rawWaste: getValue('target_raw'),
-      fullWaste: getValue('target_full'),
-      crewMeals: getValue('target_crew'),
-      nonRecipe: getValue('target_nonrecipe')
-    };
-
-    const tasks = getJson(TASKS_KEY, window.getManagerPlusShiftTasks ? window.getManagerPlusShiftTasks() : {});
-
-    return {
-      app: 'Manager+',
-      version: '6.0.2',
-      savedAt: new Date().toISOString(),
-      profile,
-      targets,
-      tasks
-    };
-  }
-
-  window.saveManagerPlusConfiguration = function(){
-    const config = collectConfiguration();
-
-    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
-    localStorage.setItem(PROFILE_KEY, JSON.stringify(config.profile));
-    localStorage.setItem(TASKS_KEY, JSON.stringify(config.tasks));
-
-    Object.entries({
-      target_oepe: config.targets.oepe,
-      target_kvs: config.targets.kvs,
-      target_r2p: config.targets.r2p,
-      target_mcdelivery: config.targets.mcdelivery,
-      target_raw: config.targets.rawWaste,
-      target_full: config.targets.fullWaste,
-      target_crew: config.targets.crewMeals,
-      target_nonrecipe: config.targets.nonRecipe
-    }).forEach(([id, value]) => setValue(id, value));
-
-    if(typeof saveData === 'function') saveData();
-    if(typeof renderShiftChecklist === 'function') renderShiftChecklist();
-
-    toast('Configuration saved.');
-  };
-
-  window.exportManagerPlusConfiguration = function(){
-    const config = collectConfiguration();
-
-    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
-    localStorage.setItem(PROFILE_KEY, JSON.stringify(config.profile));
-    localStorage.setItem(TASKS_KEY, JSON.stringify(config.tasks));
-
-    const safeRestaurant = (config.profile.restaurantName || 'restaurant')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '') || 'restaurant';
-
-    const filename = 'managerplus-config-' + safeRestaurant + '.json';
-    const blob = new Blob([JSON.stringify(config, null, 2)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-
-    setTimeout(function(){
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 100);
-
-    toast('Configuration file saved.');
-  };
-})();
-</script>
-
-
-<script>
-/* Manager+ v6.0.3 Load Configuration from File */
-(function(){
-  const CONFIG_KEY = 'manager_plus_full_configuration_v602';
-  const PROFILE_KEY = 'manager_plus_profile_v60';
-  const TASKS_KEY = 'manager_plus_shift_tasks_v60';
-
-  function toast(msg){
-    if(typeof window.amToast === 'function') window.amToast(msg);
-    else alert(msg);
-  }
-
-  function setValue(id, value){
-    const el = document.getElementById(id);
-    if(!el) return;
-    el.value = value || '';
-    el.dispatchEvent(new Event('input', {bubbles:true}));
-    el.dispatchEvent(new Event('change', {bubbles:true}));
-  }
-
-  function applyImportedConfiguration(config){
-    if(!config || typeof config !== 'object'){
-      toast('Invalid configuration file.');
-      return;
-    }
-
-    const profile = config.profile || {};
-    const targets = config.targets || {};
-    const tasks = config.tasks || {};
-
-    setValue('restaurant_name', profile.restaurantName || '');
-    setValue('default_manager_name', profile.defaultManagerName || '');
-
-    if(profile.defaultManagerName){
-      setValue('manager_name', profile.defaultManagerName);
-    }
-
-    setValue('target_oepe', targets.oepe || '110');
-    setValue('target_kvs', targets.kvs || '55');
-    setValue('target_r2p', targets.r2p || '80');
-    setValue('target_mcdelivery', targets.mcdelivery || '150');
-    setValue('target_raw', targets.rawWaste || '0.25');
-    setValue('target_full', targets.fullWaste || '0.20');
-    setValue('target_crew', targets.crewMeals || '0.50');
-    setValue('target_nonrecipe', targets.nonRecipe || '0.90');
-
-    localStorage.setItem(PROFILE_KEY, JSON.stringify({
-      restaurantName: profile.restaurantName || '',
-      defaultManagerName: profile.defaultManagerName || ''
-    }));
-
-    if(tasks && Object.keys(tasks).length){
-      localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
-    }
-
-    localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
-
-    if(typeof renderShiftTaskEditor === 'function') renderShiftTaskEditor();
-    if(typeof renderShiftChecklist === 'function') renderShiftChecklist();
-    if(typeof calculateChecklistCompletion === 'function') calculateChecklistCompletion();
-    if(typeof saveData === 'function') saveData();
-
-    toast('Configuration loaded.');
-  }
-
-  window.importManagerPlusConfigurationFile = function(event){
-    const input = event.target;
-    const file = input.files && input.files[0];
-
-    if(!file){
-      toast('No file selected.');
-      return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = function(e){
-      try{
-        const config = JSON.parse(e.target.result);
-        applyImportedConfiguration(config);
-      }catch(err){
-        toast('Invalid configuration file.');
-      }finally{
-        input.value = '';
-      }
-    };
-
-    reader.onerror = function(){
-      toast('Could not read configuration file.');
-      input.value = '';
-    };
-
-    reader.readAsText(file);
-  };
-})();
-</script>
-
-
-<script>
-/* Manager+ v6.0.4 Dynamic Handover from Settings Tasks */
-(function(){
-  const TASKS_KEY = 'manager_plus_shift_tasks_v60';
-
-  function readTasks(){
-    try{
-      const saved = JSON.parse(localStorage.getItem(TASKS_KEY) || 'null');
-      if(saved && typeof saved === 'object') return saved;
-    }catch(e){}
-    return window.checklistData || checklistData || {};
-  }
-
-  function getCurrentShift(){
-    return document.getElementById('shift_type')?.value || document.getElementById('checklist_shift')?.value || 'Overnight';
-  }
-
-  function taskId(shift, group, task){
-    return 'hw_dyn_' + safeId(shift + '_' + group + '_' + task);
-  }
-
-  window.renderDynamicHandover = function(){
-    const box = document.getElementById('dynamic_handover_items');
-    if(!box) return;
-
-    const shift = getCurrentShift();
-    const data = readTasks();
-    const groups = data[shift] || {};
-    let html = '';
-
-    Object.keys(groups).forEach(group => {
-      (groups[group] || []).forEach(task => {
-        const id = taskId(shift, group, task);
-        html += '<label class="check"><input id="' + id + '" type="checkbox" data-handover-task="' + task + '" data-handover-group="' + group + '"> ' + task + '</label>';
-      });
-    });
-
-    if(!html){
-      html = '<div class="coachBox" style="margin-top:0">No handover items available for this shift. Add tasks in Settings.</div>';
-    }
-
-    box.innerHTML = html;
-
-    if(typeof loadData === 'function') loadData();
-
-    document.querySelectorAll('input[data-handover-task]').forEach(el => {
-      el.addEventListener('change', () => {
-        if(typeof saveData === 'function') saveData();
-      });
-    });
-  };
-
-  window.generateHandover = function(){
-    const shift = getValueClean ? getValueClean('shift_type', 'Shift') : getCurrentShift();
-    const date = getValueClean ? getValueClean('shift_date', 'Today') : (document.getElementById('shift_date')?.value || 'Today');
-
-    const selected = Array.from(document.querySelectorAll('input[data-handover-task]:checked'))
-      .map(el => String(el.getAttribute('data-handover-task') || '').trim())
-      .filter(Boolean);
-
-    const optional = getValueClean ? getValueClean('handover_optional') : String(document.getElementById('handover_optional')?.value || '').trim();
-
-    const lines = [
-      `${shift} Handover – ${date}`,
-      '',
-      'PERFORMANCE KPIs',
-      `• OEPE: ${getValueClean ? getValueClean('oepe', 'N/A') : (document.getElementById('oepe')?.value || 'N/A')} sec`,
-      `• KVS: ${getValueClean ? getValueClean('kvs', 'N/A') : (document.getElementById('kvs')?.value || 'N/A')} sec`,
-      `• R2P: ${getValueClean ? getValueClean('r2p', 'N/A') : (document.getElementById('r2p')?.value || 'N/A')} sec`,
-      `• McDelivery: ${getValueClean ? getValueClean('mcdelivery', 'N/A') : (document.getElementById('mcdelivery')?.value || 'N/A')} sec`,
-      '',
-      'WASTE',
-      `• Raw Waste: ${getValueClean ? getValueClean('raw_waste', 'N/A') : (document.getElementById('raw_waste')?.value || 'N/A')}%`,
-      `• Full Waste: ${getValueClean ? getValueClean('full_waste', 'N/A') : (document.getElementById('full_waste')?.value || 'N/A')}%`,
-      `• Crew Meals: ${getValueClean ? getValueClean('crew_meals', 'N/A') : (document.getElementById('crew_meals')?.value || 'N/A')}%`,
-      `• Non-Recipe: ${getValueClean ? getValueClean('non_recipe', 'N/A') : (document.getElementById('non_recipe')?.value || 'N/A')}%`,
-      '',
-      'COMPLETED / READY',
-      selected.length ? selected.map(x => '• ' + x).join('\\n') : '• No handover items selected.',
-      '',
-      'FOLLOW UP / NOTES',
-      optional ? '• ' + optional : '• No additional notes.',
-      '',
-      'NEXT SHIFT NOTE',
-      '• Please continue to monitor open issues and keep communication clear during the next shift.'
-    ].join('\\n');
-
-    const out = document.getElementById('handover_output');
-    if(out){
-      out.value = typeof cleanGeneratedText === 'function' ? cleanGeneratedText(lines) : lines;
-      out.dispatchEvent(new Event('input', {bubbles:true}));
-    }
-  };
-
-  const oldRenderShiftChecklist = window.renderShiftChecklist;
-  if(typeof oldRenderShiftChecklist === 'function'){
-    window.renderShiftChecklist = function(){
-      oldRenderShiftChecklist.apply(this, arguments);
-      setTimeout(window.renderDynamicHandover, 50);
-    };
-  }
-
-  document.addEventListener('DOMContentLoaded', function(){
-    setTimeout(window.renderDynamicHandover, 300);
-
-    const shiftSelect = document.getElementById('shift_type');
-    if(shiftSelect){
-      shiftSelect.addEventListener('change', function(){
-        setTimeout(window.renderDynamicHandover, 80);
-      });
-    }
-  });
-})();
-</script>
-
-
-<script>
-/* Manager+ v6.0.5 Handover generated from completed Checklist tasks */
-(function(){
-  function getCurrentShift(){
-    return document.getElementById('shift_type')?.value || document.getElementById('checklist_shift')?.value || 'Overnight';
-  }
-
-  window.renderDynamicHandover = function(){
-    const box = document.getElementById('dynamic_handover_items');
-    if(!box) return;
-
-    const shift = getCurrentShift();
-    const checklistTasks = Array.from(document.querySelectorAll('input[data-checklist-task]'));
-    const completed = checklistTasks
-      .filter(el => el.checked)
-      .map(el => String(el.getAttribute('data-checklist-task') || '').trim())
-      .filter(Boolean);
-
-    if(!checklistTasks.length){
-      box.innerHTML = '<div class="coachBox" style="margin-top:0">No checklist tasks available for this shift. Add tasks in Settings.</div>';
-      return;
-    }
-
-    if(!completed.length){
-      box.innerHTML = '<div class="coachBox" style="margin-top:0">No completed checklist tasks yet. Complete tasks in Checklist and they will appear in the handover.</div>';
-      return;
-    }
-
-    box.innerHTML = completed.map(task => {
-      return '<label class="check"><input type="checkbox" checked disabled> ' + task + '</label>';
-    }).join('');
-  };
-
-  window.generateHandover = function(){
-    const shift = typeof getValueClean === 'function' ? getValueClean('shift_type', 'Shift') : getCurrentShift();
-    const date = typeof getValueClean === 'function' ? getValueClean('shift_date', 'Today') : (document.getElementById('shift_date')?.value || 'Today');
-
-    const completed = Array.from(document.querySelectorAll('input[data-checklist-task]:checked'))
-      .map(el => String(el.getAttribute('data-checklist-task') || '').trim())
-      .filter(Boolean);
-
-    const optional = typeof getValueClean === 'function' ? getValueClean('handover_optional') : String(document.getElementById('handover_optional')?.value || '').trim();
-
-    const getVal = (id, fallback='N/A') => {
-      if(typeof getValueClean === 'function') return getValueClean(id, fallback);
-      return String(document.getElementById(id)?.value || '').trim() || fallback;
-    };
-
-    const report = [
-      `${shift} Handover – ${date}`,
-      '',
-      'PERFORMANCE KPIs',
-      `• OEPE: ${getVal('oepe')} sec`,
-      `• KVS: ${getVal('kvs')} sec`,
-      `• R2P: ${getVal('r2p')} sec`,
-      `• McDelivery: ${getVal('mcdelivery')} sec`,
-      '',
-      'WASTE',
-      `• Raw Waste: ${getVal('raw_waste')}%`,
-      `• Full Waste: ${getVal('full_waste')}%`,
-      `• Crew Meals: ${getVal('crew_meals')}%`,
-      `• Non-Recipe: ${getVal('non_recipe')}%`,
-      '',
-      'COMPLETED CHECKLIST TASKS',
-      completed.length ? completed.map(x => '• ' + x).join('\n') : '• No completed checklist tasks yet.',
-      '',
-      'FOLLOW UP / NOTES',
-      optional ? '• ' + optional : '• No additional notes.',
-      '',
-      'NEXT SHIFT NOTE',
-      '• Please continue to monitor open issues and keep communication clear during the next shift.'
-    ].join('\n');
-
-    const out = document.getElementById('handover_output');
-    if(out){
-      out.value = typeof cleanGeneratedText === 'function' ? cleanGeneratedText(report) : report;
-      out.dispatchEvent(new Event('input', {bubbles:true}));
-    }
-  };
-
-  const previousChecklistCompletion = window.calculateChecklistCompletion;
-  if(typeof previousChecklistCompletion === 'function'){
-    window.calculateChecklistCompletion = function(){
-      previousChecklistCompletion.apply(this, arguments);
-      setTimeout(window.renderDynamicHandover, 50);
-    };
-  }
-
-  const previousRenderShiftChecklist = window.renderShiftChecklist;
-  if(typeof previousRenderShiftChecklist === 'function'){
-    window.renderShiftChecklist = function(){
-      previousRenderShiftChecklist.apply(this, arguments);
-      setTimeout(window.renderDynamicHandover, 80);
-    };
-  }
-
-  document.addEventListener('DOMContentLoaded', function(){
-    setTimeout(window.renderDynamicHandover, 400);
-
-    const shiftSelect = document.getElementById('shift_type');
-    if(shiftSelect){
-      shiftSelect.addEventListener('change', function(){
-        setTimeout(window.renderDynamicHandover, 120);
-      });
-    }
-
-    document.addEventListener('change', function(e){
-      if(e.target && e.target.matches('input[data-checklist-task]')){
-        setTimeout(window.renderDynamicHandover, 50);
-      }
-    });
-  });
-})();
-</script>
-
-
-
-
-<script>
-/* Manager+ v7.0.1 History visibility/save hotfix */
-(function(){
-  const HISTORY_KEY = 'manager_plus_shift_history_v70';
-
-  function toast(msg){
-    if(typeof window.amToast === 'function') window.amToast(msg);
-    else alert(msg);
-  }
-
-  function getVal(id, fallback=''){
-    return String(document.getElementById(id)?.value || '').trim() || fallback;
-  }
-
-  function getNum(id){
-    const v = parseFloat(String(document.getElementById(id)?.value || '').replace(',', '.'));
-    return isNaN(v) ? null : v;
-  }
-
-  function loadHistory(){
-    try{
-      const data = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-      return Array.isArray(data) ? data : [];
-    }catch(e){
-      return [];
-    }
-  }
-
-  function saveHistory(records){
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(records));
-  }
-
-  function checklistStats(){
-    const tasks = Array.from(document.querySelectorAll('input[data-checklist-task]'));
-    const done = tasks.filter(t => t.checked).length;
-    return {
-      done,
-      total: tasks.length,
-      percent: tasks.length ? Math.round(done / tasks.length * 100) : 0
-    };
-  }
-
-  function readShiftScore(){
-    if(typeof window.calculateShiftScore === 'function'){
-      try{ window.calculateShiftScore(); }catch(e){}
-    }
-    const value = parseInt(document.querySelector('#shift_score_card .score')?.textContent || '', 10);
-    return isNaN(value) ? null : value;
-  }
-
-  function readHealthScore(){
-    if(typeof window.calculateKPIHealth === 'function'){
-      try{ window.calculateKPIHealth(); }catch(e){}
-    }
-    const value = parseInt(document.querySelector('#shift_health_output .score')?.textContent || '', 10);
-    return isNaN(value) ? null : value;
-  }
-
-  function average(values){
-    const clean = values.filter(v => typeof v === 'number' && !isNaN(v));
-    if(!clean.length) return null;
-    return clean.reduce((a,b) => a + b, 0) / clean.length;
-  }
-
-  function formatValue(value, suffix=''){
-    if(value === null || value === undefined || isNaN(value)) return 'N/A';
-    return (Number.isInteger(value) ? value : value.toFixed(2)) + suffix;
-  }
-
-  function compareLastTwo(records){
-    if(records.length < 2) return 'Need 2 saved shifts.';
-
-    const current = records[0];
-    const previous = records[1];
-    const rows = [];
-
-    function row(label, now, before, lowerIsBetter){
-      if(now === null || now === undefined || before === null || before === undefined) return;
-      const n = Number(now);
-      const b = Number(before);
-      if(isNaN(n) || isNaN(b)) return;
-
-      const same = n === b;
-      const better = lowerIsBetter ? n < b : n > b;
-      rows.push(label + ': ' + before + ' → ' + now + ' ' + (same ? '• same' : better ? '✅ better' : '⚠ worse'));
-    }
-
-    row('Score', current.shiftScore, previous.shiftScore, false);
-    row('Checklist', current.checklistPercent, previous.checklistPercent, false);
-    row('OEPE', current.kpi?.oepe, previous.kpi?.oepe, true);
-    row('KVS', current.kpi?.kvs, previous.kpi?.kvs, true);
-    row('Raw', current.waste?.raw, previous.waste?.raw, true);
-    row('Full', current.waste?.full, previous.waste?.full, true);
-
-    return rows.length ? rows.join('\n') : 'Not enough comparable data.';
-  }
-
-  function buildRecord(){
-    if(typeof window.generateFullShiftReport === 'function'){
-      try{ window.generateFullShiftReport(); }catch(e){}
-    }
-
-    const checklist = checklistStats();
-    const reportText = String(document.getElementById('full_shift_report')?.value || '').trim();
-
-    return {
-      id: 'hist_' + Date.now(),
-      savedAt: new Date().toISOString(),
-      date: getVal('shift_date', 'Today'),
-      shift: getVal('shift_type', 'Shift'),
-      manager: getVal('manager_name', 'Manager'),
-      restaurant: getVal('restaurant_name', ''),
-      healthScore: readHealthScore(),
-      shiftScore: readShiftScore(),
-      checklistPercent: checklist.percent,
-      checklistDone: checklist.done,
-      checklistTotal: checklist.total,
-      kpi: {
-        sales: getNum('sales'),
-        guests: getNum('guests'),
-        oepe: getNum('oepe'),
-        kvs: getNum('kvs'),
-        r2p: getNum('r2p'),
-        mcdelivery: getNum('mcdelivery'),
-        labour: getNum('labour'),
-        csat: getNum('csat')
-      },
-      waste: {
-        raw: getNum('raw_waste'),
-        full: getNum('full_waste'),
-        promo: getNum('promo_waste'),
-        crewMeals: getNum('crew_meals'),
-        nonRecipe: getNum('non_recipe')
-      },
-      report: reportText
-    };
-  }
-
-  window.saveShiftToHistory = function(){
-    const record = buildRecord();
-
-    if(!record.report){
-      toast('Generate report first.');
-      return;
-    }
-
-    const records = loadHistory();
-    records.unshift(record);
-    saveHistory(records);
-
-    window.renderHistory();
-
-    const historyRadio = document.getElementById('history');
-    if(historyRadio) historyRadio.checked = true;
-
-    toast('Shift saved to history.');
-  };
-
-  window.renderHistory = function(){
-    const records = loadHistory();
-    const stats = document.getElementById('history_stats');
-    const list = document.getElementById('history_list');
-
-    if(stats){
-      if(!records.length){
-        stats.innerHTML =
-          '<div class="historyStat"><small>Saved Shifts</small><strong>0</strong></div>' +
-          '<div class="historyStat"><small>Average Score</small><strong>N/A</strong></div>' +
-          '<div class="historyStat"><small>Average Checklist</small><strong>N/A</strong></div>' +
-          '<div class="historyStat"><small>Average OEPE</small><strong>N/A</strong></div>';
-      }else{
-        stats.innerHTML =
-          '<div class="historyStat"><small>Saved Shifts</small><strong>' + records.length + '</strong></div>' +
-          '<div class="historyStat"><small>Average Score</small><strong>' + formatValue(average(records.map(r => r.shiftScore))) + '</strong></div>' +
-          '<div class="historyStat"><small>Average Checklist</small><strong>' + formatValue(average(records.map(r => r.checklistPercent)), '%') + '</strong></div>' +
-          '<div class="historyStat"><small>Average OEPE</small><strong>' + formatValue(average(records.map(r => r.kpi?.oepe)), ' sec') + '</strong></div>' +
-          '<div class="historyStat"><small>Average Raw Waste</small><strong>' + formatValue(average(records.map(r => r.waste?.raw)), '%') + '</strong></div>' +
-          '<div class="historyStat"><small>Last vs Previous</small><strong style="font-size:14px;white-space:pre-wrap">' + compareLastTwo(records) + '</strong></div>';
-      }
-    }
-
-    if(!list) return;
-
-    if(!records.length){
-      list.textContent = 'No saved shifts yet.';
-      return;
-    }
-
-    list.innerHTML = '';
-
-    records.forEach(function(record, index){
-      const card = document.createElement('div');
-      card.className = 'historyRecord';
-
-      const title = document.createElement('div');
-      title.className = 'historyRecordTitle';
-      title.textContent = (record.date || 'Today') + ' – ' + (record.shift || 'Shift') + ' – Score ' + (record.shiftScore === null || record.shiftScore === undefined ? 'N/A' : record.shiftScore);
-
-      const meta = document.createElement('div');
-      meta.className = 'historyRecordMeta';
-      meta.innerHTML =
-        (record.restaurant ? 'Restaurant: ' + record.restaurant + '<br>' : '') +
-        'Manager: ' + (record.manager || 'Manager') + '<br>' +
-        'Checklist: ' + (record.checklistPercent ?? 0) + '%<br>' +
-        'OEPE: ' + (record.kpi?.oepe ?? 'N/A') + ' sec<br>' +
-        'Raw Waste: ' + (record.waste?.raw ?? 'N/A') + '%';
-
-      const actions = document.createElement('div');
-      actions.className = 'historyActions';
-
-      const viewBtn = document.createElement('button');
-      viewBtn.className = 'generateBtn';
-      viewBtn.type = 'button';
-      viewBtn.textContent = 'View Report';
-
-      const deleteBtn = document.createElement('button');
-      deleteBtn.className = 'resetBtn';
-      deleteBtn.type = 'button';
-      deleteBtn.textContent = 'Delete';
-
-      const reportBox = document.createElement('div');
-      reportBox.className = 'historyReportBox';
-
-      const area = document.createElement('textarea');
-      area.readOnly = true;
-      area.value = record.report || '';
-
-      const copyBtn = document.createElement('button');
-      copyBtn.className = 'generateBtn';
-      copyBtn.type = 'button';
-      copyBtn.textContent = 'Copy This Report';
-
-      viewBtn.addEventListener('click', function(){
-        reportBox.style.display = reportBox.style.display === 'block' ? 'none' : 'block';
-      });
-
-      deleteBtn.addEventListener('click', function(){
-        const updated = loadHistory().filter(r => r.id !== record.id);
-        saveHistory(updated);
-        window.renderHistory();
-        toast('History record deleted.');
-      });
-
-      copyBtn.addEventListener('click', function(){
-        const text = record.report || '';
-        if(!text){
-          toast('Nothing to copy.');
-          return;
-        }
-
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          navigator.clipboard.writeText(text).then(() => toast('Report copied.')).catch(() => toast('Copy failed.'));
-        }else{
-          area.focus();
-          area.select();
-          try{
-            document.execCommand('copy');
-            toast('Report copied.');
-          }catch(e){
-            toast('Copy failed.');
-          }
-        }
-      });
-
-      actions.appendChild(viewBtn);
-      actions.appendChild(deleteBtn);
-      reportBox.appendChild(area);
-      reportBox.appendChild(copyBtn);
-
-      card.appendChild(title);
-      card.appendChild(meta);
-      card.appendChild(actions);
-      card.appendChild(reportBox);
-
-      list.appendChild(card);
-    });
-  };
-
-  window.clearShiftHistory = function(){
-    localStorage.removeItem(HISTORY_KEY);
-    window.renderHistory();
-    toast('History cleared.');
-  };
-
-  window.exportHistoryToFile = function(){
-    const records = loadHistory();
-    const blob = new Blob([JSON.stringify({
-      app: 'Manager+',
-      version: '7.0.1',
-      exportedAt: new Date().toISOString(),
-      history: records
-    }, null, 2)], {type:'application/json'});
-
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-
-    a.href = url;
-    a.download = 'managerplus-history.json';
-
-    document.body.appendChild(a);
-    a.click();
-
-    setTimeout(function(){
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 100);
-
-    toast('History file saved.');
-  };
-
-  window.importHistoryFromFile = function(event){
-    const input = event.target;
-    const file = input.files && input.files[0];
-
-    if(!file){
-      toast('No file selected.');
-      return;
-    }
-
-    const reader = new FileReader();
-
-    reader.onload = function(e){
-      try{
-        const parsed = JSON.parse(e.target.result);
-        const imported = Array.isArray(parsed) ? parsed : parsed.history;
-
-        if(!Array.isArray(imported)){
-          toast('Invalid history file.');
-          return;
-        }
-
-        saveHistory(imported);
-        window.renderHistory();
-        toast('History loaded.');
-      }catch(err){
-        toast('Invalid history file.');
-      }finally{
-        input.value = '';
-      }
-    };
-
-    reader.onerror = function(){
-      toast('Could not read history file.');
-      input.value = '';
-    };
-
-    reader.readAsText(file);
-  };
-
-  document.addEventListener('DOMContentLoaded', function(){
-    setTimeout(window.renderHistory, 500);
-
-    const historyRadio = document.getElementById('history');
-    if(historyRadio){
-      historyRadio.addEventListener('change', function(){
-        if(historyRadio.checked) setTimeout(window.renderHistory, 50);
-      });
-    }
-  });
-})();
-</script>
-
+  <div class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg class="brand-mandala" viewBox="0 0 64 64" focusable="false">
+            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="32" cy="32" r="24.5" stroke-width="2.2" opacity=".28" />
+              <circle cx="32" cy="32" r="12.4" stroke-width="2.4" opacity=".58" />
+              <path stroke-width="2.9" d="M32 5.5c-6.6 8.2-6.6 15.6 0 24.5 6.6-8.9 6.6-16.3 0-24.5Z" />
+              <path stroke-width="2.9" d="M32 58.5c6.6-8.2 6.6-15.6 0-24.5-6.6 8.9-6.6 16.3 0 24.5Z" />
+              <path stroke-width="2.9" d="M5.5 32c8.2-6.6 15.6-6.6 24.5 0-8.9 6.6-16.3 6.6-24.5 0Z" />
+              <path stroke-width="2.9" d="M58.5 32c-8.2 6.6-15.6 6.6-24.5 0 8.9-6.6 16.3-6.6 24.5 0Z" />
+              <path stroke-width="2.35" d="M13.5 13.5c10.4 1.2 15.7 6.4 17.1 17.1-10.7-1.4-15.9-6.7-17.1-17.1Z" />
+              <path stroke-width="2.35" d="M50.5 13.5c-1.2 10.4-6.4 15.7-17.1 17.1 1.4-10.7 6.7-15.9 17.1-17.1Z" />
+              <path stroke-width="2.35" d="M13.5 50.5c1.2-10.4 6.4-15.7 17.1-17.1-1.4 10.7-6.7 15.9-17.1 17.1Z" />
+              <path stroke-width="2.35" d="M50.5 50.5c-10.4-1.2-15.7-6.4-17.1-17.1 10.7 1.4 15.9 6.7 17.1 17.1Z" />
+            </g>
+            <g fill="currentColor">
+              <circle cx="32" cy="32" r="3.6" />
+              <circle cx="32" cy="4.5" r="1.8" />
+              <circle cx="32" cy="59.5" r="1.8" />
+              <circle cx="4.5" cy="32" r="1.8" />
+              <circle cx="59.5" cy="32" r="1.8" />
+              <circle cx="12.6" cy="12.6" r="1.45" opacity=".82" />
+              <circle cx="51.4" cy="12.6" r="1.45" opacity=".82" />
+              <circle cx="12.6" cy="51.4" r="1.45" opacity=".82" />
+              <circle cx="51.4" cy="51.4" r="1.45" opacity=".82" />
+            </g>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1 data-i18n="appName">MyLife Planner</h1>
+          <p data-i18n="versionText">Kalendarz i organizer</p>
+        </div>
+      </div>
+      <div class="header-status" id="headerStatus" aria-live="polite">
+        <span id="headerDateTime"></span>
+        <span class="header-weather hidden" id="headerWeather"></span>
+      </div>
+    </header>
+
+    <nav class="top-nav" aria-label="Główna nawigacja">
+      <button class="active icon-nav" type="button" data-view="dashboard" data-nav-key="navToday"></button>
+      <button class="icon-nav" type="button" data-view="calendar" data-nav-key="navCalendar"></button>
+      <button class="icon-nav" type="button" data-view="agenda" data-nav-key="navAgenda"></button>
+      <button class="icon-nav" type="button" data-view="add" data-nav-key="navAdd"></button>
+      <button class="icon-nav" type="button" data-view="all" data-nav-key="navAll"></button>
+      <button class="icon-nav" type="button" data-view="done" data-nav-key="navHistory"></button>
+      <button class="icon-nav" type="button" data-view="settings" data-nav-key="navSettings"></button>
+      <button class="icon-nav brand-nav" id="brandBtn" type="button" aria-expanded="false" aria-controls="aboutLayer"></button>
+    </nav>
+
+    <main>
+      <section id="dashboard" class="view">
+        <div class="stats" aria-label="Podsumowanie">
+          <div class="stat">
+            <span data-i18n="todayCount">dzisiaj</span>
+            <strong id="statToday">0</strong>
+          </div>
+          <div class="stat">
+            <span data-i18n="weekCount">w tygodniu</span>
+            <strong id="statWeek">0</strong>
+          </div>
+          <div class="stat">
+            <span data-i18n="overdueCount">zaległe</span>
+            <strong id="statOverdue">0</strong>
+          </div>
+        </div>
+
+        <div class="layout-grid">
+          <article class="panel">
+            <div class="panel-title">
+              <span id="iconTodayHead"></span>
+              <h2 data-i18n="todayPanel">Dzisiaj i zaległe</h2>
+            </div>
+            <form class="quick-task-form" id="quickTaskForm">
+              <input id="quickTaskInput" type="text" data-i18n-placeholder="quickTaskPlaceholder" placeholder="Wpisz szybką sprawę..." />
+              <button class="primary-action quick-task-button" type="submit" aria-label="Dodaj szybką sprawę" data-i18n-aria="quickTaskAdd">+</button>
+            </form>
+            <div id="todayList" class="list"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-title">
+              <span id="iconBellHead"></span>
+              <h2 data-i18n="upcomingPanel">Nadchodzące</h2>
+            </div>
+            <div id="upcomingList" class="list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="calendar" class="view hidden">
+        <div class="layout-grid calendar-layout">
+          <article class="panel">
+            <div class="calendar-head">
+              <button class="icon-button" id="prevMonth" type="button" aria-label="Poprzedni miesiąc">‹</button>
+              <h2 id="calendarTitle"></h2>
+              <button class="icon-button" id="nextMonth" type="button" aria-label="Następny miesiąc">›</button>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-title">
+              <span id="iconCalendarDayHead"></span>
+              <h2 id="selectedDayTitle">Wybrany dzień</h2>
+            </div>
+            <div id="selectedDayList" class="list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="agenda" class="view hidden">
+        <article class="panel">
+          <div class="panel-title">
+            <span id="iconAgendaHead"></span>
+            <h2 data-i18n="agendaTitle">Agenda</h2>
+          </div>
+          <div class="agenda-toolbar">
+            <div>
+              <label for="agendaLimit" data-i18n="agendaLimitLabel">Liczba wpisów</label>
+              <select id="agendaLimit">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+                <option value="all" data-i18n="agendaLimitAll">Wszystkie</option>
+              </select>
+            </div>
+            <button class="backup-btn agenda-print-btn" id="printAgendaBtn" type="button" data-i18n="printAgenda">Drukuj</button>
+          </div>
+          <div class="agenda-grid">
+            <section class="agenda-section">
+              <h3 data-i18n="agendaToday">Dzisiaj</h3>
+              <div id="agendaTodayList" class="list"></div>
+            </section>
+            <section class="agenda-section">
+              <h3 data-i18n="agendaTomorrow">Jutro</h3>
+              <div id="agendaTomorrowList" class="list"></div>
+            </section>
+            <section class="agenda-section">
+              <h3 data-i18n="agendaWeek">Ten tydzień</h3>
+              <div id="agendaWeekList" class="list"></div>
+            </section>
+            <section class="agenda-section">
+              <h3 data-i18n="agendaLater">Później</h3>
+              <div id="agendaLaterList" class="list"></div>
+            </section>
+          </div>
+          <p class="agenda-more hidden" id="agendaMore"></p>
+        </article>
+      </section>
+
+      <section id="add" class="view hidden">
+        <div class="layout-grid">
+          <article class="panel">
+            <div class="panel-title">
+              <span id="iconPlusHead"></span>
+              <h2 data-i18n="addTitle">Dodaj ważną sprawę</h2>
+            </div>
+
+            <form id="eventForm" class="event-form">
+              <label for="title" data-i18n="titleLabel">Tytuł</label>
+              <input id="title" placeholder="np. 800+, rata kredytu, lekarz..." required />
+
+              <div class="form-row">
+                <div>
+                  <label for="date" data-i18n="dateLabel">Data</label>
+                  <input id="date" type="date" required />
+                </div>
+                <div>
+                  <label for="time" data-i18n="timeLabel">Godzina opcjonalnie</label>
+                  <input id="time" type="time" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label for="category" data-i18n="categoryLabel">Kategoria</label>
+                  <select id="category"></select>
+                </div>
+                <div>
+                  <label for="priority" data-i18n="priorityLabel">Priorytet</label>
+                  <select id="priority">
+                    <option value="normal" data-i18n="priorityNormal">Normalne</option>
+                    <option value="important" data-i18n="priorityImportant">Ważne</option>
+                    <option value="urgent" data-i18n="priorityUrgent">Pilne</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label for="reminder" data-i18n="reminderLabel">Przypomnienie</label>
+                  <select id="reminder">
+                    <option value="0">W dniu wydarzenia</option>
+                    <option value="1">1 dzień wcześniej</option>
+                    <option value="3">3 dni wcześniej</option>
+                    <option value="7">7 dni wcześniej</option>
+                    <option value="14">14 dni wcześniej</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label for="recurrence" data-i18n="recurrenceLabel">Powtarzanie</label>
+                  <select id="recurrence">
+                    <option value="none" data-i18n="recurrenceNone">Nie powtarzaj</option>
+                    <option value="daily" data-i18n="recurrenceDaily">Codziennie</option>
+                    <option value="weekly" data-i18n="recurrenceWeekly">Co tydzień</option>
+                    <option value="biweekly" data-i18n="recurrenceBiweekly">Co 2 tygodnie</option>
+                    <option value="monthly" data-i18n="recurrenceMonthly">Co miesiąc</option>
+                    <option value="quarterly" data-i18n="recurrenceQuarterly">Co 3 miesiące</option>
+                    <option value="semiannual" data-i18n="recurrenceSemiannual">Co 6 miesięcy</option>
+                    <option value="yearly" data-i18n="recurrenceYearly">Co rok</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="repeatUntil" data-i18n="repeatUntilLabel">Powtarzaj do opcjonalnie</label>
+                  <input id="repeatUntil" type="date" />
+                </div>
+              </div>
+
+              <label for="note" data-i18n="noteLabel">Notatka opcjonalnie</label>
+              <textarea id="note" placeholder="np. dokumenty, kwota, telefon, miejsce..."></textarea>
+
+              <div class="form-actions">
+                <button class="primary-action" id="saveEventBtn" type="submit" data-i18n="saveEvent">Zapisz wydarzenie</button>
+                <button class="secondary-action hidden" id="cancelEditBtn" type="button" data-i18n="cancelEdit">Anuluj edycję</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="panel compact-panel">
+            <div class="panel-title">
+              <span id="iconBoltHead"></span>
+              <h2 data-i18n="quickTitle">Szybkie dodawanie</h2>
+            </div>
+            <div class="quick-grid">
+              <button type="button" data-template="800+" data-cat="Finanse">800+</button>
+              <button type="button" data-template="Rata kredytu" data-cat="Finanse">Rata kredytu</button>
+              <button type="button" data-template="Czynsz / opłaty" data-cat="Finanse">Czynsz / opłaty</button>
+              <button type="button" data-template="Ubezpieczenie auta" data-cat="Auto">Ubezpieczenie auta</button>
+              <button type="button" data-template="Przegląd auta" data-cat="Auto">Przegląd auta</button>
+              <button type="button" data-template="Wizyta u lekarza" data-cat="Zdrowie">Lekarz</button>
+              <button type="button" data-template="Sprawa w urzędzie" data-cat="Urzędy">Urząd</button>
+              <button type="button" data-template="Szkoła / dziecko" data-cat="Rodzina">Szkoła / dziecko</button>
+            </div>
+            <div class="stacked-actions">
+              <button class="secondary-action" id="demoBtn" type="button" data-i18n="demoButton">Dodaj przykładowe wydarzenia</button>
+              <button class="secondary-action danger-action compact-danger" id="removeDemoBtn" type="button" data-i18n="removeDemoButton">Usuń przykładowe dane</button>
+              <button class="secondary-action" id="notifyBtn" type="button" data-i18n="notifyButton">Włącz / wyłącz powiadomienia</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="all" class="view hidden">
+        <article class="panel">
+          <div class="panel-title">
+            <span id="iconCalendarHead"></span>
+            <h2 data-i18n="allTitle">Wszystkie aktywne sprawy</h2>
+          </div>
+          <div class="filter-bar" aria-label="Filtry wydarzeń">
+            <div>
+              <label for="searchInput" data-i18n="searchLabel">Szukaj</label>
+              <input id="searchInput" type="search" placeholder="Tytuł, notatka, kategoria..." data-i18n-placeholder="searchPlaceholder" />
+            </div>
+            <div>
+              <label for="filterCategory" data-i18n="filterCategoryLabel">Kategoria</label>
+              <select id="filterCategory"></select>
+            </div>
+            <div>
+              <label for="filterPriority" data-i18n="filterPriorityLabel">Priorytet</label>
+              <select id="filterPriority">
+                <option value="all" data-i18n="filterAll">Wszystkie</option>
+                <option value="normal" data-i18n="priorityNormal">Normalne</option>
+                <option value="important" data-i18n="priorityImportant">Ważne</option>
+                <option value="urgent" data-i18n="priorityUrgent">Pilne</option>
+              </select>
+            </div>
+            <div>
+              <label for="filterTime" data-i18n="filterTimeLabel">Termin</label>
+              <select id="filterTime">
+                <option value="all" data-i18n="filterAll">Wszystkie</option>
+                <option value="overdue" data-i18n="filterOverdue">Zaległe</option>
+                <option value="today" data-i18n="filterToday">Dzisiaj</option>
+                <option value="upcoming" data-i18n="filterUpcoming">Nadchodzące</option>
+              </select>
+            </div>
+          </div>
+          <div id="allList" class="list"></div>
+        </article>
+      </section>
+
+      <section id="done" class="view hidden">
+        <article class="panel">
+          <div class="panel-title">
+            <span id="iconHistoryHead"></span>
+            <h2 data-i18n="historyTitle">Historia zakończonych</h2>
+          </div>
+          <div id="doneList" class="list"></div>
+          <button class="secondary-action danger-action" id="clearDone" type="button" data-i18n="clearHistory">Wyczyść historię zakończonych</button>
+        </article>
+      </section>
+
+      <section id="settings" class="view hidden">
+        <article class="panel settings-panel">
+          <div class="panel-title">
+            <span id="iconSettingsHead"></span>
+            <h2 data-i18n="settingsTitle">Ustawienia</h2>
+          </div>
+
+          <div class="settings-grid">
+            <div class="settings-section-title">
+              <span data-i18n="settingsSectionPreferences">Preferencje aplikacji</span>
+            </div>
+
+            <div class="settings-group">
+              <label data-i18n="languageLabel">Język aplikacji</label>
+              <div class="segmented-control">
+                <button class="language-btn" type="button" data-lang="pl">Polski</button>
+                <button class="language-btn" type="button" data-lang="en">English</button>
+              </div>
+              <p data-i18n="languageNote">Wybrany język zostanie zapamiętany w tej przeglądarce.</p>
+            </div>
+
+            <div class="settings-group">
+              <label data-i18n="appearanceLabel">Wygląd</label>
+              <div class="segmented-control appearance-control">
+                <button class="appearance-btn" type="button" data-appearance="light" data-i18n="appearanceLight">Jasny</button>
+                <button class="appearance-btn" type="button" data-appearance="dark" data-i18n="appearanceDark">Ciemny</button>
+                <button class="appearance-btn" type="button" data-appearance="system" data-i18n="appearanceSystem">Systemowy</button>
+              </div>
+              <p data-i18n="appearanceNote">Tryb systemowy dopasowuje planner do ustawień urządzenia.</p>
+            </div>
+
+            <div class="settings-group">
+              <label data-i18n="onboardingSettingsLabel">Pierwsze uruchomienie</label>
+              <div class="settings-row-label" data-i18n="onboardingAutoLabel">Kreator przy starcie</div>
+              <div class="segmented-control">
+                <button class="onboarding-auto-btn" type="button" data-onboarding-auto="true" data-i18n="onboardingAutoOn">Włącz</button>
+                <button class="onboarding-auto-btn" type="button" data-onboarding-auto="false" data-i18n="onboardingAutoOff">Wyłącz</button>
+              </div>
+              <button class="backup-btn" id="openOnboardingBtn" type="button" data-i18n="onboardingOpen">Uruchom teraz</button>
+              <p data-i18n="onboardingSettingsNote">Włącz, jeśli kreator ma pojawić się przy następnym uruchomieniu. Możesz go też uruchomić ręcznie.</p>
+            </div>
+
+            <div class="settings-section-title">
+              <span data-i18n="settingsSectionAppearance">Wygląd i styl</span>
+            </div>
+
+            <div class="settings-group">
+              <label data-i18n="themeLabel">Motyw kolorystyczny</label>
+              <div class="option-grid">
+                <button class="theme-btn" type="button" data-theme="lavender"><span class="swatch lavender"></span> Lavender</button>
+                <button class="theme-btn" type="button" data-theme="ocean"><span class="swatch ocean"></span> Ocean</button>
+                <button class="theme-btn" type="button" data-theme="forest"><span class="swatch forest"></span> Forest</button>
+                <button class="theme-btn" type="button" data-theme="pistachio"><span class="swatch pistachio"></span> Pistachio</button>
+                <button class="theme-btn" type="button" data-theme="rainbow"><span class="swatch rainbow"></span> Rainbow</button>
+                <button class="theme-btn" type="button" data-theme="sunset"><span class="swatch sunset"></span> Sunset</button>
+                <button class="theme-btn" type="button" data-theme="rose"><span class="swatch rose"></span> Rose</button>
+                <button class="theme-btn" type="button" data-theme="graphite"><span class="swatch graphite"></span> Graphite</button>
+              </div>
+              <p data-i18n="themeNote">Motyw pozwala dopasować organizer do własnego stylu.</p>
+            </div>
+
+            <div class="settings-group">
+              <label data-i18n="radiusLabel">Styl okien</label>
+              <div class="option-grid radius-grid">
+                <button class="radius-btn" type="button" data-radius="soft"><span class="shape-demo soft"></span> <span data-i18n="radiusSoft">Zaokrąglone</span></button>
+                <button class="radius-btn" type="button" data-radius="medium"><span class="shape-demo medium"></span> <span data-i18n="radiusMedium">Lekko zaokrąglone</span></button>
+                <button class="radius-btn" type="button" data-radius="square"><span class="shape-demo square"></span> <span data-i18n="radiusSquare">Proste</span></button>
+              </div>
+              <p data-i18n="radiusNote">Miękkie okna wyglądają przyjaźnie, a proste bardziej technicznie.</p>
+            </div>
+
+            <div class="settings-section-title">
+              <span data-i18n="settingsSectionDefaults">Nowe sprawy</span>
+            </div>
+
+            <div class="settings-group">
+              <label for="customCategoryInput" data-i18n="customCategoriesLabel">Własne kategorie</label>
+              <div class="category-add-row">
+                <input id="customCategoryInput" type="text" data-i18n-placeholder="customCategoryPlaceholder" placeholder="np. Wycieczki, Dom, Hobby" />
+                <button class="backup-btn" id="addCategoryBtn" type="button" data-i18n="addCategory">Dodaj kategorię</button>
+              </div>
+              <div class="category-chip-list" id="customCategoryList"></div>
+              <p data-i18n="customCategoriesNote">Własne kategorie pojawią się w formularzu, filtrach i kreatorze.</p>
+            </div>
+
+            <div class="settings-group">
+              <label data-i18n="defaultsLabel">Domyślne dla nowych spraw</label>
+              <div class="form-row compact-settings-row">
+                <div>
+                  <label for="defaultCategory" data-i18n="categoryLabel">Kategoria</label>
+                  <select id="defaultCategory"></select>
+                </div>
+                <div>
+                  <label for="defaultPriority" data-i18n="priorityLabel">Priorytet</label>
+                  <select id="defaultPriority">
+                    <option value="normal" data-i18n="priorityNormal">Normalne</option>
+                    <option value="important" data-i18n="priorityImportant">Ważne</option>
+                    <option value="urgent" data-i18n="priorityUrgent">Pilne</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row compact-settings-row">
+                <div>
+                  <label for="defaultReminder" data-i18n="reminderLabel">Przypomnienie</label>
+                  <select id="defaultReminder">
+                    <option value="0">W dniu wydarzenia</option>
+                    <option value="1">1 dzień wcześniej</option>
+                    <option value="3">3 dni wcześniej</option>
+                    <option value="7">7 dni wcześniej</option>
+                    <option value="14">14 dni wcześniej</option>
+                  </select>
+                </div>
+              </div>
+              <p data-i18n="defaultsNote">Te wartości będą ustawiane automatycznie przy dodawaniu nowej sprawy.</p>
+            </div>
+
+            <div class="settings-section-title">
+              <span data-i18n="settingsSectionData">Dane i import</span>
+            </div>
+
+            <div class="settings-group">
+              <label data-i18n="backupLabel">Kopia zapasowa</label>
+              <div class="option-grid backup-grid">
+                <button class="backup-btn" id="exportBackup" type="button" data-i18n="exportBackup">Eksportuj dane</button>
+                <button class="backup-btn" id="importBackup" type="button" data-i18n="importBackup">Importuj dane</button>
+              </div>
+              <input id="backupFile" type="file" accept="application/json,.json" hidden />
+              <p data-i18n="backupNote">Zapisz kopię wydarzeń na komputerze albo przywróć ją z pliku.</p>
+            </div>
+
+            <div class="settings-group">
+              <label data-i18n="calendarTransferLabel">Kalendarz .ics</label>
+              <div class="option-grid backup-grid">
+                <button class="backup-btn" id="exportIcs" type="button" data-i18n="exportIcs">Eksportuj .ics</button>
+                <button class="backup-btn" id="importIcs" type="button" data-i18n="importIcs">Importuj .ics</button>
+              </div>
+              <input id="icsFile" type="file" accept="text/calendar,.ics,.ical" hidden />
+              <p data-i18n="calendarTransferNote">Importuj wydarzenia z Google, Outlooka lub Apple Calendar albo wyeksportuj je do pliku kalendarza.</p>
+            </div>
+
+            <div class="settings-group">
+              <label data-i18n="resetDataLabel">Dane aplikacji</label>
+              <button class="backup-btn danger-reset" id="resetDataBtn" type="button" data-i18n="resetData">Usuń wszystkie dane</button>
+              <p data-i18n="resetDataNote">Usuwa wydarzenia, historię, ustawienia wyglądu i zapisane przypomnienia z tej przeglądarki.</p>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Dolna nawigacja">
+    <button class="active icon-nav" type="button" data-view="dashboard" data-nav-key="navToday"></button>
+    <button class="icon-nav" type="button" data-view="calendar" data-nav-key="navCalendar"></button>
+    <button class="icon-nav" type="button" data-view="agenda" data-nav-key="navAgenda"></button>
+    <button class="icon-nav" type="button" data-view="add" data-nav-key="navAdd"></button>
+    <button class="icon-nav" type="button" data-view="all" data-nav-key="navAll"></button>
+    <button class="icon-nav" type="button" data-view="done" data-nav-key="navHistory"></button>
+    <button class="icon-nav" type="button" data-view="settings" data-nav-key="navSettings"></button>
+    <button class="icon-nav brand-nav" id="brandBtnMobile" type="button" aria-expanded="false" aria-controls="aboutLayer"></button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+  <div class="confirm-layer hidden" id="confirmLayer" role="presentation">
+    <div class="confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMessage">
+      <div class="confirm-icon" id="confirmIcon"></div>
+      <div>
+        <h2 id="confirmTitle" data-i18n="confirmTitle">Potwierdzenie</h2>
+        <p id="confirmMessage"></p>
+      </div>
+      <div class="confirm-actions">
+        <button class="secondary-action" id="confirmCancel" type="button" data-i18n="confirmCancel">Anuluj</button>
+        <button class="primary-action" id="confirmOk" type="button" data-i18n="confirmOk">OK</button>
+      </div>
+    </div>
+  </div>
+  <div class="about-layer hidden" id="aboutLayer" role="presentation">
+    <div class="about-dialog" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+      <button class="icon-button about-close" id="aboutClose" type="button" aria-label="Zamknij">×</button>
+      <div class="about-hero">
+        <div class="about-mark" id="aboutMark"></div>
+        <div>
+          <h2 id="aboutTitle">MyLife Planner</h2>
+          <p data-i18n="brandTagline">Kalendarz i organizer</p>
+        </div>
+      </div>
+      <div class="about-grid">
+        <section>
+          <h3 data-i18n="aboutPurposeTitle">O aplikacji</h3>
+          <p data-i18n="aboutPurposeText">MyLife Planner pomaga uporządkować codzienne sprawy, terminy, płatności, wizyty i przypomnienia w jednym spokojnym miejscu.</p>
+        </section>
+        <section>
+          <h3 data-i18n="aboutCreatorTitle">Autor</h3>
+          <p data-i18n="aboutCreatorText">Aplikacja została stworzona przez Dariusza Kaniewskiego jako praktyczny organizer do codziennego życia.</p>
+        </section>
+        <section>
+          <h3 data-i18n="aboutFeaturesTitle">Cechy</h3>
+          <ul>
+            <li data-i18n="aboutFeatureCalendar">Kalendarz z oznaczeniem ważnych i pilnych dni.</li>
+            <li data-i18n="aboutFeatureRecurring">Sprawy cykliczne i edycja całych serii.</li>
+            <li data-i18n="aboutFeatureNotifications">Powiadomienia i przypomnienia.</li>
+            <li data-i18n="aboutFeatureBackup">Eksport i import kopii zapasowej.</li>
+          </ul>
+        </section>
+        <section>
+          <h3 data-i18n="aboutBenefitsTitle">Zalety</h3>
+          <p data-i18n="aboutBenefitsText">Aplikacja jest lekka, działa lokalnie w przeglądarce i pozwala szybko wrócić do tego, co naprawdę trzeba załatwić.</p>
+        </section>
+        <section>
+          <h3 data-i18n="aboutPrivacyTitle">Prywatność i dane</h3>
+          <p data-i18n="aboutPrivacyText">Twoje wydarzenia są zapisywane lokalnie w tej przeglądarce. Aplikacja nie wysyła ich na serwer. Możesz wykonać kopię zapasową albo usunąć dane z przeglądarki.</p>
+        </section>
+        <section>
+          <h3 data-i18n="aboutChangesTitle">Ostatnie zmiany</h3>
+          <ul>
+            <li data-i18n="aboutChange209">2.09 · Dodano ciemną ikonę aplikacji spójną z iPhone.</li>
+            <li data-i18n="aboutChange208">2.08 · Poprawiono listę ostatnich zmian w Info.</li>
+            <li data-i18n="aboutChange207">2.07 · Uproszczono ikonę przywracania.</li>
+          </ul>
+        </section>
+      </div>
+      <div class="about-footer">
+        <span id="aboutFooterText">© 2026 D.K. Wszelkie prawa zastrzeżone. · Wersja 2.09</span>
+      </div>
+    </div>
+  </div>
+  <div class="onboarding-layer hidden" id="onboardingLayer" role="presentation">
+    <div class="onboarding-dialog" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle">
+      <div class="onboarding-hero">
+        <div class="about-mark" id="onboardingMark"></div>
+        <div>
+          <h2 id="onboardingTitle" data-i18n="onboardingTitle">Witaj w MyLife Planner</h2>
+          <p data-i18n="onboardingIntro">Ustaw kilka rzeczy i zacznij korzystać z organizera po swojemu.</p>
+        </div>
+      </div>
+
+      <div class="onboarding-grid">
+        <div class="onboarding-field">
+          <label for="onboardingAppearance" data-i18n="appearanceLabel">Wygląd</label>
+          <select id="onboardingAppearance">
+            <option value="light" data-i18n="appearanceLight">Jasny</option>
+            <option value="dark" data-i18n="appearanceDark">Ciemny</option>
+            <option value="system" data-i18n="appearanceSystem">Systemowy</option>
+          </select>
+        </div>
+        <div class="onboarding-field">
+          <label for="onboardingTheme" data-i18n="themeLabel">Motyw kolorystyczny</label>
+          <select id="onboardingTheme">
+            <option value="lavender">Lavender</option>
+            <option value="ocean">Ocean</option>
+            <option value="forest">Forest</option>
+            <option value="pistachio">Pistachio</option>
+            <option value="rainbow">Rainbow</option>
+            <option value="sunset">Sunset</option>
+            <option value="rose">Rose</option>
+            <option value="graphite">Graphite</option>
+          </select>
+        </div>
+        <div class="onboarding-field">
+          <label for="onboardingRadius" data-i18n="radiusLabel">Styl okien</label>
+          <select id="onboardingRadius">
+            <option value="soft" data-i18n="radiusSoft">Zaokrąglone</option>
+            <option value="medium" data-i18n="radiusMedium">Lekko zaokrąglone</option>
+            <option value="square" data-i18n="radiusSquare">Proste</option>
+          </select>
+        </div>
+        <div class="onboarding-field">
+          <label for="onboardingCategory" data-i18n="categoryLabel">Kategoria</label>
+          <select id="onboardingCategory"></select>
+        </div>
+        <div class="onboarding-field">
+          <label for="onboardingPriority" data-i18n="priorityLabel">Priorytet</label>
+          <select id="onboardingPriority">
+            <option value="normal" data-i18n="priorityNormal">Normalne</option>
+            <option value="important" data-i18n="priorityImportant">Ważne</option>
+            <option value="urgent" data-i18n="priorityUrgent">Pilne</option>
+          </select>
+        </div>
+        <div class="onboarding-field">
+          <label for="onboardingReminder" data-i18n="reminderLabel">Przypomnienie</label>
+          <select id="onboardingReminder">
+            <option value="0">W dniu wydarzenia</option>
+            <option value="1">1 dzień wcześniej</option>
+            <option value="3">3 dni wcześniej</option>
+            <option value="7">7 dni wcześniej</option>
+            <option value="14">14 dni wcześniej</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="onboarding-check">
+        <input id="onboardingWeather" type="checkbox" />
+        <span data-i18n="onboardingWeather">Włącz pogodę w nagłówku</span>
+      </label>
+      <p class="onboarding-note" data-i18n="onboardingWeatherNote">Lokalizacja służy tylko do pobrania temperatury i nie jest zapisywana.</p>
+
+      <label class="onboarding-check">
+        <input id="onboardingNotifications" type="checkbox" />
+        <span data-i18n="onboardingNotifications">Włącz powiadomienia</span>
+      </label>
+
+      <div class="onboarding-actions">
+        <button class="secondary-action" id="onboardingSkip" type="button" data-i18n="onboardingSkip">Pomiń</button>
+        <button class="primary-action" id="onboardingStart" type="button" data-i18n="onboardingStart">Zapisz</button>
+      </div>
+    </div>
+  </div>
+  <script src="app.js?v=2.09" defer></script>
 </body>
-
 </html>

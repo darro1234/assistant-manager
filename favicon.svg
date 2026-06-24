@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="MyLife">
+  <defs>
+    <linearGradient id="bg" x1="32" y1="0" x2="32" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2a2a2d"/>
+      <stop offset="1" stop-color="#0b0b0d"/>
+    </linearGradient>
+  </defs>
+  <rect x="3" y="3" width="58" height="58" rx="14" fill="url(#bg)"/>
+  <rect x="4.5" y="4.5" width="55" height="55" rx="12.5" fill="none" stroke="#ffffff" stroke-width=".8" opacity=".14"/>
+  <circle cx="32" cy="32" r="18" fill="none" stroke="#ffffff" stroke-width="2.1" opacity=".25"/>
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round">
+    <path stroke-width="3.2" d="M32 10c-5.2 6.5-5.2 12.5 0 19.3 5.2-6.8 5.2-12.8 0-19.3Z"/>
+    <path stroke-width="3.2" d="M32 54c5.2-6.5 5.2-12.5 0-19.3-5.2 6.8-5.2 12.8 0 19.3Z"/>
+    <path stroke-width="3.2" d="M10 32c6.5-5.2 12.5-5.2 19.3 0-6.8 5.2-12.8 5.2-19.3 0Z"/>
+    <path stroke-width="3.2" d="M54 32c-6.5 5.2-12.5 5.2-19.3 0 6.8-5.2 12.8-5.2 19.3 0Z"/>
+    <path stroke-width="2.4" d="M17 17c8 1 12.3 5 13.4 13.4C22 29.3 18 25 17 17Z"/>
+    <path stroke-width="2.4" d="M47 17c-1 8-5 12.3-13.4 13.4C34.7 22 39 18 47 17Z"/>
+    <path stroke-width="2.4" d="M17 47c1-8 5-12.3 13.4-13.4C29.3 42 25 46 17 47Z"/>
+    <path stroke-width="2.4" d="M47 47c-8-1-12.3-5-13.4-13.4C42 34.7 46 39 47 47Z"/>
+  </g>
+  <circle cx="32" cy="32" r="4" fill="#ffffff"/>
+</svg>
