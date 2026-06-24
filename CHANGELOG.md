@@ -1,5 +1,21 @@
 # Manager+ Changelog
 
+## 8.0.1 - 2026-06-24
+- Added an Autosave on/off control in Settings.
+- Updated Data & App Status to show whether autosave is active or off.
+- Updated the PWA cache version for the autosave preference.
+
+## 8.0.0 - 2026-06-24
+- Marked the app as a stable PWA release.
+- Added Data & App Status panels in Info and Settings.
+- Added visible history record count, last local save and last history export status.
+- Updated the PWA cache version for the stable release.
+
+## 7.4.1 - 2026-06-24
+- Improved local autosave for app fields with a visible saved status.
+- Added debounced typing saves and immediate saves for select and checkbox changes.
+- Updated the PWA cache version for the autosave improvement.
+
 ## 7.4.0 - 2026-06-24
 - Added an English/Polish language switch in Settings.
 - Added Polish translations for the main navigation, key screens, footer and Info/Privacy content.

@@ -1,4 +1,8 @@
 ﻿const SAVE_KEY='assistant_manager_mcd_v40';
+const AUTO_SAVE_TIMESTAMP_KEY='manager_plus_autosave_timestamp';
+const AUTO_SAVE_ENABLED_KEY='manager_plus_autosave_enabled';
+const DATA_EXPORT_TIMESTAMP_KEY='manager_plus_last_history_export';
+let autoSaveTimer=null;
 const checklistData={
   Morning:{
     "Opening / Breakfast":["Breakfast area ready","Coffee machine ready","Egg cooker ready","Muffins ready","Breakfast stock up complete"],
@@ -45,7 +49,7 @@ function renderShiftChecklist(){
   loadData();
 
   document.querySelectorAll('input[data-checklist-task]').forEach(el=>{
-    el.addEventListener('change',()=>{saveData();calculateChecklistCompletion();});
+    el.addEventListener('change',()=>{if(isAutoSaveEnabled())saveData();calculateChecklistCompletion();});
   });
 
   calculateChecklistCompletion();
@@ -107,23 +111,99 @@ function generateStarFeedback(){
   let output=`${pick(openings)} ${name} worked effectively on ${st} and supported the shift with good standards and teamwork. ${notes?notes+'. ':''}${pick(closings)}`;
   if(q('star_output')){q('star_output').value=output;q('star_output').dispatchEvent(new Event('input',{bubbles:true}));}
 }
-function fields(){return document.querySelectorAll('input:not(.navRadio), textarea, select')}
-function saveData(){const data={};fields().forEach((el,i)=>{const k=el.id||el.name||('field_'+i);data[k]=el.type==='checkbox'?el.checked:el.value});localStorage.setItem(SAVE_KEY,JSON.stringify(data));}
-function loadData(){const raw=localStorage.getItem(SAVE_KEY);if(!raw)return;try{const data=JSON.parse(raw);fields().forEach((el,i)=>{const k=el.id||el.name||('field_'+i);if(!(k in data))return;if(el.type==='checkbox')el.checked=!!data[k];else el.value=data[k];});}catch(e){}}
-function resetSavedData(){if(confirm('Delete all saved data?')){localStorage.removeItem(SAVE_KEY);location.reload();}}
+function fields(){return document.querySelectorAll('input:not(.navRadio):not([type="file"]):not([type="button"]):not([type="submit"]):not([type="reset"]), textarea, select')}
+function isAutoSaveEnabled(){return localStorage.getItem(AUTO_SAVE_ENABLED_KEY)!=='0'}
+function autosaveOffText(){
+  const lang=localStorage.getItem('manager_plus_language')||'en';
+  return lang==='pl'?'Autozapis wyłączony':'Autosave off';
+}
+function autosaveStatusText(prefix){
+  if(!isAutoSaveEnabled())return autosaveOffText();
+  const stamp=localStorage.getItem(AUTO_SAVE_TIMESTAMP_KEY);
+  const lang=localStorage.getItem('manager_plus_language')||'en';
+  if(!stamp)return lang==='pl'?'Autozapis gotowy':'Autosave ready';
+  const time=new Date(stamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  if(prefix)return prefix+' '+time;
+  return lang==='pl'?'Autozapis: '+time:'Autosaved: '+time;
+}
+function updateAutosaveStatus(prefix){
+  const text=autosaveStatusText(prefix);
+  ['autosave_status','autosave_status_global'].forEach(id=>{
+    const el=q(id);
+    if(el)el.textContent=text;
+  });
+  if(typeof updateManagerPlusDataStatus === 'function') updateManagerPlusDataStatus();
+}
+function saveData(){
+  const data={};
+  fields().forEach((el,i)=>{
+    const k=el.id||el.name||('field_'+i);
+    data[k]=el.type==='checkbox'?el.checked:el.value;
+  });
+  localStorage.setItem(SAVE_KEY,JSON.stringify(data));
+  localStorage.setItem(AUTO_SAVE_TIMESTAMP_KEY,new Date().toISOString());
+  updateAutosaveStatus();
+}
+function scheduleAutoSave(){
+  if(!isAutoSaveEnabled()){
+    updateAutosaveStatus();
+    return;
+  }
+  const lang=localStorage.getItem('manager_plus_language')||'en';
+  updateAutosaveStatus(lang==='pl'?'Zapisywanie...':'Saving...');
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer=setTimeout(saveData,450);
+}
+function handleAutoSaveChange(el){
+  if(!el)return;
+  localStorage.setItem(AUTO_SAVE_ENABLED_KEY, el.checked ? '1' : '0');
+  clearTimeout(autoSaveTimer);
+  updateAutosaveStatus();
+  if(el.checked)saveData();
+}
+function loadData(){
+  const raw=localStorage.getItem(SAVE_KEY);
+  if(!raw){updateAutosaveStatus();return;}
+  try{
+    const data=JSON.parse(raw);
+    fields().forEach((el,i)=>{
+      const k=el.id||el.name||('field_'+i);
+      if(!(k in data))return;
+      if(el.type==='checkbox')el.checked=!!data[k];
+      else el.value=data[k];
+    });
+  }catch(e){}
+  updateAutosaveStatus();
+}
+function resetSavedData(){if(confirm('Delete all saved data?')){localStorage.removeItem(SAVE_KEY);localStorage.removeItem(AUTO_SAVE_TIMESTAMP_KEY);localStorage.removeItem(DATA_EXPORT_TIMESTAMP_KEY);location.reload();}}
 document.addEventListener('DOMContentLoaded',()=>{
   loadData();
   renderShiftChecklist();
 
+  const autoSaveToggle=q('auto_save_toggle');
+  if(autoSaveToggle){
+    autoSaveToggle.checked=isAutoSaveEnabled();
+    autoSaveToggle.addEventListener('change',()=>handleAutoSaveChange(autoSaveToggle));
+    const autoSaveRow=document.querySelector('label[for="auto_save_toggle"]');
+    if(autoSaveRow){
+      autoSaveRow.addEventListener('click',event=>{
+        if(event.target===autoSaveToggle)return;
+        event.preventDefault();
+        autoSaveToggle.checked=!autoSaveToggle.checked;
+        handleAutoSaveChange(autoSaveToggle);
+      });
+    }
+  }
+
   fields().forEach(el=>{
-    el.addEventListener('input',saveData);
-    el.addEventListener('change',saveData);
+    el.addEventListener('input',scheduleAutoSave);
+    el.addEventListener('change',()=>{if(el.id!=='auto_save_toggle'&&isAutoSaveEnabled())saveData();});
   });
 
   const shiftSelect = q('shift_type');
   if(shiftSelect){
     shiftSelect.addEventListener('change',()=>{
-      saveData();
+      if(isAutoSaveEnabled())saveData();
       renderShiftChecklist();
       if(q('star_shift_type')) q('star_shift_type').value = shiftSelect.value;
     });
@@ -1235,7 +1315,9 @@ function resetSavedData(){
     [
       'assistant_manager_mcd_v26',
       'assistant_manager_mcd_v40',
-      'assistant_manager_v26_autosave'
+      'assistant_manager_v26_autosave',
+      AUTO_SAVE_TIMESTAMP_KEY,
+      DATA_EXPORT_TIMESTAMP_KEY
     ].forEach(function(key){
       localStorage.removeItem(key);
     });
@@ -1267,7 +1349,9 @@ function resetSavedData(){
     'assistant_manager_mcd_v40',
     'assistant_manager_v26_autosave',
     'assistant_manager_mcd_v44',
-    'assistant_manager_mcd_current'
+    'assistant_manager_mcd_current',
+    AUTO_SAVE_TIMESTAMP_KEY,
+    DATA_EXPORT_TIMESTAMP_KEY
   ];
 
   function removeAssistantManagerStorage(){
@@ -1509,7 +1593,9 @@ function resetSavedData(){
         'assistant_manager_mcd_v40',
         'assistant_manager_v26_autosave',
         'assistant_manager_mcd_v44',
-        'assistant_manager_mcd_current'
+        'assistant_manager_mcd_current',
+        AUTO_SAVE_TIMESTAMP_KEY,
+        DATA_EXPORT_TIMESTAMP_KEY
       ].forEach(k => localStorage.removeItem(k));
     }catch(e){
       try{ localStorage.clear(); }catch(err){}
@@ -1697,7 +1783,7 @@ function resetSavedData(){
           localStorage.removeItem(k);
         }
       }
-      ['assistant_manager_mcd_v26','assistant_manager_mcd_v40','assistant_manager_v26_autosave','assistant_manager_mcd_v44','assistant_manager_mcd_current'].forEach(function(k){
+      ['assistant_manager_mcd_v26','assistant_manager_mcd_v40','assistant_manager_v26_autosave','assistant_manager_mcd_v44','assistant_manager_mcd_current',AUTO_SAVE_TIMESTAMP_KEY,DATA_EXPORT_TIMESTAMP_KEY].forEach(function(k){
         localStorage.removeItem(k);
       });
     }catch(e){
@@ -3043,6 +3129,7 @@ window.confirm=function(msg){
 
   function saveHistory(records){
     localStorage.setItem(HISTORY_KEY, JSON.stringify(records));
+    if(typeof updateManagerPlusDataStatus === 'function') updateManagerPlusDataStatus();
   }
 
   function checklistStats(){
@@ -3294,6 +3381,7 @@ window.confirm=function(msg){
   window.clearShiftHistory = function(){
     localStorage.removeItem(HISTORY_KEY);
     window.renderHistory();
+    if(typeof updateManagerPlusDataStatus === 'function') updateManagerPlusDataStatus();
     toast('History cleared.');
   };
 
@@ -3301,7 +3389,7 @@ window.confirm=function(msg){
     const records = loadHistory();
     const blob = new Blob([JSON.stringify({
       app: 'Manager+',
-      version: '7.0.1',
+      version: MANAGER_PLUS_VERSION,
       exportedAt: new Date().toISOString(),
       history: records
     }, null, 2)], {type:'application/json'});
@@ -3320,6 +3408,8 @@ window.confirm=function(msg){
       URL.revokeObjectURL(url);
     }, 100);
 
+    localStorage.setItem(DATA_EXPORT_TIMESTAMP_KEY, new Date().toISOString());
+    if(typeof updateManagerPlusDataStatus === 'function') updateManagerPlusDataStatus();
     toast('History file saved.');
   };
 
@@ -3344,9 +3434,10 @@ window.confirm=function(msg){
           return;
         }
 
-        saveHistory(imported);
-        window.renderHistory();
-        toast('History loaded.');
+          saveHistory(imported);
+          window.renderHistory();
+          if(typeof updateManagerPlusDataStatus === 'function') updateManagerPlusDataStatus();
+          toast('History loaded.');
       }catch(err){
         toast('Invalid history file.');
       }finally{
@@ -3376,12 +3467,84 @@ window.confirm=function(msg){
 
 ;
 
-const MANAGER_PLUS_VERSION = document.querySelector('meta[name="manager-plus-version"]')?.content || "7.4.0";
+const MANAGER_PLUS_VERSION = document.querySelector('meta[name="manager-plus-version"]')?.content || "8.0.1";
 const MANAGER_PLUS_LANGUAGE_KEY = "manager_plus_language";
+const MANAGER_PLUS_HISTORY_KEY = "manager_plus_shift_history_v70";
 
 function updateManagerPlusVersion(){
   const versionLabel = document.getElementById("appVersion");
   if (versionLabel) versionLabel.textContent = MANAGER_PLUS_VERSION;
+}
+
+function managerPlusCurrentLanguage(){
+  return localStorage.getItem(MANAGER_PLUS_LANGUAGE_KEY) || "en";
+}
+
+function managerPlusFormatDateTime(value){
+  const empty = managerPlusCurrentLanguage() === "pl" ? "Brak" : "Never";
+  if(!value) return empty;
+  const date = new Date(value);
+  if(isNaN(date.getTime())) return empty;
+  return date.toLocaleString([], {day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit"});
+}
+
+function managerPlusHistoryCount(){
+  try{
+    const records = JSON.parse(localStorage.getItem(MANAGER_PLUS_HISTORY_KEY) || "[]");
+    return Array.isArray(records) ? records.length : 0;
+  }catch(e){
+    return 0;
+  }
+}
+
+function setManagerPlusStatusText(key, value){
+  document.querySelectorAll('[data-status="' + key + '"]').forEach(function(el){
+    el.textContent = value;
+  });
+}
+
+function updateManagerPlusDataStatus(){
+  const lang = managerPlusCurrentLanguage();
+  const dataSectionTitle = document.querySelector("#settingsScreen .appDataSection h3");
+  const dataSectionNote = document.querySelector("#settingsScreen .appDataSection .sectionNote");
+  if(dataSectionTitle) dataSectionTitle.textContent = lang === "pl" ? "Dane" : "Data";
+  if(dataSectionNote) dataSectionNote.textContent = lang === "pl" ? "Lokalny autozapis, historia i status exportu na tym urządzeniu." : "Local autosave, history and export status for this device.";
+  document.querySelectorAll("[data-autosave-title]").forEach(function(el){
+    el.textContent = lang === "pl" ? "Autozapis" : "Autosave";
+  });
+  document.querySelectorAll("[data-autosave-note]").forEach(function(el){
+    el.textContent = lang === "pl" ? "Automatycznie zapisuj zmiany pól na tym urządzeniu." : "Automatically save field changes on this device.";
+  });
+  const autoSaveToggle = document.getElementById("auto_save_toggle");
+  if(autoSaveToggle) autoSaveToggle.checked = isAutoSaveEnabled();
+  const labels = lang === "pl" ? {
+    version:"Wersja",
+    autosave:"Autozapis",
+    lastSaved:"Ostatni zapis",
+    history:"Rekordy historii",
+    lastExport:"Ostatni export",
+    storage:"Dane"
+  } : {
+    version:"Version",
+    autosave:"Autosave",
+    lastSaved:"Last saved",
+    history:"History records",
+    lastExport:"Last export",
+    storage:"Storage"
+  };
+
+  Object.keys(labels).forEach(function(key){
+    document.querySelectorAll('[data-status-label="' + key + '"]').forEach(function(el){
+      el.textContent = labels[key];
+    });
+  });
+
+  setManagerPlusStatusText("version", MANAGER_PLUS_VERSION + " Stable");
+  setManagerPlusStatusText("autosave", isAutoSaveEnabled() ? (lang === "pl" ? "Aktywny" : "Active") : (lang === "pl" ? "Wyłączony" : "Off"));
+  setManagerPlusStatusText("lastSaved", managerPlusFormatDateTime(localStorage.getItem(AUTO_SAVE_TIMESTAMP_KEY)));
+  setManagerPlusStatusText("history", String(managerPlusHistoryCount()));
+  setManagerPlusStatusText("lastExport", managerPlusFormatDateTime(localStorage.getItem(DATA_EXPORT_TIMESTAMP_KEY)));
+  setManagerPlusStatusText("storage", lang === "pl" ? "To urządzenie" : "This device");
 }
 
 function openManagerPlusRouteFromHash(){
@@ -3438,6 +3601,10 @@ const MANAGER_PLUS_TRANSLATIONS = {
       ".footer .prototype": "Version",
       "#settingsScreen .screenTitle h2": "Settings",
       "#settingsScreen .settingsSection:nth-of-type(1) h3": "Language",
+      "#settingsScreen .appDataSection h3": "Data",
+      "#settingsScreen .appDataSection .sectionNote": "Local autosave, history and export status for this device.",
+      "[data-autosave-title]": "Autosave",
+      "[data-autosave-note]": "Automatically save field changes on this device.",
       'label[for="home"].backLabel': "Back Home",
       "#dashboardScreen .screenTitle h2": "Dashboard",
       "#kpiScreen .screenTitle h2": "KPI",
@@ -3450,19 +3617,20 @@ const MANAGER_PLUS_TRANSLATIONS = {
       "#infoScreen .screenTitle h2": "Info",
       "#infoScreen .infoHero h3": "Manager+ Shift Management",
       "#infoScreen .infoHero p": "Manager+ is a progressive web app designed to support shift leaders with KPI checks, waste control, checklists, handovers, reports and saved shift history in one focused workspace.",
-      "#infoScreen .infoPanel:nth-of-type(1) h3": "About The App",
-      "#infoScreen .infoPanel:nth-of-type(2) h3": "Data Storage & Privacy",
-      "#infoScreen .infoPanel:nth-of-type(2) p": "Manager+ stores shift data locally in this browser or installed app using local storage. Data is not sent to any Manager+ server and is not shared with third parties by this app.",
-      "#infoScreen .infoPanel:nth-of-type(3) h3": "Useful Notes",
-      "#infoScreen .infoPanel:nth-of-type(4) h3": "Latest Updates"
+      "#infoScreen .infoPanel:nth-of-type(1) h3": "Data & App Status",
+      "#infoScreen .infoPanel:nth-of-type(2) h3": "About The App",
+      "#infoScreen .infoPanel:nth-of-type(3) h3": "Data Storage & Privacy",
+      "#infoScreen .infoPanel:nth-of-type(3) p": "Manager+ stores shift data locally in this browser or installed app using local storage. Data is not sent to any Manager+ server and is not shared with third parties by this app.",
+      "#infoScreen .infoPanel:nth-of-type(4) h3": "Useful Notes",
+      "#infoScreen .infoPanel:nth-of-type(5) h3": "Latest Updates"
     },
     html: {
       ".byline": 'Designated & Created by <strong>Dariusz Kaniewski</strong>',
-      ".footer": "<strong>&copy; 2026 Dariusz Kaniewski</strong><br><span class=\"brand\">Manager+</span><br><span class=\"prototype\">Version <span id=\"appVersion\">" + MANAGER_PLUS_VERSION + "</span></span><br><label class=\"footerInfoLink\" for=\"info\">Data Storage & Privacy</label><br>Independent prototype created for operational and educational purposes.<br>Not affiliated with McDonald's Corporation.",
-      "#infoScreen .infoPanel:nth-of-type(1) .infoList": "<li>Works as an installable PWA on supported browsers and mobile devices.</li><li>Designed for fast shift reviews, not for official corporate reporting.</li><li>Created as an independent operational and educational prototype by Dariusz Kaniewski.</li><li>Not affiliated with McDonald's Corporation.</li>",
-      "#infoScreen .infoPanel:nth-of-type(2) .infoList": "<li>Saved data may include KPI values, waste values, checklist status, manager name, restaurant name, generated reports and history records.</li><li>You can remove stored data using Clear All Data or Clear History.</li><li>You can export and import history manually as a JSON file.</li><li>Clearing browser data, uninstalling the PWA, changing browser or using another device may remove or hide saved records.</li>",
-      "#infoScreen .infoPanel:nth-of-type(3) .infoList": "<li>For best results, install the app from your browser menu and use it from the same device.</li><li>Export History regularly if you want a backup outside the browser.</li><li>Targets and checklist tasks can be adjusted in Settings.</li><li>Offline support depends on the browser cache after the app has loaded at least once.</li>",
-      "#infoScreen .infoPanel:nth-of-type(4) .updateList": "<li><strong>7.4.0</strong> - Added English/Polish language switch in Settings.</li><li><strong>7.3.0</strong> - Added Info, Data Storage & Privacy and latest updates.</li><li><strong>7.2.3</strong> - Cleaned remaining text encoding issues after splitting the app files.</li><li><strong>7.2.0</strong> - Split the project into separate HTML, CSS and JavaScript files.</li>"
+      ".footer": "<strong>&copy; 2026 Dariusz Kaniewski</strong><br><span class=\"brand\">Manager+</span><br><span class=\"prototype\">Version <span id=\"appVersion\">" + MANAGER_PLUS_VERSION + "</span></span><br><span id=\"autosave_status\" class=\"autosaveStatus\">Autosave ready</span><br><label class=\"footerInfoLink\" for=\"info\">Data Storage & Privacy</label><br>Independent prototype created for operational and educational purposes.<br>Not affiliated with McDonald's Corporation.",
+      "#infoScreen .infoPanel:nth-of-type(2) .infoList": "<li>Works as an installable PWA on supported browsers and mobile devices.</li><li>Designed for fast shift reviews, not for official corporate reporting.</li><li>Created as an independent operational and educational prototype by Dariusz Kaniewski.</li><li>Not affiliated with McDonald's Corporation.</li>",
+      "#infoScreen .infoPanel:nth-of-type(3) .infoList": "<li>Saved data may include KPI values, waste values, checklist status, manager name, restaurant name, generated reports and history records.</li><li>You can remove stored data using Clear All Data or Clear History.</li><li>You can export and import history manually as a JSON file.</li><li>Clearing browser data, uninstalling the PWA, changing browser or using another device may remove or hide saved records.</li>",
+      "#infoScreen .infoPanel:nth-of-type(4) .infoList": "<li>For best results, install the app from your browser menu and use it from the same device.</li><li>Export History regularly if you want a backup outside the browser.</li><li>Targets and checklist tasks can be adjusted in Settings.</li><li>Offline support depends on the browser cache after the app has loaded at least once.</li>",
+      "#infoScreen .infoPanel:nth-of-type(5) .updateList": "<li><strong>8.0.1</strong> - Added Autosave on/off control in Settings.</li><li><strong>8.0.0</strong> - Stable release with Data & App Status, backup visibility and final PWA polish.</li><li><strong>7.4.1</strong> - Added visible local autosave status.</li><li><strong>7.4.0</strong> - Added English/Polish language switch in Settings.</li>"
     }
   },
   pl: {
@@ -3497,6 +3665,10 @@ const MANAGER_PLUS_TRANSLATIONS = {
       ".footer .prototype": "Wersja",
       "#settingsScreen .screenTitle h2": "Ustawienia",
       "#settingsScreen .settingsSection:nth-of-type(1) h3": "Język",
+      "#settingsScreen .appDataSection h3": "Dane",
+      "#settingsScreen .appDataSection .sectionNote": "Lokalny autozapis, historia i status exportu na tym urządzeniu.",
+      "[data-autosave-title]": "Autozapis",
+      "[data-autosave-note]": "Automatycznie zapisuj zmiany pól na tym urządzeniu.",
       'label[for="home"].backLabel': "Powrót",
       "#dashboardScreen .screenTitle h2": "Panel",
       "#kpiScreen .screenTitle h2": "KPI",
@@ -3509,19 +3681,20 @@ const MANAGER_PLUS_TRANSLATIONS = {
       "#infoScreen .screenTitle h2": "Info",
       "#infoScreen .infoHero h3": "Manager+ Zarządzanie zmianą",
       "#infoScreen .infoHero p": "Manager+ to aplikacja PWA wspierająca liderów zmiany w kontroli KPI, strat, checklist, przekazania zmiany, raportów i historii zapisanych zmian.",
-      "#infoScreen .infoPanel:nth-of-type(1) h3": "O aplikacji",
-      "#infoScreen .infoPanel:nth-of-type(2) h3": "Przechowywanie danych i prywatność",
-      "#infoScreen .infoPanel:nth-of-type(2) p": "Manager+ zapisuje dane lokalnie w tej przeglądarce lub zainstalowanej aplikacji przy użyciu local storage. Dane nie są wysyłane na żaden serwer Manager+ i nie są udostępniane stronom trzecim przez tę aplikację.",
-      "#infoScreen .infoPanel:nth-of-type(3) h3": "Przydatne informacje",
-      "#infoScreen .infoPanel:nth-of-type(4) h3": "Ostatnie aktualizacje"
+      "#infoScreen .infoPanel:nth-of-type(1) h3": "Status danych i aplikacji",
+      "#infoScreen .infoPanel:nth-of-type(2) h3": "O aplikacji",
+      "#infoScreen .infoPanel:nth-of-type(3) h3": "Przechowywanie danych i prywatność",
+      "#infoScreen .infoPanel:nth-of-type(3) p": "Manager+ zapisuje dane lokalnie w tej przeglądarce lub zainstalowanej aplikacji przy użyciu local storage. Dane nie są wysyłane na żaden serwer Manager+ i nie są udostępniane stronom trzecim przez tę aplikację.",
+      "#infoScreen .infoPanel:nth-of-type(4) h3": "Przydatne informacje",
+      "#infoScreen .infoPanel:nth-of-type(5) h3": "Ostatnie aktualizacje"
     },
     html: {
       ".byline": 'Zaprojektowane i stworzone przez <strong>Dariusz Kaniewski</strong>',
-      ".footer": "<strong>&copy; 2026 Dariusz Kaniewski</strong><br><span class=\"brand\">Manager+</span><br><span class=\"prototype\">Wersja <span id=\"appVersion\">" + MANAGER_PLUS_VERSION + "</span></span><br><label class=\"footerInfoLink\" for=\"info\">Przechowywanie danych i prywatność</label><br>Niezależny prototyp stworzony do celów operacyjnych i edukacyjnych.<br>Nie jest powiązany z McDonald's Corporation.",
-      "#infoScreen .infoPanel:nth-of-type(1) .infoList": "<li>Działa jako instalowalna aplikacja PWA w obsługiwanych przeglądarkach i na urządzeniach mobilnych.</li><li>Przeznaczona do szybkich przeglądów zmiany, nie do oficjalnego raportowania firmowego.</li><li>Niezależny prototyp operacyjny i edukacyjny stworzony przez Dariusza Kaniewskiego.</li><li>Nie jest powiązana z McDonald's Corporation.</li>",
-      "#infoScreen .infoPanel:nth-of-type(2) .infoList": "<li>Zapisane dane mogą obejmować wartości KPI, waste, status checklisty, imię managera, nazwę restauracji, wygenerowane raporty i historię zmian.</li><li>Dane możesz usunąć przyciskiem Wyczyść wszystkie dane albo Wyczyść historię.</li><li>Historię możesz ręcznie eksportować i importować jako plik JSON.</li><li>Wyczyszczenie danych przeglądarki, odinstalowanie PWA, zmiana przeglądarki albo urządzenia może usunąć lub ukryć zapisane rekordy.</li>",
-      "#infoScreen .infoPanel:nth-of-type(3) .infoList": "<li>Najlepiej zainstalować aplikację z menu przeglądarki i używać jej na tym samym urządzeniu.</li><li>Regularnie eksportuj historię, jeśli chcesz mieć kopię poza przeglądarką.</li><li>Cele i zadania checklisty możesz zmienić w Ustawieniach.</li><li>Tryb offline zależy od cache przeglądarki po pierwszym załadowaniu aplikacji.</li>",
-      "#infoScreen .infoPanel:nth-of-type(4) .updateList": "<li><strong>7.4.0</strong> - Dodano przełącznik języka angielski/polski w Ustawieniach.</li><li><strong>7.3.0</strong> - Dodano ekran Info, prywatność danych i ostatnie aktualizacje.</li><li><strong>7.2.3</strong> - Usunięto pozostałe problemy z kodowaniem tekstu po rozdzieleniu plików.</li><li><strong>7.2.0</strong> - Rozdzielono projekt na osobne pliki HTML, CSS i JavaScript.</li>"
+      ".footer": "<strong>&copy; 2026 Dariusz Kaniewski</strong><br><span class=\"brand\">Manager+</span><br><span class=\"prototype\">Wersja <span id=\"appVersion\">" + MANAGER_PLUS_VERSION + "</span></span><br><span id=\"autosave_status\" class=\"autosaveStatus\">Autozapis gotowy</span><br><label class=\"footerInfoLink\" for=\"info\">Przechowywanie danych i prywatność</label><br>Niezależny prototyp stworzony do celów operacyjnych i edukacyjnych.<br>Nie jest powiązany z McDonald's Corporation.",
+      "#infoScreen .infoPanel:nth-of-type(2) .infoList": "<li>Działa jako instalowalna aplikacja PWA w obsługiwanych przeglądarkach i na urządzeniach mobilnych.</li><li>Przeznaczona do szybkich przeglądów zmiany, nie do oficjalnego raportowania firmowego.</li><li>Niezależny prototyp operacyjny i edukacyjny stworzony przez Dariusza Kaniewskiego.</li><li>Nie jest powiązana z McDonald's Corporation.</li>",
+      "#infoScreen .infoPanel:nth-of-type(3) .infoList": "<li>Zapisane dane mogą obejmować wartości KPI, waste, status checklisty, imię managera, nazwę restauracji, wygenerowane raporty i historię zmian.</li><li>Dane możesz usunąć przyciskiem Wyczyść wszystkie dane albo Wyczyść historię.</li><li>Historię możesz ręcznie eksportować i importować jako plik JSON.</li><li>Wyczyszczenie danych przeglądarki, odinstalowanie PWA, zmiana przeglądarki albo urządzenia może usunąć lub ukryć zapisane rekordy.</li>",
+      "#infoScreen .infoPanel:nth-of-type(4) .infoList": "<li>Najlepiej zainstalować aplikację z menu przeglądarki i używać jej na tym samym urządzeniu.</li><li>Regularnie eksportuj historię, jeśli chcesz mieć kopię poza przeglądarką.</li><li>Cele i zadania checklisty możesz zmienić w Ustawieniach.</li><li>Tryb offline zależy od cache przeglądarki po pierwszym załadowaniu aplikacji.</li>",
+      "#infoScreen .infoPanel:nth-of-type(5) .updateList": "<li><strong>8.0.1</strong> - Dodano przełącznik włączania i wyłączania autozapisu w Ustawieniach.</li><li><strong>8.0.0</strong> - Stabilne wydanie z panelem statusu danych, widocznością backupu i finalnym dopracowaniem PWA.</li><li><strong>7.4.1</strong> - Dodano widoczny status lokalnego autozapisu.</li><li><strong>7.4.0</strong> - Dodano przełącznik języka angielski/polski w Ustawieniach.</li>"
     }
   }
 };
@@ -3558,6 +3731,8 @@ function applyManagerPlusLanguage(language){
   });
 
   updateManagerPlusVersion();
+  updateManagerPlusDataStatus();
+  if(typeof updateAutosaveStatus === "function") updateAutosaveStatus();
 
   const languageSelect = document.getElementById("app_language");
   if(languageSelect) languageSelect.value = lang;
@@ -3571,6 +3746,7 @@ function setupManagerPlusLanguage(){
     languageSelect.addEventListener("change", function(){
       localStorage.setItem(MANAGER_PLUS_LANGUAGE_KEY, languageSelect.value);
       applyManagerPlusLanguage(languageSelect.value);
+      setTimeout(updateManagerPlusDataStatus, 50);
       if(typeof toast === "function") toast(languageSelect.value === "pl" ? "Język zmieniony." : "Language updated.");
     });
   }
@@ -3578,9 +3754,11 @@ function setupManagerPlusLanguage(){
 
 window.addEventListener("DOMContentLoaded", function(){
   updateManagerPlusVersion();
+  updateManagerPlusDataStatus();
   openManagerPlusRouteFromHash();
   setupManagerPlusLanguage();
 });
+window.addEventListener("storage", updateManagerPlusDataStatus);
 window.addEventListener("hashchange", openManagerPlusRouteFromHash);
 
 if ("serviceWorker" in navigator && window.location.protocol !== "file:") {

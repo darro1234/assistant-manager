@@ -1,4 +1,4 @@
-const MANAGER_PLUS_CACHE = "manager-plus-pwa-v11";
+const MANAGER_PLUS_CACHE = "manager-plus-pwa-v17";
 const MANAGER_PLUS_ASSETS = [
   "./",
   "./index.html",

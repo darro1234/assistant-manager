@@ -610,6 +610,33 @@ label.tile[for="history"]::before,
   text-underline-offset:3px;
 }
 .footerInfoLink:hover{color:var(--yellow)}
+.autosaveStatus{
+  display:inline-block;
+  margin:6px 0 2px;
+  padding:5px 10px;
+  border-radius:999px;
+  background:rgba(48,211,128,.1);
+  border:1px solid rgba(48,211,128,.2);
+  color:#86efac;
+  font-size:12px;
+  font-weight:900;
+}
+.autosaveFloating{
+  position:fixed;
+  right:18px;
+  bottom:92px;
+  z-index:55;
+  box-shadow:0 12px 32px rgba(0,0,0,.34);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+@media(max-width:720px){
+  .autosaveFloating{
+    right:50%;
+    transform:translateX(50%);
+    bottom:86px;
+  }
+}
 .infoScreenCard{max-width:980px;margin:0 auto}
 .infoHero{
   margin:18px 0;
@@ -647,8 +674,94 @@ label.tile[for="history"]::before,
 }
 .infoList li,.updateList li{margin:7px 0}
 .updateList strong{color:var(--text)}
+.sectionNote{
+  margin:0 0 14px;
+  color:var(--muted);
+  line-height:1.5;
+}
+.toggleRow{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:14px;
+  margin:0 0 14px;
+  padding:14px;
+  border-radius:14px;
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.08);
+  cursor:pointer;
+}
+.toggleRow strong{
+  display:block;
+  color:var(--text);
+  font-size:15px;
+}
+.toggleRow small{
+  display:block;
+  margin-top:4px;
+  color:var(--muted);
+  line-height:1.35;
+}
+.toggleRow input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+.toggleSwitch{
+  position:relative;
+  width:52px;
+  height:30px;
+  border-radius:999px;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.12);
+  transition:.2s ease;
+}
+.toggleSwitch::after{
+  content:"";
+  position:absolute;
+  top:4px;
+  left:4px;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:#d7dce2;
+  transition:.2s ease;
+}
+.toggleRow input:checked + .toggleSwitch{
+  background:rgba(48,211,128,.22);
+  border-color:rgba(48,211,128,.35);
+}
+.toggleRow input:checked + .toggleSwitch::after{
+  transform:translateX(22px);
+  background:#86efac;
+}
+.statusGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.statusItem{
+  min-height:74px;
+  padding:13px;
+  border-radius:12px;
+  background:rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.08);
+}
+.statusItem small{
+  display:block;
+  margin-bottom:7px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:800;
+}
+.statusItem strong{
+  display:block;
+  color:var(--text);
+  font-size:15px;
+  line-height:1.25;
+}
 @media(max-width:720px){
-  .infoGrid{grid-template-columns:1fr}
+  .infoGrid,.statusGrid{grid-template-columns:1fr}
 }
 #info:checked ~ .app #infoScreen{display:block}
 
