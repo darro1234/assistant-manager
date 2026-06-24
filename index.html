@@ -302,7 +302,8 @@ body::before{
   grid-template-columns:auto 1fr;
   align-items:center;
   text-align:left;
-  gap:20px;
+  column-gap:20px;
+  row-gap:4px;
   border-radius:24px;
   padding:28px;
   margin:4px 0 18px;
@@ -335,28 +336,39 @@ h1{
   font-size:clamp(36px,7vw,64px);
   line-height:.95;
   letter-spacing:0;
+  color:var(--yellow);
+  text-shadow:0 10px 34px rgba(255,200,61,.2);
+  margin:0;
 }
 .subtitle{
-  display:inline-flex;
-  align-items:center;
+  display:block;
   grid-column:2;
   justify-self:start;
-  margin:12px 0 0;
-  padding:7px 11px;
-  border:1px solid rgba(255,200,61,.24);
-  border-radius:999px;
-  background:rgba(255,200,61,.1);
+  margin:2px 0 0;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
   color:var(--yellow2);
-  font-size:14px;
+  font-size:16px;
   font-weight:850;
 }
-.divider{display:none}
+.divider{
+  display:block;
+  grid-column:2;
+  justify-self:start;
+  width:74px;
+  height:2px;
+  margin:6px 0 0;
+  background:linear-gradient(90deg,var(--yellow),rgba(255,200,61,0));
+  border-radius:99px;
+}
 .byline{
   grid-column:2;
   color:var(--muted);
   font-size:13px;
   line-height:1.35;
-  margin-top:-8px;
+  margin-top:6px;
 }
 .byline strong{
   display:inline;
@@ -402,15 +414,46 @@ h1{
   right:16px;
   bottom:14px;
   margin:0;
-  width:30px;
-  height:30px;
-  display:grid;
-  place-items:center;
-  border-radius:999px;
-  background:rgba(255,200,61,.12);
-  border:1px solid rgba(255,200,61,.2);
+  width:auto;
+  height:auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:0;
+  background:transparent;
+  border:0;
   color:var(--yellow2);
-  font-size:22px;
+  font-size:0;
+  line-height:1;
+}
+.arrow::before{
+  content:"›";
+  display:block;
+  font-size:28px;
+  line-height:1;
+  transform:translateY(-2px);
+  text-shadow:0 8px 22px rgba(255,200,61,.34);
+}
+.appInfo{
+  margin:16px 0 18px;
+  padding:18px 0 2px;
+  border-top:1px solid rgba(255,255,255,.1);
+  color:var(--muted);
+}
+.appInfo h2{
+  margin:0 0 8px;
+  color:var(--yellow);
+  font-size:18px;
+  letter-spacing:0;
+}
+.appInfo p{
+  max-width:760px;
+  margin:0;
+  line-height:1.5;
+  font-size:14px;
+}
+.appInfo strong{
+  color:var(--text);
 }
 .homeControls{
   grid-template-columns:repeat(2,minmax(0,1fr));
@@ -527,6 +570,7 @@ input:focus,select:focus,textarea:focus{
   }
   .byline{grid-column:auto;margin-top:0}
   .subtitle{grid-column:auto;justify-self:center}
+  .divider{grid-column:auto;justify-self:center;background:linear-gradient(90deg,rgba(255,200,61,0),var(--yellow),rgba(255,200,61,0))}
   .logo.managerLogo{grid-row:auto}
   .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
@@ -581,6 +625,7 @@ label.tile[for="history"]::before,
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Manager+">
 <meta name="application-name" content="Manager+">
+<meta name="manager-plus-version" content="7.1.1">
 <meta name="format-detection" content="telephone=no">
 <meta name="msapplication-TileColor" content="#0b0d0f">
 <meta name="msapplication-TileImage" content="icon-144.png">
@@ -605,7 +650,7 @@ label.tile[for="history"]::before,
 <div class="logo managerLogo">
   <img src="icon-512.png" alt="Manager+ icon">
 </div>
-<h1>Manager+</h1><div class="subtitle">Shift Management</div><div class="divider"></div><div class="byline">Designed & Created by <strong>Dariusz Kaniewski</strong></div>
+<h1>Manager+</h1><div class="subtitle">Shift Management</div><div class="divider"></div><div class="byline">Designated & Created by <strong>Dariusz Kaniewski</strong></div>
 </header>
 <main class="tiles">
 <label class="tile" for="dash"><svg class="yellow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a8 8 0 0 1 16 0"/><path d="M12 14l4-5"/><path d="M5 19h14"/><path d="M7 14h.01"/><path d="M12 10h.01"/><path d="M17 14h.01"/></svg><h2>Dashboard</h2><p>Shift overview and health</p><div class="arrow">›</div></label>
@@ -622,10 +667,14 @@ label.tile[for="history"]::before,
   <button id="btnClearData" class="resetBtn" type="button" onclick="amTouchClearData(this)" ontouchend="amTouchClearData(this); return false;">Clear All Data</button>
 </div>
 <div id="homeActionStatus" class="coachBox" style="display:none;margin-top:0"></div>
+<section class="appInfo" aria-label="About Manager+">
+<h2>About Manager+</h2>
+<p><strong>Manager+</strong> is a shift management PWA for tracking KPI health, waste, checklists, handovers, reports and saved shift history in one place.</p>
+</section>
 <footer class="footer">
 <strong>© 2026 Dariusz Kaniewski</strong><br>
 <span class="brand">Manager+</span><br>
-<span class="prototype">Version 7.0.1</span><br>
+<span class="prototype">Version <span id="appVersion">7.1.1</span></span><br>
 Independent prototype created for operational and educational purposes.<br>
 Not affiliated with McDonald's Corporation.
 </footer>
@@ -4094,6 +4143,13 @@ window.confirm=function(msg){
 </script>
 
 <script>
+const MANAGER_PLUS_VERSION = document.querySelector('meta[name="manager-plus-version"]')?.content || "7.1.1";
+
+function updateManagerPlusVersion(){
+  const versionLabel = document.getElementById("appVersion");
+  if (versionLabel) versionLabel.textContent = MANAGER_PLUS_VERSION;
+}
+
 function openManagerPlusRouteFromHash(){
   const routes = {
     "#home": "home",
@@ -4113,7 +4169,10 @@ function openManagerPlusRouteFromHash(){
   if (radio) radio.checked = true;
 }
 
-window.addEventListener("DOMContentLoaded", openManagerPlusRouteFromHash);
+window.addEventListener("DOMContentLoaded", function(){
+  updateManagerPlusVersion();
+  openManagerPlusRouteFromHash();
+});
 window.addEventListener("hashchange", openManagerPlusRouteFromHash);
 
 if ("serviceWorker" in navigator && window.location.protocol !== "file:") {

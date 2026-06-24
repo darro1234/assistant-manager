@@ -1,7 +1,8 @@
-const MANAGER_PLUS_CACHE = "manager-plus-pwa-v1";
+const MANAGER_PLUS_CACHE = "manager-plus-pwa-v3";
 const MANAGER_PLUS_ASSETS = [
   "./",
   "./index.html",
+  "./CHANGELOG.md",
   "./manifest.json",
   "./favicon.ico",
   "./favicon-16x16.png",
