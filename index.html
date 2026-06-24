@@ -625,7 +625,7 @@ label.tile[for="history"]::before,
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Manager+">
 <meta name="application-name" content="Manager+">
-<meta name="manager-plus-version" content="7.1.1">
+<meta name="manager-plus-version" content="7.1.3">
 <meta name="format-detection" content="telephone=no">
 <meta name="msapplication-TileColor" content="#0b0d0f">
 <meta name="msapplication-TileImage" content="icon-144.png">
@@ -674,7 +674,7 @@ label.tile[for="history"]::before,
 <footer class="footer">
 <strong>© 2026 Dariusz Kaniewski</strong><br>
 <span class="brand">Manager+</span><br>
-<span class="prototype">Version <span id="appVersion">7.1.1</span></span><br>
+<span class="prototype">Version <span id="appVersion">7.1.3</span></span><br>
 Independent prototype created for operational and educational purposes.<br>
 Not affiliated with McDonald's Corporation.
 </footer>
@@ -1890,7 +1890,12 @@ function loadDemoData(){
   const shifts = ['Morning', 'Evening', 'Overnight'];
   const shift = randomChoice(shifts);
 
-  const today = new Date().toISOString().slice(0,10);
+  const now = new Date();
+  const today = [
+    String(now.getDate()).padStart(2, '0'),
+    String(now.getMonth() + 1).padStart(2, '0'),
+    now.getFullYear()
+  ].join('/');
 
   setField('shift_date', today);
   setField('manager_name', randomChoice(managers));
@@ -2759,14 +2764,14 @@ window.confirm=function(msg){
         tasks.forEach((task, index) => {
           html += '<div class="customTaskRow">';
           html += '<span>' + task + '</span>';
-          html += '<button class="deleteTaskBtn" type="button" onclick="deleteShiftTask(\\'' + shift + '\\',\\'' + group.replace(/'/g, "\\\\'") + '\\',' + index + ')">Delete</button>';
+          html += '<button class="deleteTaskBtn" type="button" onclick="deleteShiftTask(' + JSON.stringify(shift) + ',' + JSON.stringify(group) + ',' + index + ')">Delete</button>';
           html += '</div>';
         });
       });
 
       html += '<div class="addTaskBox">';
       html += '<input id="new_task_' + shift + '" type="text" placeholder="Add new ' + shift + ' task">';
-      html += '<button class="generateBtn" type="button" onclick="addShiftTask(\\'' + shift + '\\')">Add Task</button>';
+      html += '<button class="generateBtn" type="button" onclick="addShiftTask(' + JSON.stringify(shift) + ')">Add Task</button>';
       html += '</div>';
 
       html += '</div>';
@@ -3753,7 +3758,7 @@ window.confirm=function(msg){
       const title=(r.date||'Today')+' – '+(r.shift||'Shift')+' – Score '+(r.shiftScore===null?'N/A':r.shiftScore);
       const meta=(r.restaurant?'Restaurant: '+r.restaurant+'<br>':'')+'Manager: '+(r.manager||'Manager')+'<br>Checklist: '+(r.checklistPercent??0)+'%<br>OEPE: '+(r.kpi?.oepe??'N/A')+' sec<br>Raw Waste: '+(r.waste?.raw??'N/A')+'%';
       const report=String(r.report||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-      return '<div class="historyRecord"><div class="historyRecordTitle">'+title+'</div><div class="historyRecordMeta">'+meta+'</div><div class="historyActions"><button class="generateBtn" type="button" onclick="toggleHistoryReport('+i+')">View Report</button><button class="resetBtn" type="button" onclick="deleteHistoryRecord(\\''+r.id+'\\')">Delete</button></div><div id="history_report_'+i+'" class="historyReportBox"><textarea readonly>'+report+'</textarea><button class="generateBtn" type="button" onclick="copyHistoryReport('+i+')">Copy This Report</button></div></div>';
+      return '<div class="historyRecord"><div class="historyRecordTitle">'+title+'</div><div class="historyRecordMeta">'+meta+'</div><div class="historyActions"><button class="generateBtn" type="button" onclick="toggleHistoryReport('+i+')">View Report</button><button class="resetBtn" type="button" onclick="deleteHistoryRecord('+JSON.stringify(r.id)+')">Delete</button></div><div id="history_report_'+i+'" class="historyReportBox"><textarea readonly>'+report+'</textarea><button class="generateBtn" type="button" onclick="copyHistoryReport('+i+')">Copy This Report</button></div></div>';
     }).join('');
   };
   window.toggleHistoryReport=function(i){ const b=document.getElementById('history_report_'+i); if(b) b.style.display=b.style.display==='block'?'none':'block'; };
@@ -4143,7 +4148,7 @@ window.confirm=function(msg){
 </script>
 
 <script>
-const MANAGER_PLUS_VERSION = document.querySelector('meta[name="manager-plus-version"]')?.content || "7.1.1";
+const MANAGER_PLUS_VERSION = document.querySelector('meta[name="manager-plus-version"]')?.content || "7.1.3";
 
 function updateManagerPlusVersion(){
   const versionLabel = document.getElementById("appVersion");
